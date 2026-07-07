@@ -1,0 +1,60 @@
+def registrar_protocolo():
+    print("=============================================")
+    # Central de Atendimento / Protocolo
+    print("      SISTEMA DE REGISTRO DE PROTOCOLO       ")
+    print("=============================================\n")
+    
+    # 1. Quem está emitindo o relatório
+    emissor = input("Nome do funcionário (Emissor do relatório): ").strip()
+    while not emissor:
+        emissor = input("⚠️ Campo obrigatório! Quem está emitindo o relatório?: ").strip()
+        
+    # 2. Destinatário da remessa
+    destinatario = input("Destinatário da remessa: ").strip()
+    while not destinatario:
+        destinatario = input("⚠️ Campo obrigatório! Destinatário da remessa: ").strip()
+        
+    # 3. Referência do volume
+    ref_volume = input("Referência do volume (ex: Caixa 01, Envelope Pardo, Palete A): ").strip()
+    while not ref_volume:
+        ref_volume = input("⚠️ Campo obrigatório! Referência do volume: ").strip()
+        
+    # 4. Quantidade de itens (com validação de número inteiro)
+    while True:
+        try:
+            qtd_itens = int(input("Quantidade de itens dentro do volume: "))
+            if qtd_itens > 0:
+                break
+            print("❌ A quantidade deve ser pelo menos 1.")
+        except ValueError:
+            print("❌ Entrada inválida. Por favor, digite um número inteiro.")
+            
+    # 5. Nome do Remetente de cada um dos itens
+    itens_remetentes = []
+    print("\n--- Registro dos Remetentes por Item ---")
+    for i in range(1, qtd_itens + 1):
+        remetente = input(f"Nome do Remetente do Item {i}: ").strip()
+        while not remetente:
+            remetente = input(f"⚠️ Campo obrigatório! Nome do Remetente do Item {i}: ").strip()
+        itens_remetentes.append(remetente)
+        
+    # --- GERAÇÃO DO RELATÓRIO FINAL ---
+    print("\n" + "="*45)
+    print("         RELATÓRIO DE RECEBIMENTO          ")
+    print("="*45)
+    print(f" Emitido por:         {emissor}")
+    print(f" Destinatário:        {destinatario}")
+    print(f" Ref. do Volume:      {ref_volume}")
+    print(f" Total de Itens:      {qtd_itens}")
+    print("-"*45)
+    print(" LISTAGEM DE REMETENTES POR ITEM:")
+    
+    for idx, remetente in enumerate(itens_remetentes, 1):
+        print(f"   • Item {idx:02d}: Remetente -> {remetente}")
+        
+    print("="*45)
+    print("      Protocolo registrado com sucesso!      ")
+    print("="*45)
+
+if __name__ == "__main__":
+    registrar_protocolo()

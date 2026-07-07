@@ -1,60 +1,206 @@
-def registrar_protocolo():
-    print("=============================================")
-    # Central de Atendimento / Protocolo
-    print("      SISTEMA DE REGISTRO DE PROTOCOLO       ")
-    print("=============================================\n")
-    
-    # 1. Quem está emitindo o relatório
-    emissor = input("Nome do funcionário (Emissor do relatório): ").strip()
-    while not emissor:
-        emissor = input("⚠️ Campo obrigatório! Quem está emitindo o relatório?: ").strip()
-        
-    # 2. Destinatário da remessa
-    destinatario = input("Destinatário da remessa: ").strip()
-    while not destinatario:
-        destinatario = input("⚠️ Campo obrigatório! Destinatário da remessa: ").strip()
-        
-    # 3. Referência do volume
-    ref_volume = input("Referência do volume (ex: Caixa 01, Envelope Pardo, Palete A): ").strip()
-    while not ref_volume:
-        ref_volume = input("⚠️ Campo obrigatório! Referência do volume: ").strip()
-        
-    # 4. Quantidade de itens (com validação de número inteiro)
-    while True:
-        try:
-            qtd_itens = int(input("Quantidade de itens dentro do volume: "))
-            if qtd_itens > 0:
-                break
-            print("❌ A quantidade deve ser pelo menos 1.")
-        except ValueError:
-            print("❌ Entrada inválida. Por favor, digite um número inteiro.")
-            
-    # 5. Nome do Remetente de cada um dos itens
-    itens_remetentes = []
-    print("\n--- Registro dos Remetentes por Item ---")
-    for i in range(1, qtd_itens + 1):
-        remetente = input(f"Nome do Remetente do Item {i}: ").strip()
-        while not remetente:
-            remetente = input(f"⚠️ Campo obrigatório! Nome do Remetente do Item {i}: ").strip()
-        itens_remetentes.append(remetente)
-        
-    # --- GERAÇÃO DO RELATÓRIO FINAL ---
-    print("\n" + "="*45)
-    print("         RELATÓRIO DE RECEBIMENTO          ")
-    print("="*45)
-    print(f" Emitido por:         {emissor}")
-    print(f" Destinatário:        {destinatario}")
-    print(f" Ref. do Volume:      {ref_volume}")
-    print(f" Total de Itens:      {qtd_itens}")
-    print("-"*45)
-    print(" LISTAGEM DE REMETENTES POR ITEM:")
-    
-    for idx, remetente in enumerate(itens_remetentes, 1):
-        print(f"   • Item {idx:02d}: Remetente -> {remetente}")
-        
-    print("="*45)
-    print("      Protocolo registrado com sucesso!      ")
-    print("="*45)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo Digital</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
 
-if __name__ == "__main__":
-    registrar_protocolo()
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 24px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input:focus, textarea:focus {
+            outline: 2px solid var(--primary);
+        }
+
+        .items-section {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-download {
+            background-color: #10b981;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .btn-download:hover {
+            background-color: #059669;
+        }
+
+        .result-section {
+            margin-top: 25px;
+        }
+
+        textarea {
+            font-family: monospace;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📋 Sistema de Protocolo - Registro</h1>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="emissor">👤 Emissor do Relatório:</label>
+            <input type="text" id="emissor" placeholder="Nome do funcionário">
+        </div>
+        <div class="form-group">
+            <label for="destinatario">🏢 Destinatário da Remessa:</label>
+            <input type="text" id="destinatario" placeholder="Ex: Setor de TI">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="ref_volume">📦 Referência do Volume:</label>
+            <input type="text" id="ref_volume" placeholder="Ex: Caixa 01, Envelope Pardo">
+        </div>
+        <div class="form-group">
+            <label for="qtd_itens">🔢 Quantidade de Itens:</label>
+            <input type="number" id="qtd_itens" min="1" value="1" oninput="gerarCamposRemetentes()">
+        </div>
+    </div>
+
+    <div class="items-section">
+        <h3>📝 Nome dos Remetentes</h3>
+        <div id="container-remetentes">
+            </div>
+    </div>
+
+    <button class="btn" onclick="gerarProtocolo()">🚀 Gerar Relatório de Protocolo</button>
+
+    <div class="result-section">
+        <label for="resultado">📄 Pré-visualização do Protocolo:</label>
+        <textarea id="resultado" rows="10" readonly placeholder="O relatório aparecerá aqui..."></textarea>
+        <a id="btn-download" class="btn btn-download" href="#">📥 Baixar Relatório em TXT</a>
+    </div>
+</div>
+
+<script>
+    // Gera os campos de remetentes dinamicamente com base na quantidade
+    function gerarCamposRemetentes() {
+        const qtd = parseInt(document.getElementById('qtd_itens').value) || 1;
+        const container = document.getElementById('container-remetentes');
+        container.innerHTML = ''; // Limpa antes de recriar
+
+        for (let i = 1; i <= qtd; i++) {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+            div.innerHTML = `
+                <label>Remetente do Item ${String(i).padStart(2, '0')}:</label>
+                <input type="text" class="input-remetente" data-item="${i}" placeholder="Nome do remetente">
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // Processa os dados e cria o relatório textual
+    function gerarProtocolo() {
+        const emissor = document.getElementById('emissor').value.trim();
+        const destinatario = document.getElementById('destinatario').value.trim();
+        const refVolume = document.getElementById('ref_volume').value.trim();
+        const qtdItens = document.getElementById('qtd_itens').value;
+        const inputsRemetentes = document.querySelectorAll('.input-remetente');
+
+        // Validação básica de campos vazios
+        if (!emissor || !destinatario || !refVolume) {
+            alert('⚠️ Por favor, preencha todos os campos obrigatórios do volume!');
+            return;
+        }
+
+        let remetentesLista = "";
+        let erroRemetente = false;
+
+        inputsRemetentes.forEach(input => {
+            const nome = input.value.trim();
+            const itemNum = String(input.getAttribute('data-item')).padStart(2, '0');
+            if (!

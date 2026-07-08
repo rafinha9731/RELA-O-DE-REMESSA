@@ -20,66 +20,7 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 0;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* --- MENU LATERAL (SIDEBAR) --- */
-        .sidebar {
-            width: 240px;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            flex-direction: column;
             padding: 20px;
-            box-sizing: border-box;
-            position: fixed;
-            height: 100vh;
-            left: 0;
-            top: 0;
-            z-index: 100;
-        }
-
-        .sidebar h2 {
-            font-size: 16px;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .menu-btn {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.8);
-            padding: 12px 15px;
-            text-align: left;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .menu-btn:hover, .menu-btn.active {
-            background-color: var(--primary-hover);
-            color: white;
-        }
-
-        /* --- CONTEÚDO PRINCIPAL --- */
-        .main-content {
-            margin-left: 240px;
-            padding: 40px;
-            width: calc(100% - 240px);
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -93,15 +34,6 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
-        }
-
-        .app-screen {
-            display: none;
-            width: 100%;
-        }
-
-        .app-screen.active {
-            display: block;
         }
 
         h1 {
@@ -185,102 +117,64 @@
             background-color: var(--primary-hover);
         }
 
-        /* --- BOTÕES DE AÇÃO --- */
         .action-buttons {
-            display: none; 
+            display: none;
             gap: 15px;
             margin-bottom: 15px;
             margin-top: 10px;
-            width: 100%;
-            max-width: 210mm;
         }
 
-        .btn-print { background-color: #3b82f6; margin-top: 0; flex: 1; }
-        .btn-print:hover { background-color: #2563eb; }
-        .btn-save { background-color: #10b981; margin-top: 0; flex: 1; }
-        .btn-save:hover { background-color: #059669; }
-
-        /* --- TABELA DE HISTÓRICO --- */
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .btn-print {
+            background-color: #3b82f6;
+            margin-top: 0;
+            flex: 1;
         }
 
-        .history-table th, .history-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
+        .btn-print:hover {
+            background-color: #2563eb;
         }
 
-        .history-table th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 12px;
+        .btn-save {
+            background-color: #10b981;
+            margin-top: 0;
+            flex: 1;
         }
 
-        .btn-reprint {
-            background-color: #64748b;
-            padding: 6px 12px;
-            font-size: 12px;
-            margin: 0;
-            width: auto;
-            text-transform: none;
+        .btn-save:hover {
+            background-color: #059669;
         }
-        .btn-reprint:hover { background-color: #475569; }
 
-        /* --- AJUSTE DA MEIA PÁGINA COM MARGEM DE SEGURANÇA (PRODUÇÃO) --- */
         #preview-container {
             display: none;
             margin-top: 30px;
             width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
+            max-width: 800px;
         }
 
         .print-page {
             background: white;
             color: black;
-            width: 210mm;   
-            height: 296mm;  /* Margem de segurança de 1mm para evitar folha em branco extra */
+            width: 100%;
+            padding: 20px;
             box-sizing: border-box;
             font-family: Arial, sans-serif;
             font-size: 11px;
             line-height: 1.3;
             border: 1px solid #94a3b8;
-            margin: 0 auto; 
-            position: relative;
         }
 
         .via-block {
             width: 100%;
-            height: 148mm; /* Meia folha perfeita calibrada */
             box-sizing: border-box;
-            padding: 12mm 12mm; 
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; 
+            position: relative;
         }
 
         .corte-linha {
-            position: absolute;
-            top: 148mm; 
-            left: 0;
-            width: 100%;
             border-top: 2px dashed #cbd5e1;
-            margin: 0;
+            margin: 25px 0;
             text-align: center;
-            z-index: 10;
-            height: 0;
+            position: relative;
         }
-        
         .corte-linha span {
             position: absolute;
             top: -9px;
@@ -292,33 +186,99 @@
             transform: translateX(-50%);
         }
 
-        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        .header-table td { border: 1px solid black; padding: 5px; vertical-align: top; }
-        .title-main { font-weight: bold; font-size: 11px; text-align: center; text-transform: uppercase; }
-        .title-doc { font-size: 14px; font-weight: bold; text-align: center; letter-spacing: 1px; padding: 5px 0; }
-        .meta-grid { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        .meta-grid td { border: 1px solid black; padding: 6px; width: 50%; font-size: 11px; }
-        .data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .data-table th { border: 1px solid black; background-color: #f2f2f2; padding: 5px; font-weight: bold; text-align: left; text-transform: uppercase; }
-        .data-table td { border: 1px solid black; padding: 5px; height: 20px; }
-        .footer-sign { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        .footer-sign td { border: 1px solid black; padding: 8px; width: 50%; }
-        .via-label { text-align: center; font-weight: bold; font-size: 10px; margin-top: 5px; text-transform: uppercase; }
-
-        @page {
-            size: A4 portrait;
-            margin: 0; 
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
         }
-        
+
+        .header-table td {
+            border: 1px solid black;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .title-main {
+            font-weight: bold;
+            font-size: 11px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .title-doc {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 1px;
+            padding: 5px 0;
+        }
+
+        .meta-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .meta-grid td {
+            border: 1px solid black;
+            padding: 6px;
+            width: 50%;
+            font-size: 11px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .data-table th {
+            border: 1px solid black;
+            background-color: #f2f2f2;
+            padding: 5px;
+            font-weight: bold;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            border: 1px solid black;
+            padding: 5px;
+            height: 20px;
+        }
+
+        .footer-sign {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .footer-sign td {
+            border: 1px solid black;
+            padding: 8px;
+            width: 50%;
+        }
+
+        .via-label {
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
         @media print {
-            body * { visibility: hidden; }
-            #folha-a4-impressao, #folha-a4-impressao * { visibility: visible; }
+            body * {
+                visibility: hidden;
+            }
+            #folha-a4-impressao, #folha-a4-impressao * {
+                visibility: visible;
+            }
             #folha-a4-impressao {
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 210mm;
-                height: 296mm;
+                width: 100%;
                 border: none !important;
                 padding: 0 !important;
                 margin: 0 !important;
@@ -328,84 +288,64 @@
 </head>
 <body>
 
-<nav class="sidebar">
-    <h2>IPEN / CNEN</h2>
-    <button id="menu-cadastro" class="menu-btn active" onclick="alternarTela('cadastro')">📝 Cadastro</button>
-    <button id="menu-historico" class="menu-btn" onclick="alternarTela('historico')">📋 Histórico</button>
-</nav>
-
-<main class="main-content">
+<div class="container">
+    <h1>📋 Relação de Remessas - IPEN / CNEN</h1>
     
-    <section id="screen-cadastro" class="container app-screen active">
-        <h1>📋 Relação de Remessas - Registro</h1>
-        
-        <div class="form-row">
-            <div class="form-group">
-                <label for="numero_remessa">🔢 Número da Remessa (Deixe em branco para Sequencial):</label>
-                <input type="text" id="numero_remessa" placeholder="Ex: 042/2026 ou vazio para auto-gerar">
-            </div>
-            <div class="form-group">
-                <label for="emissor">👤 Emitido Por:</label>
-                <select id="emissor">
-                    <option value="Juliana">Juliana</option>
-                    <option value="Rafael">Rafael</option>
-                    <option value="Washington">Washington</option>
-                </select>
-            </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="numero_remessa">🔢 Número da Remessa:</label>
+            <input type="text" id="numero_remessa" placeholder="Ex: 042/2026">
         </div>
+        <div class="form-group">
+            <label for="emissor">👤 Emitido Por:</label>
+            <select id="emissor">
+                <option value="Juliana">Juliana</option>
+                <option value="Rafael">Rafael</option>
+                <option value="Washington">Washington</option>
+            </select>
+        </div>
+    </div>
 
+    <div class="form-row">
+        <div class="form-group">
+            <label for="de_setor">🏢 De (Setor de Origem):</label>
+            <input type="text" id="de_setor" value="Setor de Protocolo" readonly style="background-color: #e2e8f0; font-weight: bold;">
+        </div>
         <div class="form-group">
             <label for="destinatario">🏢 Para (Destinatário Final):</label>
             <input type="text" id="destinatario" placeholder="Ex: Setor de TI / Recursos Humanos">
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="qtd_itens">🔢 Quantidade de Itens na Remessa:</label>
-            <input type="number" id="qtd_itens" min="1" value="1" oninput="gerarCamposRemetentes()">
-        </div>
+    <div class="form-group">
+        <label for="qtd_itens">🔢 Quantidade de Itens na Remessa:</label>
+        <input type="number" id="qtd_itens" min="1" value="1" oninput="gerarCamposRemetentes()">
+    </div>
 
-        <div class="items-section">
-            <h3>📝 Itens da Remessa</h3>
-            <div id="container-remetentes"></div>
-        </div>
+    <div class="items-section">
+        <h3>📝 Itens da Remessa</h3>
+        <div id="container-remetentes"></div>
+    </div>
 
-        <button class="btn" onclick="gerarProtocolo()">🚀 Registrar e Estruturar Vias</button>
-    </section>
+    <button class="btn" onclick="gerarProtocolo()">🚀 Registrar e Estruturar Vias</button>
 
-    <section id="screen-historico" class="container app-screen">
-        <h1>📋 Histórico de Protocolos Gerados</h1>
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Nº Protocolo</th>
-                    <th>Emitido Por</th>
-                    <th>Destinatário</th>
-                    <th>Data de Emissão</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="lista-historico">
-                </tbody>
-        </table>
-    </section>
-
-    <section id="preview-container">
-        <hr style="border: 1px solid var(--border); margin: 30px 0;">
-        <label style="font-weight: bold; margin-bottom: 10px; display: block;">📄 Documento de Saída Prontificado:</label>
+    <div id="preview-container">
+        <label style="font-weight: bold; margin-bottom: 5px; display: block;">📄 Pré-visualização da Folha A4 (Economia de Papel):</label>
         
         <div id="grupo-botoes" class="action-buttons">
-            <button class="btn btn-print" onclick="imprimirPDF()">🖨️ Imprimir Vias</button>
+            <button class="btn btn-print" onclick="imprimirPDF()">🖨️ Imprimir Protocolo</button>
             <button class="btn btn-save" onclick="baixarPDF()">📥 Salvar em PDF</button>
         </div>
         
         <div id="folha-a4-impressao" class="print-page"></div>
-    </section>
-
-</main>
+    </div>
+</div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    // Corrigido para uma versão estável e real do Firebase SDK (10.13.0)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAToKKu1Ccmb5yT1f86gTeC1kF3ZD0Zpig",
@@ -420,22 +360,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Variável de controle global segura para o gerenciamento de arquivos
-    window.currentProtocolo = "";
-
-    function alternarTela(tela) {
-        document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('preview-container').style.display = 'none';
-
-        if(tela === 'cadastro') {
-            document.getElementById('screen-cadastro').classList.add('active');
-            document.getElementById('menu-cadastro').classList.add('active');
-        } else if(tela === 'historico') {
-            document.getElementById('screen-historico').classList.add('active');
-            document.getElementById('menu-historico').classList.add('active');
-            carregarHistorico();
-        }
+    // Inicialização segura do Analytics para evitar quebra do script em ambientes locais
+    try {
+        getAnalytics(app);
+    } catch (e) {
+        console.warn("Analytics não pôde ser carregado neste ambiente local/restrito.");
     }
 
     function gerarCamposRemetentes() {
@@ -450,7 +379,7 @@
                 div.innerHTML = `
                     <span style="font-weight: bold; min-width: 60px;">Item ${String(i).padStart(2, '0')}:</span>
                     <input type="text" class="input-remetente" data-item="${i}" placeholder="Nome do Remetente" style="flex: 2;">
-                    <input type="text" class="input-volume" data-item="${i}" placeholder="Referência do Volume" style="flex: 2;">
+                    <input type="text" class="input-volume" data-item="${i}" placeholder="Referência do Volume (Ex: Caixa 01)" style="flex: 2;">
                 `;
                 container.appendChild(div);
             }
@@ -461,176 +390,29 @@
         }
     }
 
-    async function carregarHistorico() {
-        const tabela = document.getElementById('lista-historico');
-        tabela.innerHTML = `<tr><td colspan="5" style="text-align:center;">Carregando histórico...</td></tr>`;
-        
-        try {
-            const q = query(collection(db, "remessas"), orderBy("dataRegistro", "desc"));
-            const querySnapshot = await getDocs(q);
-            tabela.innerHTML = "";
-
-            if (querySnapshot.empty) {
-                tabela.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum protocolo registrado.</td></tr>`;
-                return;
-            }
-
-            querySnapshot.forEach((docSnap) => {
-                const doc = docSnap.data();
-                const dataFormatada = doc.dataRegistro ? new Date(doc.dataRegistro.seconds * 1000).toLocaleDateString('pt-BR') : '-';
-                
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${doc.numeroRemessa}</strong></td>
-                    <td>${doc.emissor}</td>
-                    <td>${doc.destinatario}</td>
-                    <td>${dataFormatada}</td>
-                    <td><button class="btn btn-reprint" data-id="${docSnap.id}">🖨️ Reimprimir</button></td>
-                `;
-                tabela.appendChild(tr);
-
-                tr.querySelector('.btn-reprint').addEventListener('click', () => {
-                    renderizarViasFolha(doc);
-                });
-            });
-        } catch (error) {
-            console.error("Erro ao ler histórico: ", error);
-            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Falha ao carregar registros.</td></tr>`;
-        }
-    }
-
-    function renderizarViasFolha(dados) {
-        window.currentProtocolo = dados.numeroRemessa; // Segurança de Estado para o download de arquivos
-        
-        let tabelaItensHTML = "";
-        dados.itens.forEach(item => {
-            tabelaItensHTML += `
-                <tr>
-                    <td style="text-align: center; width: 10%; font-weight: bold;">${String(item.item).padStart(2, '0')}</td>
-                    <td style="width: 45%;">${item.remetente}</td>
-                    <td style="width: 45%;">${item.referenciaVolume}</td>
-                </tr>
-            `;
-        });
-
-        const dataDocumento = dados.dataDocumento || new Date().toLocaleDateString('pt-BR');
-
-        const layoutVia = (tituloVia) => `
-            <div class="via-block">
-                <div>
-                    <table class="header-table">
-                        <tr>
-                            <td style="width: 75%;" class="title-main">
-                                COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
-                                INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
-                                <span style="font-size: 9px; font-weight: normal;">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
-                            </td>
-                            <td style="width: 25%; text-align: center; font-weight: bold; border-left: 1px solid black;">
-                                NÚMERO:<br><span style="font-size: 13px; color: #b91c1c; font-family: monospace;">${dados.numeroRemessa}</span>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div class="title-doc">RELAÇÃO DE REMESSA</div>
-
-                    <table class="meta-grid">
-                        <tr>
-                            <td><strong>DE:</strong> ${dados.deSetor}</td>
-                            <td><strong>DATA DE EMISSÃO:</strong> ${dataDocumento}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>PARA:</strong> ${dados.destinatario}</td>
-                            <td><strong>EMITIDO POR:</strong> ${dados.emissor}</td>
-                        </tr>
-                    </table>
-
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center;">Item</th>
-                                <th>Remetente</th>
-                                <th>Referência do Volume</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tabelaItensHTML}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div>
-                    <table class="footer-sign">
-                        <tr>
-                            <td><strong>RECEBIDO POR:</strong></td>
-                            <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 2026</td>
-                        </tr>
-                    </table>
-                    <div class="via-label">${tituloVia}</div>
-                </div>
-            </div>
-        `;
-
-        const folha = document.getElementById('folha-a4-impressao');
-        folha.innerHTML = `
-            ${layoutVia('1ª via - Emitente (Setor de Protocolo)')}
-            <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
-            ${layoutVia('2ª via - DESTINATÁRIO')}
-        `;
-
-        document.getElementById('preview-container').style.display = 'block';
-        document.getElementById('grupo-botoes').style.display = 'flex';
-        
-        document.getElementById('preview-container').scrollIntoView({ behavior: 'smooth' });
-    }
-
     async function gerarProtocolo() {
-        let numeroRemessa = document.getElementById('numero_remessa').value.trim();
+        const numeroRemessa = document.getElementById('numero_remessa').value.trim();
         const emissor = document.getElementById('emissor').value;
-        const deSetor = "Setor de Protocolo"; 
+        const deSetor = document.getElementById('de_setor').value;
         const destinatario = document.getElementById('destinatario').value.trim();
         const qtdItens = Math.max(1, parseInt(document.getElementById('qtd_itens').value) || 1);
         
         const inputsRemetentes = document.querySelectorAll('.input-remetente');
         const inputsVolumes = document.querySelectorAll('.input-volume');
 
-        if (!destinatario) {
-            alert('⚠️ Por favor, preencha o campo do Destinatário (Para)!');
+        if (!numeroRemessa || !destinatario) {
+            alert('⚠️ Por favor, preencha o Número da Remessa e o Destinatário (Para)!');
             return;
         }
 
-        if (!numeroRemessa) {
-            try {
-                const qSequencial = query(
-                    collection(db, "remessas"),
-                    where("numeroRemessa", ">=", "20260300"),
-                    where("numeroRemessa", "<=", "20269999"),
-                    orderBy("numeroRemessa", "desc"),
-                    limit(1)
-                );
-                const querySnapshot = await getDocs(qSequencial);
-                let ultimoNumeroNum = 20260299;
-
-                querySnapshot.forEach((doc) => {
-                    const numConvertido = parseInt(doc.data().numeroRemessa);
-                    if (!isNaN(numConvertido) && numConvertido > ultimoNumeroNum) {
-                        ultimoNumeroNum = numConvertido;
-                    }
-                });
-
-                numeroRemessa = String(ultimoNumeroNum + 1);
-            } catch (err) {
-                console.error("Erro ao gerar sequencial: ", err);
-                numeroRemessa = "20260300";
-            }
-        }
-
         let remessasArrayDados = [];
+        let tabelaItensHTML = "";
         let erroValidacao = false;
 
         for (let i = 0; i < inputsRemetentes.length; i++) {
             const nomeRemetente = inputsRemetentes[i].value.trim();
             const refVolume = inputsVolumes[i].value.trim();
-            const itemNum = parseInt(inputsRemetentes[i].getAttribute('data-item'));
+            const itemNum = String(inputsRemetentes[i].getAttribute('data-item')).padStart(2, '0');
 
             if (!nomeRemetente || !refVolume) {
                 erroValidacao = true;
@@ -638,10 +420,18 @@
             }
 
             remessasArrayDados.push({
-                item: itemNum,
+                item: parseInt(itemNum),
                 remetente: nomeRemetente,
                 referenciaVolume: refVolume
             });
+
+            tabelaItensHTML += `
+                <tr>
+                    <td style="text-align: center; width: 10%; font-weight: bold;">${itemNum}</td>
+                    <td style="width: 45%;">${nomeRemetente}</td>
+                    <td style="width: 45%;">${refVolume}</td>
+                </tr>
+            `;
         }
 
         if (erroValidacao) {
@@ -650,41 +440,95 @@
         }
 
         const dataAtual = new Date().toLocaleDateString('pt-BR');
-        const dadosRemessa = {
-            numeroRemessa,
-            emissor,
-            deSetor,
-            destinatario,
-            qtdItens,
-            itens: remessasArrayDados,
-            dataDocumento: dataAtual,
-            dataRegistro: new Date()
-        };
+
+        const construirLayoutVia = (tituloVia) => `
+            <div class="via-block">
+                <table class="header-table">
+                    <tr>
+                        <td style="width: 75%;" class="title-main">
+                            COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
+                            INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
+                            <span style="font-size: 9px; font-weight: normal;">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
+                        </td>
+                        <td style="width: 25%; text-align: center; font-weight: bold; border-left: 1px solid black;">
+                            NÚMERO:<br><span style="font-size: 13px; color: #b91c1c;">${numeroRemessa}</span>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="title-doc">RELAÇÃO DE REMESSA</div>
+
+                <table class="meta-grid">
+                    <tr>
+                        <td><strong>DE:</strong> ${deSetor}</td>
+                        <td><strong>DATA DE EMISSÃO:</strong> ${dataAtual}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PARA:</strong> ${destinatario}</td>
+                        <td><strong>EMITIDO POR:</strong> ${emissor}</td>
+                    </tr>
+                </table>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Item</th>
+                            <th>Remetente</th>
+                            <th>Referência do Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tabelaItensHTML}
+                    </tbody>
+                </table>
+
+                <table class="footer-sign">
+                    <tr>
+                        <td><strong>RECEBIDO POR:</strong></td>
+                        <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 2026</td>
+                    </tr>
+                </table>
+                
+                <div class="via-label">${tituloVia}</div>
+            </div>
+        `;
+
+        const folhaAlvo = document.getElementById('folha-a4-impressao');
+        folhaAlvo.innerHTML = `
+            ${construirLayoutVia('1ª via - Emitente (Setor de Protocolo)')}
+            <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
+            ${construirLayoutVia('2ª via - DESTINATÁRIO')}
+        `;
+
+        document.getElementById('preview-container').style.display = 'block';
 
         try {
-            await addDoc(collection(db, "remessas"), dadosRemessa);
-            alert(`🚀 Registro armazenado com sucesso! Protocolo atribuído: ${numeroRemessa}`);
-            
-            renderizarViasFolha(dadosRemessa);
-            
-            document.getElementById('numero_remessa').value = "";
-            document.getElementById('destinatario').value = "";
-            document.getElementById('qtd_itens').value = "1";
-            gerarCamposRemetentes();
+            await addDoc(collection(db, "remessas"), {
+                numeroRemessa,
+                emissor,
+                deSetor,
+                destinatario,
+                qtdItens: qtdItens,
+                itens: remessasArrayDados,
+                dataRegistro: new Date()
+            });
+
+            alert('🚀 Dados consolidados e salvos com sucesso no Firebase!');
+            document.getElementById('grupo-botoes').style.display = 'flex';
 
         } catch (error) {
-            console.error("Erro ao gravar dados no Firestore: ", error);
-            alert('❌ Erro de comunicação com o banco do Firebase.');
+            console.error("Erro ao salvar no Firestore: ", error);
+            alert('❌ Erro de comunicação com o Firebase. Verifique as regras e conexão do banco.');
         }
     }
 
     function baixarPDF() {
         const elemento = document.getElementById('folha-a4-impressao');
-        const numDocSafe = window.currentProtocolo.replace(/\//g, '-');
+        const numeroRemessa = document.getElementById('numero_remessa').value.trim().replace(/\//g, '-');
         
         const opcoes = {
-            margin:       0, 
-            filename:     `relacao_remessa_${numDocSafe}.pdf`,
+            margin:       10,
+            filename:     `relacao_remessa_${numeroRemessa}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, logging: false, useCORS: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -697,12 +541,13 @@
         window.print();
     }
 
-    window.alternarTela = alternarTela;
+    // Vinculação explícita ao escopo Global (Window) obrigatória para scripts do tipo module
     window.gerarCamposRemetentes = gerarCamposRemetentes;
     window.gerarProtocolo = gerarProtocolo;
     window.baixarPDF = baixarPDF;
     window.imprimirPDF = imprimirPDF;
 
+    // Inicialização do primeiro item
     gerarCamposRemetentes();
 </script>
 

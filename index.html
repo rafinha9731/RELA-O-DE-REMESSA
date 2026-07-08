@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Relação de Remessas - IPEN</title>
     
+    <!-- Bibliotecas Necessárias (Carregamento Universal Seguro via CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -246,6 +247,21 @@
         }
         .btn-reprint:hover { background-color: #475569; }
 
+        .btn-delete {
+            background-color: #ef4444;
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0;
+            width: auto;
+            text-transform: none;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-delete:hover { background-color: #dc2626; }
+
         /* --- CONFIGURAÇÃO MEIA PÁGINA A4 --- */
         #preview-container {
             display: none;
@@ -337,14 +353,17 @@
 </head>
 <body>
 
+<!-- MENU LATERAL -->
 <nav class="sidebar">
     <h2>IPEN / CNEN</h2>
     <button id="menu-cadastro" class="menu-btn active" onclick="alternarTela('cadastro')">📝 Cadastro</button>
     <button id="menu-historico" class="menu-btn" onclick="alternarTela('historico')">📋 Histórico</button>
 </nav>
 
+<!-- CONTEÚDO PRINCIPAL -->
 <main class="main-content">
     
+    <!-- TELA 1: CADASTRO -->
     <section id="screen-cadastro" class="container app-screen active">
         <h1>📋 Relação de Remessas - Registro</h1>
         
@@ -378,9 +397,10 @@
             <div id="container-remetentes"></div>
         </div>
 
-        <button class="btn" onclick="gerarProtocolo()">🚀 Registrar e Estruturar Vias</button>
+        <button class="btn" id="btn-registrar-trigger" onclick="gerarProtocolo()">Registrar</button>
     </section>
 
+    <!-- TELA 2: HISTÓRICO -->
     <section id="screen-historico" class="container app-screen">
         <h1>📋 Histórico de Protocolos Gerados</h1>
         <table class="history-table">
@@ -394,10 +414,12 @@
                 </tr>
             </thead>
             <tbody id="lista-historico">
-                </tbody>
+                <!-- Injetado dinamicamente -->
+            </tbody>
         </table>
     </section>
 
+    <!-- PRÉ-VISUALIZAÇÃO GLOBAL -->
     <section id="preview-container">
         <hr style="border: 1px solid var(--border); margin: 30px 0;">
         <label style="font-weight: bold; margin-bottom: 10px; display: block;">📄 Documento de Saída Prontificado:</label>
@@ -413,22 +435,28 @@
 </main>
 
 <script>
-    // Inicialização Segura do Firebase em modo de Compatibilidade Universal
-    const firebaseConfig = {
-        apiKey: "AIzaSyAToKKu1Ccmb5yT1f86gTeC1kF3ZD0Zpig",
-        authDomain: "relacaoderemessasipen.firebaseapp.com",
-        projectId: "relacaoderemessasipen",
-        storageBucket: "relacaoderemessasipen.firebasestorage.app",
-        messagingSenderId: "882583423239",
-        appId: "1:882583423239:web:ced3e75173cb0350b89da2",
-        measurementId: "G-NEV79DSP64"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // Memória global para o nome correto do arquivo PDF
+    let db = null;
     let numeroProtocoloAtivo = "remessa";
+
+    try {
+        const firebaseConfig = {
+            apiKey: "AIzaSyAToKKu1Ccmb5yT1f86gTeC1kF3ZD0Zpig",
+            authDomain: "relacaoderemessasipen.firebaseapp.com",
+            projectId: "relacaoderemessasipen",
+            storageBucket: "relacaoderemessasipen.firebasestorage.app",
+            messagingSenderId: "882583423239",
+            appId: "1:882583423239:web:ced3e75173cb0350b89da2",
+            measurementId: "G-NEV79DSP64"
+        };
+
+        if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("🔥 Firebase Inicializado com Sucesso.");
+        }
+    } catch (e) {
+        console.error("❌ Falha ao instanciar o Firebase:", e);
+    }
 
     function alternarTela(tela) {
         document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -472,6 +500,11 @@
         const tabela = document.getElementById('lista-historico');
         tabela.innerHTML = `<tr><td colspan="5" style="text-align:center;">Carregando histórico...</td></tr>`;
         
+        if (!db) {
+            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; color:orange;">⚠️ Banco de dados offline ou bloqueado.</td></tr>`;
+            return;
+        }
+
         try {
             const querySnapshot = await db.collection("remessas").orderBy("dataRegistro", "desc").get();
             tabela.innerHTML = "";
@@ -491,25 +524,46 @@
                     <td>${doc.emissor}</td>
                     <td>${doc.destinatario}</td>
                     <td>${dataFormatada}</td>
-                    <td><button class="btn btn-reprint" id="btn-rep-${docSnap.id}">🖨️ Reimprimir</button></td>
+                    <td style="white-space: nowrap;">
+                        <button class="btn btn-reprint" id="btn-rep-${docSnap.id}">🖨️ Reimprimir</button>
+                        <button class="btn btn-delete" id="btn-del-${docSnap.id}" style="margin-left: 5px;">🗑️ Excluir</button>
+                    </td>
                 `;
                 tabela.appendChild(tr);
 
                 document.getElementById(`btn-rep-${docSnap.id}`).addEventListener('click', () => {
-                    renderiasViasEstrutura(doc);
+                    renderizarViasEstrutura(doc);
+                });
+
+                document.getElementById(`btn-del-${docSnap.id}`).addEventListener('click', () => {
+                    excluirRegistro(docSnap.id, doc.numeroRemessa);
                 });
             });
         } catch (error) {
             console.error("Erro ao carregar histórico: ", error);
-            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Falha ao carregar registros. Verifique a conexão.</td></tr>`;
+            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Falha ao carregar registros.</td></tr>`;
         }
     }
 
-    function renderiasViasEstrutura(dados) {
-        numeroProtocoloAtivo = dados.numeroRemessa; // Atualiza contexto do PDF
+    async function excluirRegistro(id, numeroRemessa) {
+        const confirmacao = confirm(`⚠️ ATENÇÃO: Tem certeza absoluta que deseja EXCLUIR permanentemente a Remessa nº ${numeroRemessa} do banco de dados?`);
+        if (!confirmacao) return;
+
+        try {
+            await db.collection("remessas").doc(id).delete();
+            alert(`✅ Sucesso: O registro nº ${numeroRemessa} foi removido com sucesso.`);
+            carregarHistorico();
+        } catch (error) {
+            console.error("Erro ao deletar documento: ", error);
+            alert(`❌ Erro ao Excluir:\nNão foi possível deletar o registro.\n\nMotivo do insucesso: ${error.message || error}`);
+        }
+    }
+
+    function renderizarViasEstrutura(dados) {
+        numeroProtocoloAtivo = dados.numeroRemessa;
         let tabelaItensHTML = "";
         
-        dados.itens.forEach(item => {
+        dados.items.forEach(item => {
             tabelaItensHTML += `
                 <tr>
                     <td style="text-align: center; width: 10%; font-weight: bold;">${String(item.item).padStart(2, '0')}</td>
@@ -589,6 +643,11 @@
     }
 
     async function gerarProtocolo() {
+        if (!db) {
+            alert('❌ Erro Crítico: Conexão com o Firebase não foi estabelecida. Verifique se extensões de AdBlock estão ativas e bloqueando a requisição.');
+            return;
+        }
+
         let numeroRemessa = document.getElementById('numero_remessa').value.trim();
         const emissor = document.getElementById('emissor').value;
         const deSetor = "Setor de Protocolo"; 
@@ -599,11 +658,10 @@
         const inputsVolumes = document.querySelectorAll('.input-volume');
 
         if (!destinatario) {
-            alert('⚠️ Por favor, preencha o campo do Destinatário (Para)!');
+            alert('⚠️ Validação: Por favor, preencha o campo do Destinatário (Para)!');
             return;
         }
 
-        // Regra de Numeração Sequencial Automática (20260300 até 20269999)
         if (!numeroRemessa) {
             try {
                 const querySnapshot = await db.collection("remessas")
@@ -624,7 +682,7 @@
 
                 numeroRemessa = String(ultimoNumeroNum + 1);
             } catch (err) {
-                console.error("Erro na busca sequencial: ", err);
+                console.warn("Erro na busca sequencial, definindo valor base:", err);
                 numeroRemessa = "20260300";
             }
         }
@@ -650,7 +708,7 @@
         }
 
         if (erroValidacao) {
-            alert('⚠️ Por favor, preencha o Remetente e a Referência do Volume para todos os itens!');
+            alert('⚠️ Validação: preencha o Remetente e a Referência do Volume em todas as linhas listadas!');
             return;
         }
 
@@ -668,19 +726,28 @@
 
         try {
             await db.collection("remessas").add(dadosRemessa);
-            alert(`🚀 Protocolo registrado com sucesso: ${numeroRemessa}`);
             
-            renderiasViasEstrutura(dadosRemessa);
+            // 1. Mensagem de Sucesso Clara
+            alert(`✅ SUCESSO: Remessa nº ${numeroRemessa} registrada perfeitamente no banco de dados.`);
             
-            // Limpa formulário mantendo integridade
+            // 2. Renderiza o PDF instantaneamente na mesma tela
+            renderizarViasEstrutura(dadosRemessa);
+            
+            // 3. Abre a janela de impressão do navegador sem precisar mudar de tela
+            setTimeout(() => {
+                window.print();
+            }, 600);
+            
+            // Limpa formulário
             document.getElementById('numero_remessa').value = "";
             document.getElementById('destinatario').value = "";
             document.getElementById('qtd_itens').value = "1";
             gerarCamposRemetentes();
 
         } catch (error) {
-            console.error("Erro ao salvar no Firestore: ", error);
-            alert('❌ Falha de comunicação com o Firestore. Verifique regras de escrita.');
+            console.error("Erro ao gravar dados no Firestore: ", error);
+            // Mensagem de Erro Clara com o Motivo Técnico
+            alert(`❌ FALHA NO REGISTRO:\nNão foi possível concluir o salvamento dos dados.\n\nMotivo do insucesso: ${error.message || error}`);
         }
     }
 
@@ -703,7 +770,15 @@
         window.print();
     }
 
-    // Inicialização da primeira linha de dados
+    // Vinculação estrita global para o GitHub Pages
+    window.alternarTela = alternarTela;
+    window.gerarCamposRemetentes = gerarCamposRemetentes;
+    window.gerarProtocolo = gerarProtocolo;
+    window.baixarPDF = baixarPDF;
+    window.imprimirPDF = imprimirPDF;
+    window.excluirRegistro = excluirRegistro;
+
+    // Inicialização da primeira linha
     gerarCamposRemetentes();
 </script>
 

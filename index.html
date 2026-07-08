@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Relação de Remessas - IPEN</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #003366;
@@ -67,6 +71,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            width: 100%;
         }
 
         .menu-btn:hover, .menu-btn.active {
@@ -233,23 +238,27 @@
             margin: 0;
             width: auto;
             text-transform: none;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
         }
         .btn-reprint:hover { background-color: #475569; }
 
-        /* --- AJUSTE DA MEIA PÁGINA (PRODUÇÃO) --- */
+        /* --- CONFIGURAÇÃO MEIA PÁGINA A4 --- */
         #preview-container {
             display: none;
             margin-top: 30px;
             width: 100%;
             max-width: 100%;
-            overflow-x: auto;
         }
 
         .print-page {
             background: white;
             color: black;
             width: 210mm;   
-            height: 296mm;  /* Margem de segurança de 1mm para evitar folha em branco extra */
+            height: 296mm;  
             box-sizing: border-box;
             font-family: Arial, sans-serif;
             font-size: 11px;
@@ -341,8 +350,8 @@
         
         <div class="form-row">
             <div class="form-group">
-                <label for="numero_remessa">🔢 Número da Remessa (Deixe em branco para Sequencial):</label>
-                <input type="text" id="numero_remessa" placeholder="Ex: 042/2026 ou vazio para auto-gerar">
+                <label for="numero_remessa">🔢 Número da Remessa (Vazio para Automático):</label>
+                <input type="text" id="numero_remessa" placeholder="Ex: 042/2026 ou deixe vazio para sequencial">
             </div>
             <div class="form-group">
                 <label for="emissor">👤 Emitido Por:</label>
@@ -403,10 +412,8 @@
 
 </main>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-
+<script>
+    // Inicialização Segura do Firebase em modo de Compatibilidade Universal
     const firebaseConfig = {
         apiKey: "AIzaSyAToKKu1Ccmb5yT1f86gTeC1kF3ZD0Zpig",
         authDomain: "relacaoderemessasipen.firebaseapp.com",
@@ -417,8 +424,11 @@
         measurementId: "G-NEV79DSP64"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Memória global para o nome correto do arquivo PDF
+    let numeroProtocoloAtivo = "remessa";
 
     function alternarTela(tela) {
         document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -463,8 +473,7 @@
         tabela.innerHTML = `<tr><td colspan="5" style="text-align:center;">Carregando histórico...</td></tr>`;
         
         try {
-            const q = query(collection(db, "remessas"), orderBy("dataRegistro", "desc"));
-            const querySnapshot = await getDocs(q);
+            const querySnapshot = await db.collection("remessas").orderBy("dataRegistro", "desc").get();
             tabela.innerHTML = "";
 
             if (querySnapshot.empty) {
@@ -474,7 +483,7 @@
 
             querySnapshot.forEach((docSnap) => {
                 const doc = docSnap.data();
-                const dataFormatada = doc.dataRegistro ? new Date(doc.dataRegistro.seconds * 1000).toLocaleDateString('pt-BR') : '-';
+                const dataFormatada = doc.dataRegistro ? (doc.dataRegistro.toDate ? doc.dataRegistro.toDate() : new Date(doc.dataRegistro.seconds * 1000)).toLocaleDateString('pt-BR') : '-';
                 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -482,22 +491,24 @@
                     <td>${doc.emissor}</td>
                     <td>${doc.destinatario}</td>
                     <td>${dataFormatada}</td>
-                    <td><button class="btn btn-reprint" data-id="${docSnap.id}">🖨️ Reimprimir</button></td>
+                    <td><button class="btn btn-reprint" id="btn-rep-${docSnap.id}">🖨️ Reimprimir</button></td>
                 `;
                 tabela.appendChild(tr);
 
-                tr.querySelector('.btn-reprint').addEventListener('click', () => {
-                    renderizarViasFolha(doc);
+                document.getElementById(`btn-rep-${docSnap.id}`).addEventListener('click', () => {
+                    renderiasViasEstrutura(doc);
                 });
             });
         } catch (error) {
-            console.error("Erro ao ler histórico: ", error);
-            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Falha ao carregar registros.</td></tr>`;
+            console.error("Erro ao carregar histórico: ", error);
+            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Falha ao carregar registros. Verifique a conexão.</td></tr>`;
         }
     }
 
-    function renderizarViasFolha(dados) {
+    function renderiasViasEstrutura(dados) {
+        numeroProtocoloAtivo = dados.numeroRemessa; // Atualiza contexto do PDF
         let tabelaItensHTML = "";
+        
         dados.itens.forEach(item => {
             tabelaItensHTML += `
                 <tr>
@@ -574,7 +585,6 @@
 
         document.getElementById('preview-container').style.display = 'block';
         document.getElementById('grupo-botoes').style.display = 'flex';
-        
         document.getElementById('preview-container').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -596,14 +606,13 @@
         // Regra de Numeração Sequencial Automática (20260300 até 20269999)
         if (!numeroRemessa) {
             try {
-                const qSequencial = query(
-                    collection(db, "remessas"),
-                    where("numeroRemessa", ">=", "20260300"),
-                    where("numeroRemessa", "<=", "20269999"),
-                    orderBy("numeroRemessa", "desc"),
-                    limit(1)
-                );
-                const querySnapshot = await getDocs(qSequencial);
+                const querySnapshot = await db.collection("remessas")
+                    .where("numeroRemessa", ">=", "20260300")
+                    .where("numeroRemessa", "<=", "20269999")
+                    .orderBy("numeroRemessa", "desc")
+                    .limit(1)
+                    .get();
+
                 let ultimoNumeroNum = 20260299;
 
                 querySnapshot.forEach((doc) => {
@@ -615,7 +624,7 @@
 
                 numeroRemessa = String(ultimoNumeroNum + 1);
             } catch (err) {
-                console.error("Erro ao computar faixa sequencial: ", err);
+                console.error("Erro na busca sequencial: ", err);
                 numeroRemessa = "20260300";
             }
         }
@@ -658,27 +667,26 @@
         };
 
         try {
-            await addDoc(collection(db, "remessas"), dadosRemessa);
-            alert(`🚀 Registro armazenado com sucesso! Protocolo atribuído: ${numeroRemessa}`);
+            await db.collection("remessas").add(dadosRemessa);
+            alert(`🚀 Protocolo registrado com sucesso: ${numeroRemessa}`);
             
-            renderizarViasFolha(dadosRemessa);
+            renderiasViasEstrutura(dadosRemessa);
             
-            // Limpa o formulário para novas entradas
+            // Limpa formulário mantendo integridade
             document.getElementById('numero_remessa').value = "";
             document.getElementById('destinatario').value = "";
             document.getElementById('qtd_itens').value = "1";
             gerarCamposRemetentes();
 
         } catch (error) {
-            console.error("Erro ao gravar dados no Firestore: ", error);
-            alert('❌ Erro de comunicação com o banco do Firebase.');
+            console.error("Erro ao salvar no Firestore: ", error);
+            alert('❌ Falha de comunicação com o Firestore. Verifique regras de escrita.');
         }
     }
 
     function baixarPDF() {
         const elemento = document.getElementById('folha-a4-impressao');
-        const numeroRemessa = document.getElementById('numero_remessa').value.trim() || "gerado";
-        const numDocSafe = numeroRemessa.replace(/\//g, '-');
+        const numDocSafe = numeroProtocoloAtivo.replace(/\//g, '-');
         
         const opcoes = {
             margin:       0, 
@@ -695,14 +703,7 @@
         window.print();
     }
 
-    // Vinculação explícita ao escopo Global para acionamento via botões HTML
-    window.alternarTela = alternarTela;
-    window.gerarCamposRemetentes = gerarCamposRemetentes;
-    window.gerarProtocolo = gerarProtocolo;
-    window.baixarPDF = baixarPDF;
-    window.imprimirPDF = imprimirPDF;
-
-    // Inicialização padrão do primeiro item
+    // Inicialização da primeira linha de dados
     gerarCamposRemetentes();
 </script>
 

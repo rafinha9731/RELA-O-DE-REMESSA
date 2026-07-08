@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protocolo Digital - IPEN</title>
+    <title>Sistema de Relação de Remessas - IPEN</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f8fafc;
+            --primary: #003366;
+            --primary-hover: #002244;
+            --bg: #f1f5f9;
             --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
+            --text: #334155;
+            --border: #cbd5e1;
         }
 
         body {
@@ -22,24 +22,27 @@
             margin: 0;
             padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 800px;
             width: 100%;
             background: var(--card);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
         }
 
         h1 {
             margin-top: 0;
             color: var(--primary);
-            font-size: 24px;
-            border-bottom: 2px solid var(--border);
+            font-size: 22px;
+            border-bottom: 3px solid var(--primary);
             padding-bottom: 10px;
+            text-transform: uppercase;
         }
 
         .form-group {
@@ -59,34 +62,47 @@
             display: block;
             margin-bottom: 5px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], select {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border);
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 14px;
+            background-color: #fff;
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: 2px solid var(--primary);
         }
 
         .items-section {
-            background: #f1f5f9;
+            background: #f8fafc;
             padding: 15px;
+            border: 1px solid var(--border);
             border-radius: 8px;
             margin-top: 20px;
+        }
+
+        .item-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 10px;
         }
 
         .btn {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 6px;
@@ -94,81 +110,238 @@
             width: 100%;
             margin-top: 15px;
             transition: background 0.2s;
+            text-transform: uppercase;
         }
 
         .btn:hover {
             background-color: var(--primary-hover);
         }
 
-        .btn-download {
-            background-color: #10b981;
+        /* --- ESTILIZAÇÃO DOS NOVOS BOTÕES ACIMA DO PDF --- */
+        .action-buttons {
+            display: none; /* Fica oculto até salvar no Firebase */
+            gap: 15px;
+            margin-bottom: 15px;
             margin-top: 10px;
-            display: none;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
         }
 
-        .btn-download:hover {
+        .btn-print {
+            background-color: #3b82f6;
+            margin-top: 0;
+            flex: 1;
+        }
+
+        .btn-print:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-save {
+            background-color: #10b981;
+            margin-top: 0;
+            flex: 1;
+        }
+
+        .btn-save:hover {
             background-color: #059669;
         }
 
-        .result-section {
-            margin-top: 25px;
+        /* --- ESTILIZAÇÃO DO MODELO DE FOLHA A4 OFICIAL --- */
+        #preview-container {
+            display: none;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
         }
 
-        .pdf-template {
+        .print-page {
             background: white;
-            color: #000;
-            padding: 25px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-family: 'Courier New', Courier, monospace;
-            line-height: 1.5;
-            display: none;
-            white-space: pre-wrap;
+            color: black;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
+            border: 1px solid #94a3b8;
+        }
+
+        .via-block {
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .corte-linha {
+            border-top: 2px dashed #cbd5e1;
+            margin: 25px 0;
+            text-align: center;
+            position: relative;
+        }
+        .corte-linha span {
+            position: absolute;
+            top: -9px;
+            background: white;
+            padding: 0 10px;
+            font-size: 10px;
+            color: #94a3b8;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .header-table td {
+            border: 1px solid black;
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .title-main {
+            font-weight: bold;
+            font-size: 11px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .title-doc {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 1px;
+            padding: 5px 0;
+        }
+
+        .meta-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .meta-grid td {
+            border: 1px solid black;
+            padding: 6px;
+            width: 50%;
+            font-size: 11px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .data-table th {
+            border: 1px solid black;
+            background-color: #f2f2f2;
+            padding: 5px;
+            font-weight: bold;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            border: 1px solid black;
+            padding: 5px;
+            height: 20px;
+        }
+
+        .footer-sign {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .footer-sign td {
+            border: 1px solid black;
+            padding: 8px;
+            width: 50%;
+        }
+
+        .via-label {
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        /* --- CONFIGURAÇÃO DE IMPRESSÃO NATIVA (OCULTA O QUE NÃO FOR O PROTOCOLO) --- */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #folha-a4-impressao, #folha-a4-impressao * {
+                visibility: visible;
+            }
+            #folha-a4-impressao {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📋 Sistema de Protocolo - Registro</h1>
+    <h1>📋 Relação de Remessas - IPEN / CNEN</h1>
     
     <div class="form-row">
         <div class="form-group">
-            <label for="emissor">👤 Emissor do Relatório:</label>
-            <input type="text" id="emissor" placeholder="Nome do funcionário">
+            <label for="numero_remessa">🔢 Número da Remessa:</label>
+            <input type="text" id="numero_remessa" placeholder="Ex: 042/2026">
         </div>
         <div class="form-group">
-            <label for="destinatario">🏢 Destinatário da Remessa:</label>
-            <input type="text" id="destinatario" placeholder="Ex: Setor de TI">
+            <label for="emissor">👤 Emitido Por:</label>
+            <select id="emissor">
+                <option value="Juliana">Juliana</option>
+                <option value="Nádia">Nádia</option>
+                <option value="Washington">Washington</option>
+            </select>
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group">
-            <label for="ref_volume">📦 Referência do Volume:</label>
-            <input type="text" id="ref_volume" placeholder="Ex: Caixa 01, Envelope Pardo">
+            <label for="de_setor">🏢 De (Setor de Origem):</label>
+            <input type="text" id="de_setor" value="Setor de Protocolo" readonly style="background-color: #e2e8f0; font-weight: bold;">
         </div>
         <div class="form-group">
-            <label for="qtd_itens">🔢 Quantidade de Itens:</label>
-            <input type="number" id="qtd_itens" min="1" value="1" oninput="gerarCamposRemetentes()">
+            <label for="destinatario">🏢 Para (Destinatário Final):</label>
+            <input type="text" id="destinatario" placeholder="Ex: Setor de TI / Recursos Humanos">
         </div>
+    </div>
+
+    <div class="form-group">
+        <label for="qtd_itens">🔢 Quantidade de Itens na Remessa:</label>
+        <input type="number" id="qtd_itens" min="1" value="1" oninput="gerarCamposRemetentes()">
     </div>
 
     <div class="items-section">
-        <h3>📝 Nome dos Remetentes</h3>
+        <h3>📝 Itens da Remessa</h3>
         <div id="container-remetentes"></div>
     </div>
 
-    <button class="btn" onclick="gerarProtocolo()">🚀 Gerar e Salvar Relatório</button>
+    <button class="btn" onclick="gerarProtocolo()">🚀 Registrar e Estruturar Vias</button>
 
-    <div class="result-section">
-        <label id="label-preview" style="display: none;">📄 Pré-visualização do Protocolo (PDF):</label>
-        <div id="resultado-pdf" class="pdf-template"></div>
+    <div id="preview-container">
+        <label style="font-weight: bold; margin-bottom: 5px; display: block;">📄 Pré-visualização da Folha A4 (Economia de Papel):</label>
         
-        <button id="btn-download" class="btn btn-download" onclick="baixarPDF()">📥 Baixar Relatório em PDF</button>
+        <div id="grupo-botoes" class="action-buttons">
+            <button class="btn btn-print" onclick="imprimirPDF()">🖨️ Imprimir Protocolo</button>
+            <button class="btn btn-save" onclick="baixarPDF()">📥 Salvar em PDF</button>
+        </div>
+        
+        <div id="folha-a4-impressao" class="print-page">
+            </div>
     </div>
 </div>
 
@@ -191,26 +364,23 @@
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
-    // CORREÇÃO: Função incremental que não apaga os dados já digitados pelo usuário
     function gerarCamposRemetentes() {
-        // Evita números menores que 1 ou nulos
         const qtd = Math.max(1, parseInt(document.getElementById('qtd_itens').value) || 1);
         const container = document.getElementById('container-remetentes');
-        const blocosAtuais = container.querySelectorAll('.form-group');
+        const blocosAtuais = container.querySelectorAll('.item-row');
         
         if (blocosAtuais.length < qtd) {
-            // Adiciona apenas a diferença necessária
             for (let i = blocosAtuais.length + 1; i <= qtd; i++) {
                 const div = document.createElement('div');
-                div.className = 'form-group';
+                div.className = 'item-row';
                 div.innerHTML = `
-                    <label>Remetente do Item ${String(i).padStart(2, '0')}:</label>
-                    <input type="text" class="input-remetente" data-item="${i}" placeholder="Nome do remetente">
+                    <span style="font-weight: bold; min-width: 60px;">Item ${String(i).padStart(2, '0')}:</span>
+                    <input type="text" class="input-remetente" data-item="${i}" placeholder="Nome do Remetente" style="flex: 2;">
+                    <input type="text" class="input-volume" data-item="${i}" placeholder="Referência do Volume (Ex: Caixa 01)" style="flex: 2;">
                 `;
                 container.appendChild(div);
             }
         } else if (blocosAtuais.length > qtd) {
-            // Remove cirurgicamente os excessos do final da lista
             for (let i = blocosAtuais.length; i > qtd; i--) {
                 container.lastElementChild.remove();
             }
@@ -218,100 +388,163 @@
     }
 
     async function gerarProtocolo() {
-        const emissor = document.getElementById('emissor').value.trim();
+        const numeroRemessa = document.getElementById('numero_remessa').value.trim();
+        const emissor = document.getElementById('emissor').value;
+        const deSetor = document.getElementById('de_setor').value;
         const destinatario = document.getElementById('destinatario').value.trim();
-        const refVolume = document.getElementById('ref_volume').value.trim();
         const qtdItens = Math.max(1, parseInt(document.getElementById('qtd_itens').value) || 1);
+        
         const inputsRemetentes = document.querySelectorAll('.input-remetente');
+        const inputsVolumes = document.querySelectorAll('.input-volume');
 
-        if (!emissor || !destinatario || !refVolume) {
-            alert('⚠️ Por favor, preencha todos os campos obrigatórios do volume!');
+        if (!numeroRemessa || !destinatario) {
+            alert('⚠️ Por favor, preencha o Número da Remessa e o Destinatário (Para)!');
             return;
         }
 
-        let remetentesListaTexto = "";
-        let remetentesArrayDados = [];
-        let erroRemetente = false;
+        let remessasArrayDados = [];
+        let tabelaItensHTML = "";
+        let erroValidacao = false;
 
-        inputsRemetentes.forEach(input => {
-            const nome = input.value.trim();
-            const itemNum = String(input.getAttribute('data-item')).padStart(2, '0');
-            
-            if (!nome) {
-                erroRemetente = true;
+        for (let i = 0; i < inputsRemetentes.length; i++) {
+            const nomeRemetente = inputsRemetentes[i].value.trim();
+            const refVolume = inputsVolumes[i].value.trim();
+            const itemNum = String(inputsRemetentes[i].getAttribute('data-item')).padStart(2, '0');
+
+            if (!nomeRemetente || !refVolume) {
+                erroValidacao = true;
+                break;
             }
-            
-            remetentesListaTexto += `  • Item ${itemNum}: ${nome}\n`;
-            remetentesArrayDados.push({
-                item: parseInt(itemNum),
-                nome: nome
-            });
-        });
 
-        if (erroRemetente) {
-            alert('⚠️ Por favor, preencha o nome de todos os remetentes listados!');
+            remessasArrayDados.push({
+                item: parseInt(itemNum),
+                remetente: nomeRemetente,
+                referenciaVolume: refVolume
+            });
+
+            tabelaItensHTML += `
+                <tr>
+                    <td style="text-align: center; width: 10%; font-weight: bold;">${itemNum}</td>
+                    <td style="width: 45%;">${nomeRemetente}</td>
+                    <td style="width: 45%;">${refVolume}</td>
+                </tr>
+            `;
+        }
+
+        if (erroValidacao) {
+            alert('⚠️ Por favor, preencha o Remetente e a Referência do Volume para todos os itens!');
             return;
         }
 
-        const dataHoraAtual = new Date().toLocaleString('pt-BR');
+        const dataAtual = new Date().toLocaleDateString('pt-BR');
 
-        let relatorioConteudo = `==================================================\n`;
-        relatorioConteudo += `          RELAÇÃO DE REMESSAS - IPEN              \n`;
-        relatorioConteudo += `==================================================\n\n`;
-        relatorioConteudo += `Data/Hora de Emissão : ${dataHoraAtual}\n`;
-        relatorioConteudo += `Emissor Responsável  : ${emissor}\n`;
-        relatorioConteudo += `Destinatário Final   : ${destinatario}\n`;
-        relatorioConteudo += `Referência do Volume : ${refVolume}\n`;
-        relatorioConteudo += `Quantidade de Itens  : ${qtdItens}\n`;
-        relatorioConteudo += `--------------------------------------------------\n`;
-        relatorioConteudo += `LISTAGEM DOS REMETENTES POR ITEM:\n`;
-        relatorioConteudo += remetentesListaTexto;
-        relatorioConteudo += `\n==================================================\n`;
-        relatorioConteudo += `        Documento gerado eletronicamente.       `;
+        const construirLayoutVia = (tituloVia) => `
+            <div class="via-block">
+                <table class="header-table">
+                    <tr>
+                        <td style="width: 75%;" class="title-main">
+                            COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
+                            INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
+                            <span style="font-size: 9px; font-weight: normal;">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
+                        </td>
+                        <td style="width: 25%; text-align: center; font-weight: bold; border-left: 1px solid black;">
+                            NÚMERO:<br><span style="font-size: 13px; color: #b91c1c;">${numeroRemessa}</span>
+                        </td>
+                    </tr>
+                </table>
 
-        const areaPreview = document.getElementById('resultado-pdf');
-        areaPreview.textContent = relatorioConteudo;
-        areaPreview.style.display = 'block';
-        document.getElementById('label-preview').style.display = 'block';
+                <div class="title-doc">RELAÇÃO DE REMESSA</div>
+
+                <table class="meta-grid">
+                    <tr>
+                        <td><strong>DE:</strong> ${deSetor}</td>
+                        <td><strong>DATA DE EMISSÃO:</strong> ${dataAtual}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PARA:</strong> ${destinatario}</td>
+                        <td><strong>EMITIDO POR:</strong> ${emissor}</td>
+                    </tr>
+                </table>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Item</th>
+                            <th>Remetente</th>
+                            <th>Referência do Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tabelaItensHTML}
+                    </tbody>
+                </table>
+
+                <table class="footer-sign">
+                    <tr>
+                        <td><strong>RECEBIDO POR:</strong></td>
+                        <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / 2026</td>
+                    </tr>
+                </table>
+                
+                <div class="via-label">${tituloVia}</div>
+            </div>
+        `;
+
+        const folhaAlvo = document.getElementById('folha-a4-impressao');
+        folhaAlvo.innerHTML = `
+            ${construirLayoutVia('1ª via - Emitente (Setor de Protocolo)')}
+            <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
+            ${construirLayoutVia('2ª via - DESTINATÁRIO')}
+        `;
+
+        document.getElementById('preview-container').style.display = 'block';
 
         try {
             await addDoc(collection(db, "remessas"), {
+                numeroRemessa,
                 emissor,
+                deSetor,
                 destinatario,
-                refVolume,
                 qtdItens: qtdItens,
-                remetentes: remetentesArrayDados,
+                itens: remessasArrayDados,
                 dataRegistro: new Date()
             });
 
-            alert('🚀 Dados salvos com sucesso no Firebase! Clique no botão abaixo para baixar o PDF.');
-            document.getElementById('btn-download').style.display = 'block';
+            alert('🚀 Dados consolidados e salvos com sucesso no Firebase!');
+            // Exibe os botões de ação após o sucesso do banco
+            document.getElementById('grupo-botoes').style.display = 'flex';
 
         } catch (error) {
             console.error("Erro ao salvar no Firestore: ", error);
-            alert('❌ Erro ao salvar no Firebase. Verifique suas regras do Firestore Console.');
+            alert('❌ Erro de comunicação com o Firebase. Verifique seu painel do Cloud Firestore.');
         }
     }
 
     function baixarPDF() {
-        const elemento = document.getElementById('resultado-pdf');
+        const elemento = document.getElementById('folha-a4-impressao');
+        const numeroRemessa = document.getElementById('numero_remessa').value.trim().replace(/\//g, '-');
+        
         const opcoes = {
-            margin:       15,
-            filename:     `protocolo_ipen_${Date.now()}.pdf`,
+            margin:       10,
+            filename:     `relacao_remessa_${numeroRemessa}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, logging: false },
+            html2canvas:  { scale: 2, logging: false, useCORS: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
         html2pdf().set(opcoes).from(elemento).save();
     }
 
-    // Exportação das funções para o escopo global (HTML)
+    // Função para acionar a janela de impressão nativa
+    function imprimirPDF() {
+        window.print();
+    }
+
     window.gerarCamposRemetentes = gerarCamposRemetentes;
     window.gerarProtocolo = gerarProtocolo;
     window.baixarPDF = baixarPDF;
+    window.imprimirPDF = imprimirPDF;
 
-    // CORREÇÃO: Executa a primeira renderização diretamente no escopo do módulo
     gerarCamposRemetentes();
 </script>
 

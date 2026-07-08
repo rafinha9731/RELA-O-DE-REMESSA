@@ -446,7 +446,10 @@
         };
 
         if (typeof firebase !== 'undefined') {
-            firebase.initializeApp(firebaseConfig);
+            // Prevenção de erro de dupla inicialização
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
             db = firebase.firestore();
             console.log("🔥 Firebase Inicializado com Sucesso.");
         }
@@ -559,12 +562,15 @@
         numeroProtocoloAtivo = dados.numeroRemessa;
         let tabelaItensHTML = "";
         
-        dados.items.forEach(item => {
+        // CORREÇÃO CRÍTICA: Suporta chaves em português 'itens' e em inglês 'items' (retrocompatibilidade)
+        const listaAlvo = dados.itens || dados.items || [];
+        
+        listaAlvo.forEach(item => {
             tabelaItensHTML += `
                 <tr>
                     <td style="text-align: center; width: 10%; font-weight: bold;">${String(item.item).padStart(2, '0')}</td>
-                    <td style="width: 45%;">${item.remetente}</td>
-                    <td style="width: 45%;">${item.referenciaVolume}</td>
+                    <td style="width: 45%;">${item.remetente || ''}</td>
+                    <td style="width: 45%;">${item.referenciaVolume || ''}</td>
                 </tr>
             `;
         });
@@ -591,12 +597,12 @@
 
                     <table class="meta-grid">
                         <tr>
-                            <td><strong>DE:</strong> ${dados.deSetor}</td>
+                            <td><strong>DE:</strong> ${dados.deSetor || 'Setor de Protocolo'}</td>
                             <td><strong>DATA DE EMISSÃO:</strong> ${dataDocumento}</td>
                         </tr>
                         <tr>
-                            <td><strong>PARA:</strong> ${dados.destinatario}</td>
-                            <td><strong>EMITIDO POR:</strong> ${dados.emissor}</td>
+                            <td><strong>PARA:</strong> ${dados.destinatario || ''}</td>
+                            <td><strong>EMITIDO POR:</strong> ${dados.emissor || ''}</td>
                         </tr>
                     </table>
 
@@ -639,7 +645,6 @@
     }
 
     async function gerarProtocolo() {
-        // BLINDAGEM COMPLETA: try-catch absoluto para interceptar qualquer travamento de interface
         try {
             if (!db) {
                 alert('❌ Erro Crítico: Conexão com o Firebase não foi estabelecida. Verifique se extensões de AdBlock estão ativas e bloqueando a requisição.');
@@ -651,7 +656,7 @@
             const inputDestinatario = document.getElementById('destinatario');
             
             if (!inputNumero || !inputEmissor || !inputDestinatario) {
-                alert('❌ Erro de Estrutura Interna: Um ou mais campos principais desapareceram da árvore do HTML. Restaure o código original.');
+                alert('❌ Erro de Estrutura Interna: Um ou mais campos principais desapareceram da árvore do HTML.');
                 return;
             }
 
@@ -668,31 +673,28 @@
                 return;
             }
 
+            // CORREÇÃO E OTIMIZAÇÃO: Busca o último sequencial nativamente ordenando por data de registro
             if (!numeroRemessa) {
                 try {
                     const anoCorrente = new Date().getFullYear();
-                    const rangeInicio = `${anoCorrente}0300`;
-                    const rangeFim = `${anoCorrente}9999`;
-
                     const querySnapshot = await db.collection("remessas")
-                        .where("numeroRemessa", ">=", rangeInicio)
-                        .where("numeroRemessa", "<=", rangeFim)
-                        .orderBy("numeroRemessa", "desc")
+                        .orderBy("dataRegistro", "desc")
                         .limit(1)
                         .get();
 
                     let ultimoNumeroNum = parseInt(`${anoCorrente}0299`);
 
-                    querySnapshot.forEach((doc) => {
-                        const numConvertido = parseInt(doc.data().numeroRemessa);
-                        if (!isNaN(numConvertido) && numConvertido > ultimoNumeroNum) {
+                    if (!querySnapshot.empty) {
+                        const ultimoDoc = querySnapshot.docs[0].data();
+                        const numConvertido = parseInt(ultimoDoc.numeroRemessa);
+                        if (!isNaN(numConvertido) && String(numConvertido).startsWith(String(anoCorrente))) {
                             ultimoNumeroNum = numConvertido;
                         }
-                    });
+                    }
 
                     numeroRemessa = String(ultimoNumeroNum + 1);
                 } catch (err) {
-                    console.warn("Erro na busca sequencial, definindo valor base:", err);
+                    console.warn("Erro ao ler sequencial padrão, aplicando fallback seguro:", err);
                     numeroRemessa = `${new Date().getFullYear()}0300`;
                 }
             }
@@ -729,7 +731,7 @@
                 deSetor,
                 destinatario,
                 qtdItens: remessasArrayDados.length,
-                itens: remessasArrayDados,
+                itens: remessasArrayDados, 
                 dataDocumento: dataAtual,
                 dataRegistro: new Date()
             };
@@ -738,16 +740,17 @@
             try {
                 await db.collection("remessas").add(dadosRemessa);
                 
-                // Emissão de Aviso Explícito em caso de SUCESSO
+                // Emissão de Aviso Explícito em caso de SUCESSO absoluto
                 alert(`✅ SUCESSO NO REGISTRO:\nRemessa nº ${numeroRemessa} persistida perfeitamente no banco de dados.`);
                 
+                // Renderiza o documento na tela com o espelhamento exato das vias
                 renderizarViasEstrutura(dadosRemessa);
                 
                 setTimeout(() => {
                     window.print();
                 }, 600);
                 
-                // Resets de Interface de forma segura
+                // Resets de Interface de forma limpa e segura
                 document.getElementById('numero_remessa').value = "";
                 document.getElementById('destinatario').value = "";
                 document.getElementById('qtd_itens').value = "1";
@@ -757,14 +760,12 @@
 
             } catch (error) {
                 console.error("Erro interno do Firestore:", error);
-                // Emissão de Aviso Explícito em caso de FRACASSO DO BANCO
-                alert(`❌ FALHA AO SALVAR NO FIREBASE:\nA gravação falhou por motivos externos.\n\nMotivo Técnico: ${error.message || error}`);
+                alert(`❌ FALHA AO SALVAR NO FIREBASE:\nA gravação falhou por motivos de rede ou regras de acesso.\n\nMotivo Técnico: ${error.message || error}`);
             }
 
         } catch (erroGeral) {
             console.error("Erro estrutural no processamento JavaScript:", erroGeral);
-            // Emissão de Aviso Explícito em caso de CRASH INTERNO DO CÓDIGO
-            alert(`❌ CRASH INTERNO DE SOFTWARE:\nOcorreu um erro na montagem dos dados estruturais.\n\nDiagnóstico: ${erroGeral.message}`);
+            alert(`❌ CRASH INTERNO DE SOFTWARE:\nOcorreu um erro inesperado no processamento.\n\nDiagnóstico: ${erroGeral.message}`);
         }
     }
 
@@ -794,7 +795,7 @@
     window.imprimirPDF = imprimirPDF;
     window.excluirRegistro = excluirRegistro;
 
-    // Inicialização compulsória da primeira linha vazia
+    // Inicialização compulsória da primeira linha vazia ao carregar a página
     gerarCamposRemetentes();
 </script>
 

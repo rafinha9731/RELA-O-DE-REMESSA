@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Relação de Remessas - IPEN</title>
     
-    <!-- Bibliotecas Necessárias (Carregamento Universal Seguro via CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
@@ -336,8 +335,10 @@
         }
         
         @media print {
-            body * { visibility: hidden; }
-            #folha-a4-impressao, #folha-a4-impressao * { visibility: visible; }
+            body { background: white !important; }
+            .sidebar, .main-content > *:not(#preview-container), #grupo-botoes, hr, label { display: none !important; }
+            .main-content { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+            #preview-container { display: block !important; margin: 0 !important; padding: 0 !important; }
             #folha-a4-impressao {
                 position: absolute;
                 left: 0;
@@ -347,23 +348,21 @@
                 border: none !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                box-shadow: none !important;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- MENU LATERAL -->
 <nav class="sidebar">
     <h2>IPEN / CNEN</h2>
     <button id="menu-cadastro" class="menu-btn active" onclick="alternarTela('cadastro')">📝 Cadastro</button>
     <button id="menu-historico" class="menu-btn" onclick="alternarTela('historico')">📋 Histórico</button>
 </nav>
 
-<!-- CONTEÚDO PRINCIPAL -->
 <main class="main-content">
     
-    <!-- TELA 1: CADASTRO -->
     <section id="screen-cadastro" class="container app-screen active">
         <h1>📋 Relação de Remessas - Registro</h1>
         
@@ -400,7 +399,6 @@
         <button class="btn" id="btn-registrar-trigger" onclick="gerarProtocolo()">Registrar</button>
     </section>
 
-    <!-- TELA 2: HISTÓRICO -->
     <section id="screen-historico" class="container app-screen">
         <h1>📋 Histórico de Protocolos Gerados</h1>
         <table class="history-table">
@@ -414,12 +412,10 @@
                 </tr>
             </thead>
             <tbody id="lista-historico">
-                <!-- Injetado dinamicamente -->
-            </tbody>
+                </tbody>
         </table>
     </section>
 
-    <!-- PRÉ-VISUALIZAÇÃO GLOBAL -->
     <section id="preview-container">
         <hr style="border: 1px solid var(--border); margin: 30px 0;">
         <label style="font-weight: bold; margin-bottom: 10px; display: block;">📄 Documento de Saída Prontificado:</label>
@@ -525,17 +521,18 @@
                     <td>${doc.destinatario}</td>
                     <td>${dataFormatada}</td>
                     <td style="white-space: nowrap;">
-                        <button class="btn btn-reprint" id="btn-rep-${docSnap.id}">🖨️ Reimprimir</button>
-                        <button class="btn btn-delete" id="btn-del-${docSnap.id}" style="margin-left: 5px;">🗑️ Excluir</button>
+                        <button class="btn btn-reprint">🖨️ Reimprimir</button>
+                        <button class="btn btn-delete" style="margin-left: 5px;">🗑️ Excluir</button>
                     </td>
                 `;
                 tabela.appendChild(tr);
 
-                document.getElementById(`btn-rep-${docSnap.id}`).addEventListener('click', () => {
+                // Vinculação direta via escopo local do loop (evita bugs de concorrência/ID)
+                tr.querySelector('.btn-reprint').addEventListener('click', () => {
                     renderizarViasEstrutura(doc);
                 });
 
-                document.getElementById(`btn-del-${docSnap.id}`).addEventListener('click', () => {
+                tr.querySelector('.btn-delete').addEventListener('click', () => {
                     excluirRegistro(docSnap.id, doc.numeroRemessa);
                 });
             });
@@ -652,7 +649,6 @@
         const emissor = document.getElementById('emissor').value;
         const deSetor = "Setor de Protocolo"; 
         const destinatario = document.getElementById('destinatario').value.trim();
-        const qtdItens = Math.max(1, parseInt(document.getElementById('qtd_itens').value) || 1);
         
         const inputsRemetentes = document.querySelectorAll('.input-remetente');
         const inputsVolumes = document.querySelectorAll('.input-volume');
@@ -664,14 +660,19 @@
 
         if (!numeroRemessa) {
             try {
+                // CORREÇÃO DE BUG: Definição de ano dinâmico para evitar quebras anuais perpétuas
+                const anoCorrente = new Date().getFullYear();
+                const rangeInicio = `${anoCorrente}0300`;
+                const rangeFim = `${anoCorrente}9999`;
+
                 const querySnapshot = await db.collection("remessas")
-                    .where("numeroRemessa", ">=", "20260300")
-                    .where("numeroRemessa", "<=", "20269999")
+                    .where("numeroRemessa", ">=", rangeInicio)
+                    .where("numeroRemessa", "<=", rangeFim)
                     .orderBy("numeroRemessa", "desc")
                     .limit(1)
                     .get();
 
-                let ultimoNumeroNum = 20260299;
+                let ultimoNumeroNum = parseInt(`${anoCorrente}0299`);
 
                 querySnapshot.forEach((doc) => {
                     const numConvertido = parseInt(doc.data().numeroRemessa);
@@ -683,7 +684,7 @@
                 numeroRemessa = String(ultimoNumeroNum + 1);
             } catch (err) {
                 console.warn("Erro na busca sequencial, definindo valor base:", err);
-                numeroRemessa = "20260300";
+                numeroRemessa = `${new Date().getFullYear()}0300`;
             }
         }
 
@@ -718,7 +719,7 @@
             emissor,
             deSetor,
             destinatario,
-            qtdItens,
+            qtdItens: remessasArrayDados.length,
             itens: remessasArrayDados,
             dataDocumento: dataAtual,
             dataRegistro: new Date()
@@ -727,26 +728,25 @@
         try {
             await db.collection("remessas").add(dadosRemessa);
             
-            // 1. Mensagem de Sucesso Clara
             alert(`✅ SUCESSO: Remessa nº ${numeroRemessa} registrada perfeitamente no banco de dados.`);
             
-            // 2. Renderiza o PDF instantaneamente na mesma tela
             renderizarViasEstrutura(dadosRemessa);
             
-            // 3. Abre a janela de impressão do navegador sem precisar mudar de tela
             setTimeout(() => {
                 window.print();
             }, 600);
             
-            // Limpa formulário
+            // CORREÇÃO DE BUG: Reset completo limpando resíduos textuais do Item 01
             document.getElementById('numero_remessa').value = "";
             document.getElementById('destinatario').value = "";
             document.getElementById('qtd_itens').value = "1";
             gerarCamposRemetentes();
+            
+            const inputsRestantes = document.querySelectorAll('.input-remetente, .input-volume');
+            inputsRestantes.forEach(inp => inp.value = "");
 
         } catch (error) {
             console.error("Erro ao gravar dados no Firestore: ", error);
-            // Mensagem de Erro Clara com o Motivo Técnico
             alert(`❌ FALHA NO REGISTRO:\nNão foi possível concluir o salvamento dos dados.\n\nMotivo do insucesso: ${error.message || error}`);
         }
     }
@@ -770,7 +770,6 @@
         window.print();
     }
 
-    // Vinculação estrita global para o GitHub Pages
     window.alternarTela = alternarTela;
     window.gerarCamposRemetentes = gerarCamposRemetentes;
     window.gerarProtocolo = gerarProtocolo;
@@ -778,7 +777,7 @@
     window.imprimirPDF = imprimirPDF;
     window.excluirRegistro = excluirRegistro;
 
-    // Inicialização da primeira linha
+    // Inicialização da primeira linha vazia
     gerarCamposRemetentes();
 </script>
 

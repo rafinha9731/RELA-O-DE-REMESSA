@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protocolo Digital</title>
+    <title>Protocolo Digital - IPEN</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -61,7 +62,7 @@
             font-size: 14px;
         }
 
-        input[type="text"], input[type="number"], textarea {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border);
@@ -70,7 +71,7 @@
             font-size: 14px;
         }
 
-        input:focus, textarea:focus {
+        input:focus {
             outline: 2px solid var(--primary);
         }
 
@@ -104,9 +105,8 @@
             margin-top: 10px;
             display: none;
             text-align: center;
-            text-decoration: none;
-            color: white;
-            box-sizing: border-box;
+            font-size: 16px;
+            font-weight: bold;
         }
 
         .btn-download:hover {
@@ -117,9 +117,16 @@
             margin-top: 25px;
         }
 
-        textarea {
-            font-family: monospace;
-            resize: vertical;
+        .pdf-template {
+            background: white;
+            color: #000;
+            padding: 25px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.5;
+            display: none;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -152,55 +159,161 @@
 
     <div class="items-section">
         <h3>📝 Nome dos Remetentes</h3>
-        <div id="container-remetentes">
-            </div>
+        <div id="container-remetentes"></div>
     </div>
 
-    <button class="btn" onclick="gerarProtocolo()">🚀 Gerar Relatório de Protocolo</button>
+    <button class="btn" onclick="gerarProtocolo()">🚀 Gerar e Salvar Relatório</button>
 
     <div class="result-section">
-        <label for="resultado">📄 Pré-visualização do Protocolo:</label>
-        <textarea id="resultado" rows="10" readonly placeholder="O relatório aparecerá aqui..."></textarea>
-        <a id="btn-download" class="btn btn-download" href="#">📥 Baixar Relatório em TXT</a>
+        <label id="label-preview" style="display: none;">📄 Pré-visualização do Protocolo (PDF):</label>
+        <div id="resultado-pdf" class="pdf-template"></div>
+        
+        <button id="btn-download" class="btn btn-download" onclick="baixarPDF()">📥 Baixar Relatório em PDF</button>
     </div>
 </div>
 
-<script>
-    // Gera os campos de remetentes dinamicamente com base na quantidade
-    function gerarCamposRemetentes() {
-        const qtd = parseInt(document.getElementById('qtd_itens').value) || 1;
-        const container = document.getElementById('container-remetentes');
-        container.innerHTML = ''; // Limpa antes de recriar
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-        for (let i = 1; i <= qtd; i++) {
-            const div = document.createElement('div');
-            div.className = 'form-group';
-            div.innerHTML = `
-                <label>Remetente do Item ${String(i).padStart(2, '0')}:</label>
-                <input type="text" class="input-remetente" data-item="${i}" placeholder="Nome do remetente">
-            `;
-            container.appendChild(div);
+    const firebaseConfig = {
+        apiKey: "AIzaSyAToKKu1Ccmb5yT1f86gTeC1kF3ZD0Zpig",
+        authDomain: "relacaoderemessasipen.firebaseapp.com",
+        projectId: "relacaoderemessasipen",
+        storageBucket: "relacaoderemessasipen.firebasestorage.app",
+        messagingSenderId: "882583423239",
+        appId: "1:882583423239:web:ced3e75173cb0350b89da2",
+        measurementId: "G-NEV79DSP64"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    // CORREÇÃO: Função incremental que não apaga os dados já digitados pelo usuário
+    function gerarCamposRemetentes() {
+        // Evita números menores que 1 ou nulos
+        const qtd = Math.max(1, parseInt(document.getElementById('qtd_itens').value) || 1);
+        const container = document.getElementById('container-remetentes');
+        const blocosAtuais = container.querySelectorAll('.form-group');
+        
+        if (blocosAtuais.length < qtd) {
+            // Adiciona apenas a diferença necessária
+            for (let i = blocosAtuais.length + 1; i <= qtd; i++) {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
+                    <label>Remetente do Item ${String(i).padStart(2, '0')}:</label>
+                    <input type="text" class="input-remetente" data-item="${i}" placeholder="Nome do remetente">
+                `;
+                container.appendChild(div);
+            }
+        } else if (blocosAtuais.length > qtd) {
+            // Remove cirurgicamente os excessos do final da lista
+            for (let i = blocosAtuais.length; i > qtd; i--) {
+                container.lastElementChild.remove();
+            }
         }
     }
 
-    // Processa os dados e cria o relatório textual
-    function gerarProtocolo() {
+    async function gerarProtocolo() {
         const emissor = document.getElementById('emissor').value.trim();
         const destinatario = document.getElementById('destinatario').value.trim();
         const refVolume = document.getElementById('ref_volume').value.trim();
-        const qtdItens = document.getElementById('qtd_itens').value;
+        const qtdItens = Math.max(1, parseInt(document.getElementById('qtd_itens').value) || 1);
         const inputsRemetentes = document.querySelectorAll('.input-remetente');
 
-        // Validação básica de campos vazios
         if (!emissor || !destinatario || !refVolume) {
             alert('⚠️ Por favor, preencha todos os campos obrigatórios do volume!');
             return;
         }
 
-        let remetentesLista = "";
+        let remetentesListaTexto = "";
+        let remetentesArrayDados = [];
         let erroRemetente = false;
 
         inputsRemetentes.forEach(input => {
             const nome = input.value.trim();
             const itemNum = String(input.getAttribute('data-item')).padStart(2, '0');
-            if (!
+            
+            if (!nome) {
+                erroRemetente = true;
+            }
+            
+            remetentesListaTexto += `  • Item ${itemNum}: ${nome}\n`;
+            remetentesArrayDados.push({
+                item: parseInt(itemNum),
+                nome: nome
+            });
+        });
+
+        if (erroRemetente) {
+            alert('⚠️ Por favor, preencha o nome de todos os remetentes listados!');
+            return;
+        }
+
+        const dataHoraAtual = new Date().toLocaleString('pt-BR');
+
+        let relatorioConteudo = `==================================================\n`;
+        relatorioConteudo += `          RELAÇÃO DE REMESSAS - IPEN              \n`;
+        relatorioConteudo += `==================================================\n\n`;
+        relatorioConteudo += `Data/Hora de Emissão : ${dataHoraAtual}\n`;
+        relatorioConteudo += `Emissor Responsável  : ${emissor}\n`;
+        relatorioConteudo += `Destinatário Final   : ${destinatario}\n`;
+        relatorioConteudo += `Referência do Volume : ${refVolume}\n`;
+        relatorioConteudo += `Quantidade de Itens  : ${qtdItens}\n`;
+        relatorioConteudo += `--------------------------------------------------\n`;
+        relatorioConteudo += `LISTAGEM DOS REMETENTES POR ITEM:\n`;
+        relatorioConteudo += remetentesListaTexto;
+        relatorioConteudo += `\n==================================================\n`;
+        relatorioConteudo += `        Documento gerado eletronicamente.       `;
+
+        const areaPreview = document.getElementById('resultado-pdf');
+        areaPreview.textContent = relatorioConteudo;
+        areaPreview.style.display = 'block';
+        document.getElementById('label-preview').style.display = 'block';
+
+        try {
+            await addDoc(collection(db, "remessas"), {
+                emissor,
+                destinatario,
+                refVolume,
+                qtdItens: qtdItens,
+                remetentes: remetentesArrayDados,
+                dataRegistro: new Date()
+            });
+
+            alert('🚀 Dados salvos com sucesso no Firebase! Clique no botão abaixo para baixar o PDF.');
+            document.getElementById('btn-download').style.display = 'block';
+
+        } catch (error) {
+            console.error("Erro ao salvar no Firestore: ", error);
+            alert('❌ Erro ao salvar no Firebase. Verifique suas regras do Firestore Console.');
+        }
+    }
+
+    function baixarPDF() {
+        const elemento = document.getElementById('resultado-pdf');
+        const opcoes = {
+            margin:       15,
+            filename:     `protocolo_ipen_${Date.now()}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, logging: false },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opcoes).from(elemento).save();
+    }
+
+    // Exportação das funções para o escopo global (HTML)
+    window.gerarCamposRemetentes = gerarCamposRemetentes;
+    window.gerarProtocolo = gerarProtocolo;
+    window.baixarPDF = baixarPDF;
+
+    // CORREÇÃO: Executa a primeira renderização diretamente no escopo do módulo
+    gerarCamposRemetentes();
+</script>
+
+</body>
+</html>

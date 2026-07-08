@@ -527,7 +527,6 @@
                 `;
                 tabela.appendChild(tr);
 
-                // Vinculação direta via escopo local do loop (evita bugs de concorrência/ID)
                 tr.querySelector('.btn-reprint').addEventListener('click', () => {
                     renderizarViasEstrutura(doc);
                 });
@@ -640,114 +639,132 @@
     }
 
     async function gerarProtocolo() {
-        if (!db) {
-            alert('❌ Erro Crítico: Conexão com o Firebase não foi estabelecida. Verifique se extensões de AdBlock estão ativas e bloqueando a requisição.');
-            return;
-        }
-
-        let numeroRemessa = document.getElementById('numero_remessa').value.trim();
-        const emissor = document.getElementById('emissor').value;
-        const deSetor = "Setor de Protocolo"; 
-        const destinatario = document.getElementById('destinatario').value.trim();
-        
-        const inputsRemetentes = document.querySelectorAll('.input-remetente');
-        const inputsVolumes = document.querySelectorAll('.input-volume');
-
-        if (!destinatario) {
-            alert('⚠️ Validação: Por favor, preencha o campo do Destinatário (Para)!');
-            return;
-        }
-
-        if (!numeroRemessa) {
-            try {
-                // CORREÇÃO DE BUG: Definição de ano dinâmico para evitar quebras anuais perpétuas
-                const anoCorrente = new Date().getFullYear();
-                const rangeInicio = `${anoCorrente}0300`;
-                const rangeFim = `${anoCorrente}9999`;
-
-                const querySnapshot = await db.collection("remessas")
-                    .where("numeroRemessa", ">=", rangeInicio)
-                    .where("numeroRemessa", "<=", rangeFim)
-                    .orderBy("numeroRemessa", "desc")
-                    .limit(1)
-                    .get();
-
-                let ultimoNumeroNum = parseInt(`${anoCorrente}0299`);
-
-                querySnapshot.forEach((doc) => {
-                    const numConvertido = parseInt(doc.data().numeroRemessa);
-                    if (!isNaN(numConvertido) && numConvertido > ultimoNumeroNum) {
-                        ultimoNumeroNum = numConvertido;
-                    }
-                });
-
-                numeroRemessa = String(ultimoNumeroNum + 1);
-            } catch (err) {
-                console.warn("Erro na busca sequencial, definindo valor base:", err);
-                numeroRemessa = `${new Date().getFullYear()}0300`;
-            }
-        }
-
-        let remessasArrayDados = [];
-        let erroValidacao = false;
-
-        for (let i = 0; i < inputsRemetentes.length; i++) {
-            const nomeRemetente = inputsRemetentes[i].value.trim();
-            const refVolume = inputsVolumes[i].value.trim();
-            const itemNum = parseInt(inputsRemetentes[i].getAttribute('data-item'));
-
-            if (!nomeRemetente || !refVolume) {
-                erroValidacao = true;
-                break;
-            }
-
-            remessasArrayDados.push({
-                item: itemNum,
-                remetente: nomeRemetente,
-                referenciaVolume: refVolume
-            });
-        }
-
-        if (erroValidacao) {
-            alert('⚠️ Validação: preencha o Remetente e a Referência do Volume em todas as linhas listadas!');
-            return;
-        }
-
-        const dataAtual = new Date().toLocaleDateString('pt-BR');
-        const dadosRemessa = {
-            numeroRemessa,
-            emissor,
-            deSetor,
-            destinatario,
-            qtdItens: remessasArrayDados.length,
-            itens: remessasArrayDados,
-            dataDocumento: dataAtual,
-            dataRegistro: new Date()
-        };
-
+        // BLINDAGEM COMPLETA: try-catch absoluto para interceptar qualquer travamento de interface
         try {
-            await db.collection("remessas").add(dadosRemessa);
-            
-            alert(`✅ SUCESSO: Remessa nº ${numeroRemessa} registrada perfeitamente no banco de dados.`);
-            
-            renderizarViasEstrutura(dadosRemessa);
-            
-            setTimeout(() => {
-                window.print();
-            }, 600);
-            
-            // CORREÇÃO DE BUG: Reset completo limpando resíduos textuais do Item 01
-            document.getElementById('numero_remessa').value = "";
-            document.getElementById('destinatario').value = "";
-            document.getElementById('qtd_itens').value = "1";
-            gerarCamposRemetentes();
-            
-            const inputsRestantes = document.querySelectorAll('.input-remetente, .input-volume');
-            inputsRestantes.forEach(inp => inp.value = "");
+            if (!db) {
+                alert('❌ Erro Crítico: Conexão com o Firebase não foi estabelecida. Verifique se extensões de AdBlock estão ativas e bloqueando a requisição.');
+                return;
+            }
 
-        } catch (error) {
-            console.error("Erro ao gravar dados no Firestore: ", error);
-            alert(`❌ FALHA NO REGISTRO:\nNão foi possível concluir o salvamento dos dados.\n\nMotivo do insucesso: ${error.message || error}`);
+            const inputNumero = document.getElementById('numero_remessa');
+            const inputEmissor = document.getElementById('emissor');
+            const inputDestinatario = document.getElementById('destinatario');
+            
+            if (!inputNumero || !inputEmissor || !inputDestinatario) {
+                alert('❌ Erro de Estrutura Interna: Um ou mais campos principais desapareceram da árvore do HTML. Restaure o código original.');
+                return;
+            }
+
+            let numeroRemessa = inputNumero.value.trim();
+            const emissor = inputEmissor.value;
+            const deSetor = "Setor de Protocolo"; 
+            const destinatario = inputDestinatario.value.trim();
+            
+            const inputsRemetentes = document.querySelectorAll('.input-remetente');
+            const inputsVolumes = document.querySelectorAll('.input-volume');
+
+            if (!destinatario) {
+                alert('⚠️ Validação: Por favor, preencha o campo do Destinatário (Para)!');
+                return;
+            }
+
+            if (!numeroRemessa) {
+                try {
+                    const anoCorrente = new Date().getFullYear();
+                    const rangeInicio = `${anoCorrente}0300`;
+                    const rangeFim = `${anoCorrente}9999`;
+
+                    const querySnapshot = await db.collection("remessas")
+                        .where("numeroRemessa", ">=", rangeInicio)
+                        .where("numeroRemessa", "<=", rangeFim)
+                        .orderBy("numeroRemessa", "desc")
+                        .limit(1)
+                        .get();
+
+                    let ultimoNumeroNum = parseInt(`${anoCorrente}0299`);
+
+                    querySnapshot.forEach((doc) => {
+                        const numConvertido = parseInt(doc.data().numeroRemessa);
+                        if (!isNaN(numConvertido) && numConvertido > ultimoNumeroNum) {
+                            ultimoNumeroNum = numConvertido;
+                        }
+                    });
+
+                    numeroRemessa = String(ultimoNumeroNum + 1);
+                } catch (err) {
+                    console.warn("Erro na busca sequencial, definindo valor base:", err);
+                    numeroRemessa = `${new Date().getFullYear()}0300`;
+                }
+            }
+
+            let remessasArrayDados = [];
+            let erroValidacao = false;
+
+            for (let i = 0; i < inputsRemetentes.length; i++) {
+                const nomeRemetente = inputsRemetentes[i].value.trim();
+                const refVolume = inputsVolumes[i] ? inputsVolumes[i].value.trim() : "";
+                const itemNum = parseInt(inputsRemetentes[i].getAttribute('data-item'));
+
+                if (!nomeRemetente || !refVolume) {
+                    erroValidacao = true;
+                    break;
+                }
+
+                remessasArrayDados.push({
+                    item: itemNum,
+                    remetente: nomeRemetente,
+                    referenciaVolume: refVolume
+                });
+            }
+
+            if (erroValidacao || remessasArrayDados.length === 0) {
+                alert('⚠️ Validação: Preencha o Remetente e a Referência do Volume em todas as linhas listadas!');
+                return;
+            }
+
+            const dataAtual = new Date().toLocaleDateString('pt-BR');
+            const dadosRemessa = {
+                numeroRemessa,
+                emissor,
+                deSetor,
+                destinatario,
+                qtdItens: remessasArrayDados.length,
+                itens: remessasArrayDados,
+                dataDocumento: dataAtual,
+                dataRegistro: new Date()
+            };
+
+            // Processamento Real de Gravação no Banco de Dados
+            try {
+                await db.collection("remessas").add(dadosRemessa);
+                
+                // Emissão de Aviso Explícito em caso de SUCESSO
+                alert(`✅ SUCESSO NO REGISTRO:\nRemessa nº ${numeroRemessa} persistida perfeitamente no banco de dados.`);
+                
+                renderizarViasEstrutura(dadosRemessa);
+                
+                setTimeout(() => {
+                    window.print();
+                }, 600);
+                
+                // Resets de Interface de forma segura
+                document.getElementById('numero_remessa').value = "";
+                document.getElementById('destinatario').value = "";
+                document.getElementById('qtd_itens').value = "1";
+                gerarCamposRemetentes();
+                
+                document.querySelectorAll('.input-remetente, .input-volume').forEach(inp => inp.value = "");
+
+            } catch (error) {
+                console.error("Erro interno do Firestore:", error);
+                // Emissão de Aviso Explícito em caso de FRACASSO DO BANCO
+                alert(`❌ FALHA AO SALVAR NO FIREBASE:\nA gravação falhou por motivos externos.\n\nMotivo Técnico: ${error.message || error}`);
+            }
+
+        } catch (erroGeral) {
+            console.error("Erro estrutural no processamento JavaScript:", erroGeral);
+            // Emissão de Aviso Explícito em caso de CRASH INTERNO DO CÓDIGO
+            alert(`❌ CRASH INTERNO DE SOFTWARE:\nOcorreu um erro na montagem dos dados estruturais.\n\nDiagnóstico: ${erroGeral.message}`);
         }
     }
 
@@ -777,7 +794,7 @@
     window.imprimirPDF = imprimirPDF;
     window.excluirRegistro = excluirRegistro;
 
-    // Inicialização da primeira linha vazia
+    // Inicialização compulsória da primeira linha vazia
     gerarCamposRemetentes();
 </script>
 

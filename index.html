@@ -214,10 +214,19 @@
         .btn-print { background-color: #6b7280; }
         .btn-print:hover { background-color: #4b5563; }
 
-        /* ------------------------------------------------------------- */
-        /* LAYOUT REESTRUTURADO EM TAMANHO ABSOLUTO PREVININDO ENCURTAMENTO */
-        /* ------------------------------------------------------------- */
-        #folha-a4-impressao {
+        .btn-relatorio {
+            background-color: #8b5cf6;
+            max-width: 320px;
+        }
+        .btn-relatorio:hover { background-color: #7c3aed; }
+
+        .btn-massa-print {
+            background-color: #d97706;
+            max-width: 320px;
+        }
+        .btn-massa-print:hover { background-color: #b45309; }
+
+        #folha-a4-impressao, .pagina-a4-massa {
             background: white;
             color: black;
             box-sizing: border-box;
@@ -228,13 +237,11 @@
             border: 1px solid #94a3b8;
             overflow: hidden;
             
-            /* Dimensões padrão de exibição em tela */
             width: 210mm;
             height: 297mm;
             padding: 8mm 10mm;
         }
 
-        /* Classe injetada via JS dinamicamente apenas durante a exportação do PDF */
         .pdf-strict-mode {
             width: 794px !important;
             height: 1123px !important;
@@ -261,15 +268,14 @@
         
         .corte-linha span {
             position: absolute;
-            top: -9px;
+            top: -10px; /* Ajustado levemente para centralizar a fonte maior */
             background: white;
             padding: 0 10px;
-            font-size: 10px;
+            font-size: 12px; /* Aumentado de 10px para 12px */
             color: #94a3b8;
             font-weight: bold;
         }
 
-        /* Tabelas Internas */
         .header-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
         .header-table td { border: 1px solid black; padding: 5px; vertical-align: middle; box-sizing: border-box; }
         .title-main { font-weight: bold; font-size: 11px; text-align: left; line-height: 1.3; }
@@ -280,18 +286,27 @@
         .meta-grid td { border: 1px solid black; padding: 5px; width: 50%; font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
-        .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 10px; text-transform: uppercase;}
+        .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 12px; text-transform: uppercase;} /* Aumentado de 10px para 12px */
         .data-table td { 
             border: 1px solid black; 
             padding: 5px; 
-            font-size: 10px; 
+            font-size: 12px; /* Aumentado de 10px para 12px */
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis;
         }
         
         .footer-sign { width: 100%; border-collapse: collapse; margin-top: auto; table-layout: fixed; }
-        .footer-sign td { border: 1px solid black; padding: 6px; width: 50%; font-size: 10px; }
+        .footer-sign td { 
+            border: 1px solid black; 
+            padding: 12px 8px; 
+            font-size: 12px; 
+            vertical-align: middle; 
+            box-sizing: border-box;
+        }
+        .footer-sign td:first-child { width: 75%; }
+        .footer-sign td:last-child { width: 25%; }
+        
         .via-label { text-align: center; font-weight: bold; font-size: 9px; margin-top: 2px; text-transform: uppercase; color: #475569;}
 
         .carimbo-container {
@@ -301,26 +316,46 @@
             justify-content: center;
             border: 1.5px dashed #003366;
             border-radius: 4px;
-            padding: 2px;
+            padding: 4px;
             background-color: #f8fafc;
-            margin-top: 2px;
+            margin-top: 3px;
             box-sizing: border-box;
         }
-        .carimbo-title { font-size: 8px; font-weight: bold; color: #003366; text-transform: uppercase; margin-bottom: 1px;}
-        .carimbo-data { font-size: 9px; font-family: monospace; font-weight: bold; color: #1e293b; }
+        .carimbo-title { font-size: 11px; font-weight: bold; color: #003366; text-transform: uppercase; margin-bottom: 2px;}
+        .carimbo-data { font-size: 12px; font-family: monospace; font-weight: bold; color: #1e293b; }
 
         @media print {
             body * { visibility: hidden; }
-            #folha-a4-impressao, #folha-a4-impressao * { visibility: visible; }
+            #folha-a4-impressao, #folha-a4-impressao *,
+            .area-impressao-massa, .area-impressao-massa * { 
+                visibility: visible; 
+            }
             #folha-a4-impressao {
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 210mm;
-                height: 297mm;
                 border: none !important;
                 padding: 8mm 10mm !important;
                 margin: 0 !important;
+            }
+            .area-impressao-massa {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 210mm;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .pagina-a4-massa {
+                border: none !important;
+                padding: 8mm 10mm !important;
+                margin: 0 !important;
+                page-break-after: always;
+                break-after: page;
+            }
+            .pagina-a4-massa:last-child {
+                page-break-after: avoid;
+                break-after: avoid;
             }
         }
     </style>
@@ -373,10 +408,17 @@
 
     <div id="tela-historico" class="screen">
         <h2>📋 Histórico de Remessas Salvas</h2>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button class="btn btn-relatorio" onclick="gerarRelatorioPDF()">📄 Gerar Relatório PDF dos Selecionados</button>
+            <button class="btn btn-massa-print" onclick="imprimirSelecionados()">🖨️ Imprimir Vias dos Selecionados</button>
+        </div>
+        
         <div style="overflow-x: auto;">
             <table class="history-table">
                 <thead>
                     <tr>
+                        <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-history" onclick="alternarTodosCheckboxes(this)"></th>
                         <th>Nº Remessa</th>
                         <th>Data Registro</th>
                         <th>Destinatário (Para)</th>
@@ -385,7 +427,7 @@
                     </tr>
                 </thead>
                 <tbody id="lista-historico">
-                    <tr><td colspan="5" style="text-align:center;">Buscando registros ativos no servidor...</td></tr>
+                    <tr><td colspan="6" style="text-align:center;">Buscando registros ativos no servidor...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -431,13 +473,16 @@
         if(!tabela) return;
 
         if(snapshot.empty) {
-            tabela.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhuma remessa encontrada.</td></tr>`;
+            tabela.innerHTML = `<tr><td colspan="6" style="text-align:center;">Nenhuma remessa encontrada.</td></tr>`;
             dadosHistoricoCache = {};
             return;
         }
 
         tabela.innerHTML = '';
         dadosHistoricoCache = {};
+        
+        const selectAllCheckbox = document.getElementById('select-all-history');
+        if (selectAllCheckbox) selectAllCheckbox.checked = false;
 
         snapshot.forEach(doc => {
             const dados = doc.data();
@@ -456,6 +501,7 @@
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
+                <td style="text-align: center;"><input type="checkbox" class="select-item-history" data-id="${doc.id}"></td>
                 <td style="font-weight:bold; color:var(--primary);">${escaparHTML(dados.numeroRemessa)}</td>
                 <td>${dataFormatada}</td>
                 <td>${escaparHTML(dados.destinatario)}</td>
@@ -472,6 +518,206 @@
     }, error => {
         console.error("Erro no Listener: ", error);
     });
+
+    function alternarTodosCheckboxes(master) {
+        const checkboxes = document.querySelectorAll('.select-item-history');
+        checkboxes.forEach(cb => cb.checked = master.checked);
+    }
+
+    function gerarRelatorioPDF() {
+        const checkboxes = document.querySelectorAll('.select-item-history:checked');
+        if (checkboxes.length === 0) {
+            alert('⚠️ Selecione pelo menos um registro para gerar o relatório!');
+            return;
+        }
+
+        let tabelaLinhasHTML = '';
+        
+        checkboxes.forEach(cb => {
+            const id = cb.getAttribute('data-id');
+            const dados = dadosHistoricoCache[id];
+            if (!dados) return;
+
+            let dataFormatada = '-';
+            if (dados.dataRegistro) {
+                if (typeof dados.dataRegistro.toDate === 'function') {
+                    dataFormatada = new Date(dados.dataRegistro.toDate()).toLocaleDateString('pt-BR');
+                } else if (dados.dataRegistro instanceof Date) {
+                    dataFormatada = dados.dataRegistro.toLocaleDateString('pt-BR');
+                } else {
+                    dataFormatada = new Date(dados.dataRegistro).toLocaleDateString('pt-BR');
+                }
+            }
+
+            tabelaLinhasHTML += `
+                <tr style="border-bottom: 1px solid #cbd5e1;">
+                    <td style="padding: 10px; font-weight: bold; word-wrap: break-word;">${escaparHTML(dados.numeroRemessa)}</td>
+                    <td style="padding: 10px; word-wrap: break-word;">${dataFormatada}</td>
+                    <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(dados.destinatario)}</td>
+                    <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(dados.emissor)}</td>
+                </tr>
+            `;
+        });
+
+        const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+        const conteudoRelatorioHTML = `
+            <div style="padding: 30px; font-family: system-ui, -apple-system, sans-serif; color: #1e293b; background-color: #ffffff;">
+                <div style="border-bottom: 2px solid #003366; padding-bottom: 15px; margin-bottom: 25px;">
+                    <h1 style="font-size: 22px; color: #003366; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Relatório Resumido de Remessas</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 6px 0 0 0; font-weight: 500;">IPEN / CNEN — Documento emitido em: ${dataHoje}</p>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed;">
+                    <thead>
+                        <tr style="background-color: #f1f5f9; text-align: left; border-bottom: 2px solid #94a3b8;">
+                            <th style="padding: 12px 10px; color: #003366; width: 18%; font-weight: bold;">Nº Remessa</th>
+                            <th style="padding: 12px 10px; color: #003366; width: 17%; font-weight: bold;">Data Registro</th>
+                            <th style="padding: 12px 10px; color: #003366; width: 43%; font-weight: bold;">Destinatário Final</th>
+                            <th style="padding: 12px 10px; color: #003366; width: 22%; font-weight: bold;">Emitido Por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tabelaLinhasHTML}
+                    </tbody>
+                </table>
+                <div style="margin-top: 40px; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-align: right; font-size: 12px; color: #64748b; font-weight: bold;">
+                    Quantidade total de remessas listadas: ${checkboxes.length}
+                </div>
+            </div>
+        `;
+
+        const opcoes = {
+            margin:       10,
+            filename:     `relatorio_remessas_${new Date().toISOString().slice(0,10)}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                logging: false, 
+                useCORS: true,
+                scrollX: 0, 
+                scrollY: 0  
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opcoes).from(conteudoRelatorioHTML).save().catch(err => {
+            console.error("Erro ao gerar relatório:", err);
+            alert("❌ Erro ao tentar processar o arquivo PDF.");
+        });
+    }
+
+    function imprimirSelecionados() {
+        const checkboxes = document.querySelectorAll('.select-item-history:checked');
+        if (checkboxes.length === 0) {
+            alert('⚠️ Selecione pelo menos um registro para fazer a impressão!');
+            return;
+        }
+
+        const containerMassa = document.createElement('div');
+        containerMassa.className = 'area-impressao-massa';
+        
+        checkboxes.forEach(cb => {
+            const id = cb.getAttribute('data-id');
+            const dados = dadosHistoricoCache[id];
+            if (!dados) return;
+
+            let dataObjeto = new Date();
+            let dataFormatada = dataObjeto.toLocaleDateString('pt-BR');
+            
+            if (dados.dataRegistro) {
+                if (typeof dados.dataRegistro.toDate === 'function') {
+                    dataObjeto = dados.dataRegistro.toDate();
+                } else {
+                    dataObjeto = new Date(dados.dataRegistro);
+                }
+                dataFormatada = dataObjeto.toLocaleDateString('pt-BR');
+            }
+            const horaCarimbo = dados.horaCarimbo || dataObjeto.toLocaleTimeString('pt-BR');
+
+            let linesTabelaHTML = "";
+            dados.itens.forEach(i => {
+                linesTabelaHTML += `
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
+                        <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
+                        <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.volume)}</td>
+                    </tr>
+                `;
+            });
+
+            const anoAtual = new Date(dataObjeto).getFullYear();
+
+            const montarVia = (tituloVia) => `
+                <div class="via-block">
+                    <table class="header-table">
+                        <tr>
+                            <td style="width: 65%;" class="title-main">
+                                COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
+                                INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
+                                <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
+                            </td>
+                            <td style="width: 35%; text-align: center; padding: 4px;">
+                                <div style="font-weight: bold; font-size: 9px; text-transform: uppercase;">NÚMERO:</div>
+                                <div style="font-size: 13px; font-weight: bold; color: #dc2626;">${escaparHTML(dados.numeroRemessa)}</div>
+                                <div class="carimbo-container">
+                                    <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
+                                    <div class="carimbo-data">${escaparHTML(dataFormatada)} - ${escaparHTML(horaCarimbo)}</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="title-doc">RELAÇÃO DE REMESSA</div>
+
+                    <table class="meta-grid">
+                        <tr>
+                            <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>DE:</strong> ${escaparHTML(dados.deSetor || "Setor de Protocolo")}</td>
+                            <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(dataFormatada)}</td>
+                        </tr>
+                        <tr>
+                            <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>PARA:</strong> ${escaparHTML(dados.destinatario)}</td>
+                            <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>EMITIDO POR:</strong> ${escaparHTML(dados.emissor)}</td>
+                        </tr>
+                    </table>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; width: 10%;">Item</th>
+                                <th style="width: 45%;">Remetente</th>
+                                <th style="width: 45%;">Referência do Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${linesTabelaHTML}
+                        </tbody>
+                    </table>
+
+                    <table class="footer-sign">
+                        <tr>
+                            <td><strong>RECEBIDO POR:</strong></td>
+                            <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
+                        </tr>
+                    </table>
+                    <div class="via-label">${tituloVia}</div>
+                </div>
+            `;
+
+            const divPagina = document.createElement('div');
+            divPagina.className = 'pagina-a4-massa';
+            divPagina.innerHTML = `
+                ${montarVia('1ª via - Emitente (Setor de Protocolo)')}
+                <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
+                ${montarVia('2ª via - Destinatário')}
+            `;
+            
+            containerMassa.appendChild(divPagina);
+        });
+
+        document.body.appendChild(containerMassa);
+        window.print();
+        document.body.removeChild(containerMassa);
+    }
 
     function mudarTela(tela) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -634,9 +880,9 @@
     }
 
     function renderizarLayoutA4(numero, de, para, por, data, hora, itens) {
-        let linhasTabelaHTML = "";
+        let linesTabelaHTML = "";
         itens.forEach(i => {
-            linhasTabelaHTML += `
+            linesTabelaHTML += `
                 <tr>
                     <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
                     <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
@@ -689,14 +935,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${linhasTabelaHTML}
+                        ${linesTabelaHTML}
                     </tbody>
                 </table>
 
                 <table class="footer-sign">
                     <tr>
                         <td><strong>RECEBIDO POR:</strong></td>
-                        <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
+                        <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
                     </tr>
                 </table>
                 <div class="via-label">${tituloVia}</div>
@@ -717,7 +963,6 @@
         const elemento = document.getElementById('folha-a4-impressao');
         const nomeRef = (numeroRemessaAtualParaPDF || 'remessa').replace(/\//g, '-');
         
-        // CORREÇÃO CRÍTICA: Força pixels estritos e absolutos antes do print da janela
         elemento.classList.add('pdf-strict-mode');
 
         const opcoes = {
@@ -736,7 +981,6 @@
         };
 
         html2pdf().set(opcoes).from(elemento).save().then(() => {
-            // Remove a classe e devolve o comportamento fluido para a tela do sistema
             elemento.classList.remove('pdf-strict-mode');
         }).catch((err) => {
             elemento.classList.remove('pdf-strict-mode');

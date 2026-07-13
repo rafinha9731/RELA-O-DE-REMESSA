@@ -168,6 +168,22 @@
             font-weight: bold;
         }
 
+        .history-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        
+        .history-table th.sortable:hover {
+            background-color: #e2e8f0;
+        }
+
+        .sort-icon {
+            font-size: 11px;
+            margin-left: 4px;
+            color: var(--primary);
+        }
+
         .history-table tr:hover { background-color: #f8fafc; }
 
         .actions-cell {
@@ -194,6 +210,44 @@
             background-color: var(--danger);
         }
         .btn-delete:hover { background-color: var(--danger-hover); }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .pagination-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background-color: #e2e8f0;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            margin: 0 8px;
+        }
 
         #preview-container {
             display: none;
@@ -268,10 +322,10 @@
         
         .corte-linha span {
             position: absolute;
-            top: -10px; /* Ajustado levemente para centralizar a fonte maior */
+            top: -10px;
             background: white;
             padding: 0 10px;
-            font-size: 12px; /* Aumentado de 10px para 12px */
+            font-size: 12px;
             color: #94a3b8;
             font-weight: bold;
         }
@@ -286,11 +340,11 @@
         .meta-grid td { border: 1px solid black; padding: 5px; width: 50%; font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
         
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
-        .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 12px; text-transform: uppercase;} /* Aumentado de 10px para 12px */
+        .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 12px; text-transform: uppercase;}
         .data-table td { 
             border: 1px solid black; 
             padding: 5px; 
-            font-size: 12px; /* Aumentado de 10px para 12px */
+            font-size: 12px; 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis;
@@ -374,7 +428,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="numero_remessa">🔢 Número da Remessa:</label>
-                <input type="text" id="numero_remessa" placeholder="Deixe em branco para sequencial automático">
+                <input type="text" id="numero_remessa" maxlength="8" placeholder="Deixe em branco para sequencial automático">
             </div>
             <div class="form-group">
                 <label for="emissor">👤 Emitido Por:</label>
@@ -409,9 +463,14 @@
     <div id="tela-historico" class="screen">
         <h2>📋 Histórico de Remessas Salvas</h2>
         
-        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;">
             <button class="btn btn-relatorio" onclick="gerarRelatorioPDF()">📄 Gerar Relatório PDF dos Selecionados</button>
             <button class="btn btn-massa-print" onclick="imprimirSelecionados()">🖨️ Imprimir Vias dos Selecionados</button>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="pesquisa-historico" style="font-size: 14px;">🔍 Filtrar e Pesquisar Registros:</label>
+            <input type="text" id="pesquisa-historico" placeholder="Pesquise por Nº de remessa, destinatário, emissor ou data (ex: dd/mm/aaaa)..." oninput="pesquisarHistorico()">
         </div>
         
         <div style="overflow-x: auto;">
@@ -419,9 +478,9 @@
                 <thead>
                     <tr>
                         <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-history" onclick="alternarTodosCheckboxes(this)"></th>
-                        <th>Nº Remessa</th>
-                        <th>Data Registro</th>
-                        <th>Destinatário (Para)</th>
+                        <th class="sortable" onclick="alterarOrdenacao('numeroRemessa')">Nº Remessa <span id="icon-numeroRemessa" class="sort-icon"></span></th>
+                        <th class="sortable" onclick="alterarOrdenacao('dataRegistro')">Data Registro <span id="icon-dataRegistro" class="sort-icon">▼</span></th>
+                        <th class="sortable" onclick="alterarOrdenacao('destinatario')">Destinatário (Para) <span id="icon-destinatario" class="sort-icon"></span></th>
                         <th>Emitido Por</th>
                         <th>Ações</th>
                     </tr>
@@ -431,6 +490,8 @@
                 </tbody>
             </table>
         </div>
+
+        <div id="paginacao-historico" class="pagination-container"></div>
     </div>
 
     <div id="preview-container">
@@ -461,7 +522,13 @@
     const db = firebase.firestore();
 
     let dadosHistoricoCache = {};
+    let remessasListaGlobal = []; 
+    let campoOrdenacaoAtual = 'dataRegistro'; 
+    let direcaoOrdenacaoAtual = 'desc'; 
     let numeroRemessaAtualParaPDF = "";
+
+    let paginaAtual = 1;
+    const REGISTROS_POR_PAGINA = 15;
 
     function escaparHTML(str) {
         if (!str) return '';
@@ -475,49 +542,186 @@
         if(snapshot.empty) {
             tabela.innerHTML = `<tr><td colspan="6" style="text-align:center;">Nenhuma remessa encontrada.</td></tr>`;
             dadosHistoricoCache = {};
+            remessasListaGlobal = [];
+            renderizarControlesPagina(0, 0);
             return;
         }
 
-        tabela.innerHTML = '';
         dadosHistoricoCache = {};
+        remessasListaGlobal = [];
         
         const selectAllCheckbox = document.getElementById('select-all-history');
         if (selectAllCheckbox) selectAllCheckbox.checked = false;
 
         snapshot.forEach(doc => {
             const dados = doc.data();
+            dados.id = doc.id; 
             dadosHistoricoCache[doc.id] = dados;
 
+            let dataTimestamp = 0;
             let dataFormatada = '-';
             if (dados.dataRegistro) {
+                let dt;
                 if (typeof dados.dataRegistro.toDate === 'function') {
-                    dataFormatada = new Date(dados.dataRegistro.toDate()).toLocaleDateString('pt-BR');
+                    dt = dados.dataRegistro.toDate();
                 } else if (dados.dataRegistro instanceof Date) {
-                    dataFormatada = dados.dataRegistro.toLocaleDateString('pt-BR');
+                    dt = dados.dataRegistro;
                 } else {
-                    dataFormatada = new Date(dados.dataRegistro).toLocaleDateString('pt-BR');
+                    dt = new Date(dados.dataRegistro);
+                }
+                dataTimestamp = dt.getTime();
+                dataFormatada = dt.toLocaleDateString('pt-BR');
+            }
+            dados._dataTimestamp = dataTimestamp;
+            dados._dataFormatada = dataFormatada;
+
+            remessasListaGlobal.push(dados);
+        });
+
+        filtrarEOrdenarHistorico();
+
+    }, error => {
+        console.error("Erro no Listener: ", error);
+    });
+
+    function alterarOrdenacao(campo) {
+        if (campoOrdenacaoAtual === campo) {
+            direcaoOrdenacaoAtual = direcaoOrdenacaoAtual === 'asc' ? 'desc' : 'asc';
+        } else {
+            campoOrdenacaoAtual = campo;
+            direcaoOrdenacaoAtual = 'asc';
+        }
+        paginaAtual = 1; 
+        filtrarEOrdenarHistorico();
+    }
+
+    function pesquisarHistorico() {
+        paginaAtual = 1;
+        filtrarEOrdenarHistorico();
+    }
+
+    function atualizarIconesCabecalho() {
+        const icones = {
+            numeroRemessa: document.getElementById('icon-numeroRemessa'),
+            dataRegistro: document.getElementById('icon-dataRegistro'),
+            destinatario: document.getElementById('icon-destinatario')
+        };
+
+        for (let key in icones) {
+            if (icones[key]) {
+                if (campoOrdenacaoAtual === key) {
+                    icones[key].innerText = direcaoOrdenacaoAtual === 'asc' ? ' ▲' : ' ▼';
+                } else {
+                    icones[key].innerText = '';
                 }
             }
+        }
+    }
 
+    function filtrarEOrdenarHistorico() {
+        const tabela = document.getElementById('lista-historico');
+        if (!tabela) return;
+
+        const termoPesquisa = (document.getElementById('pesquisa-historico')?.value || '').toLowerCase().trim();
+
+        let dadosFiltrados = remessasListaGlobal.filter(dados => {
+            const num = (dados.numeroRemessa || '').toLowerCase();
+            const dest = (dados.destinatario || '').toLowerCase();
+            const emi = (dados.emissor || '').toLowerCase();
+            const dataStr = (dados._dataFormatada || '').toLowerCase();
+            
+            return num.includes(termoPesquisa) || 
+                   dest.includes(termoPesquisa) || 
+                   emi.includes(termoPesquisa) || 
+                   dataStr.includes(termoPesquisa);
+        });
+
+        dadosFiltrados.sort((a, b) => {
+            let valA, valB;
+
+            if (campoOrdenacaoAtual === 'dataRegistro') {
+                valA = a._dataTimestamp;
+                valB = b._dataTimestamp;
+            } else {
+                valA = (a[campoOrdenacaoAtual] || '').toString().toLowerCase();
+                valB = (b[campoOrdenacaoAtual] || '').toString().toLowerCase();
+            }
+
+            if (valA < valB) return direcaoOrdenacaoAtual === 'asc' ? -1 : 1;
+            if (valA > valB) return direcaoOrdenacaoAtual === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        let dadosParaExibir = [];
+        const temFiltroAtivo = termoPesquisa.length > 0;
+
+        if (temFiltroAtivo) {
+            dadosParaExibir = dadosFiltrados;
+            renderizarControlesPagina(0, 0);
+        } else {
+            const totalPaginas = Math.ceil(dadosFiltrados.length / REGISTROS_POR_PAGINA);
+            
+            if (paginaAtual > totalPaginas) {
+                paginaAtual = Math.max(1, totalPaginas);
+            }
+
+            const indiceInicial = (paginaAtual - 1) * REGISTROS_POR_PAGINA;
+            const indiceFinal = indiceInicial + REGISTROS_POR_PAGINA;
+            
+            dadosParaExibir = dadosFiltrados.slice(indiceInicial, indiceFinal);
+            renderizarControlesPagina(totalPaginas, paginaAtual);
+        }
+
+        tabela.innerHTML = '';
+        atualizarIconesCabecalho();
+
+        if (dadosParaExibir.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="6" style="text-align:center;">Nenhum registro corresponde à pesquisa aplicada.</td></tr>`;
+            return;
+        }
+
+        dadosParaExibir.forEach(dados => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td style="text-align: center;"><input type="checkbox" class="select-item-history" data-id="${doc.id}"></td>
+                <td style="text-align: center;"><input type="checkbox" class="select-item-history" data-id="${dados.id}"></td>
                 <td style="font-weight:bold; color:var(--primary);">${escaparHTML(dados.numeroRemessa)}</td>
-                <td>${dataFormatada}</td>
+                <td>${dados._dataFormatada}</td>
                 <td>${escaparHTML(dados.destinatario)}</td>
                 <td>${escaparHTML(dados.emissor)}</td>
                 <td>
                     <div class="actions-cell">
-                        <button class="btn-action" onclick="visualizarRemessaHistorico('${doc.id}')">👁️ Abrir</button>
-                        <button class="btn-action btn-delete" onclick="deletarRegistro('${doc.id}', '${escaparHTML(dados.numeroRemessa)}')">🗑️ Excluir</button>
+                        <button class="btn-action" onclick="visualizarRemessaHistorico('${dados.id}')">👁️ Abrir</button>
+                        <button class="btn-action btn-delete" onclick="deletarRegistro('${dados.id}', '${escaparHTML(dados.numeroRemessa)}')">🗑️ Excluir</button>
                     </div>
                 </td>
             `;
             tabela.appendChild(tr);
         });
-    }, error => {
-        console.error("Erro no Listener: ", error);
-    });
+    }
+
+    function renderizarControlesPagina(totalPaginas, paginaAtiva) {
+        const container = document.getElementById('paginacao-historico');
+        if (!container) return;
+
+        if (totalPaginas <= 1) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = `
+            <button class="pagination-btn" onclick="mudarPagina(1)" ${paginaAtiva === 1 ? 'disabled' : ''}>«</button>
+            <button class="pagination-btn" onclick="mudarPagina(${paginaAtiva - 1})" ${paginaAtiva === 1 ? 'disabled' : ''}>Anterior</button>
+            <span class="pagination-info">Página ${paginaAtiva} de ${totalPaginas}</span>
+            <button class="pagination-btn" onclick="mudarPagina(${paginaAtiva + 1})" ${paginaAtiva === totalPaginas ? 'disabled' : ''}>Próxima</button>
+            <button class="pagination-btn" onclick="mudarPagina(${totalPaginas})" ${paginaAtiva === totalPaginas ? 'disabled' : ''}>»</button>
+        `;
+    }
+
+    function mudarPagina(novaPagina) {
+        paginaAtual = novaPagina;
+        filtrarEOrdenarHistorico();
+        document.getElementById('pesquisa-historico').scrollIntoView({ behavior: 'smooth' });
+    }
 
     function alternarTodosCheckboxes(master) {
         const checkboxes = document.querySelectorAll('.select-item-history');
@@ -538,21 +742,10 @@
             const dados = dadosHistoricoCache[id];
             if (!dados) return;
 
-            let dataFormatada = '-';
-            if (dados.dataRegistro) {
-                if (typeof dados.dataRegistro.toDate === 'function') {
-                    dataFormatada = new Date(dados.dataRegistro.toDate()).toLocaleDateString('pt-BR');
-                } else if (dados.dataRegistro instanceof Date) {
-                    dataFormatada = dados.dataRegistro.toLocaleDateString('pt-BR');
-                } else {
-                    dataFormatada = new Date(dados.dataRegistro).toLocaleDateString('pt-BR');
-                }
-            }
-
             tabelaLinhasHTML += `
                 <tr style="border-bottom: 1px solid #cbd5e1;">
                     <td style="padding: 10px; font-weight: bold; word-wrap: break-word;">${escaparHTML(dados.numeroRemessa)}</td>
-                    <td style="padding: 10px; word-wrap: break-word;">${dataFormatada}</td>
+                    <td style="padding: 10px; word-wrap: break-word;">${dados._dataFormatada}</td>
                     <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(dados.destinatario)}</td>
                     <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(dados.emissor)}</td>
                 </tr>
@@ -622,15 +815,12 @@
             if (!dados) return;
 
             let dataObjeto = new Date();
-            let dataFormatada = dataObjeto.toLocaleDateString('pt-BR');
-            
             if (dados.dataRegistro) {
                 if (typeof dados.dataRegistro.toDate === 'function') {
                     dataObjeto = dados.dataRegistro.toDate();
                 } else {
                     dataObjeto = new Date(dados.dataRegistro);
                 }
-                dataFormatada = dataObjeto.toLocaleDateString('pt-BR');
             }
             const horaCarimbo = dados.horaCarimbo || dataObjeto.toLocaleTimeString('pt-BR');
 
@@ -651,7 +841,10 @@
                 <div class="via-block">
                     <table class="header-table">
                         <tr>
-                            <td style="width: 65%;" class="title-main">
+                            <td style="width: 14%; text-align: center; padding: 4px; border-right: none;">
+                                <img src="logo_ipen.png" style="max-height: 42px; max-width: 100%; object-fit: contain; display: block; margin: 0 auto;">
+                            </td>
+                            <td style="width: 51%; border-left: none;" class="title-main">
                                 COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
                                 INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
                                 <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
@@ -661,7 +854,7 @@
                                 <div style="font-size: 13px; font-weight: bold; color: #dc2626;">${escaparHTML(dados.numeroRemessa)}</div>
                                 <div class="carimbo-container">
                                     <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
-                                    <div class="carimbo-data">${escaparHTML(dataFormatada)} - ${escaparHTML(horaCarimbo)}</div>
+                                    <div class="carimbo-data">${escaparHTML(dados._dataFormatada)} - ${escaparHTML(horaCarimbo)}</div>
                                 </div>
                             </td>
                         </tr>
@@ -672,7 +865,7 @@
                     <table class="meta-grid">
                         <tr>
                             <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>DE:</strong> ${escaparHTML(dados.deSetor || "Setor de Protocolo")}</td>
-                            <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(dataFormatada)}</td>
+                            <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(dados._dataFormatada)}</td>
                         </tr>
                         <tr>
                             <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>PARA:</strong> ${escaparHTML(dados.destinatario)}</td>
@@ -730,6 +923,7 @@
         } else {
             document.getElementById('tela-historico').classList.add('active');
             document.getElementById('tab-historico').classList.add('active');
+            filtrarEOrdenarHistorico();
         }
     }
 
@@ -780,7 +974,29 @@
             return;
         }
 
-        if (!numeroRemessa) {
+        if (numeroRemessa) {
+            const regexOitoDigitos = /^\d{8}$/;
+            if (!regexOitoDigitos.test(numeroRemessa)) {
+                alert('⚠️ O número da remessa inserido manualmente deve conter exatamente 8 números.\n\nPor favor, confira o número informado ou deixe o campo em branco para que o sistema gere automaticamente o número da remessa sequencial.');
+                return;
+            }
+
+            try {
+                const snapshotDuplicado = await db.collection("remessas")
+                    .where("numeroRemessa", "==", numeroRemessa)
+                    .limit(1)
+                    .get();
+
+                if (!snapshotDuplicado.empty) {
+                    alert(`⚠️ O número de registro "${numeroRemessa}" já existe no sistema!\n\nPor favor, insira um número que ainda não tenha sido usado ou deixe o campo totalmente em branco para o sistema gerar um número sequencial automático.`);
+                    return;
+                }
+            } catch (err) {
+                console.error("Erro ao validar duplicidade:", err);
+                alert("❌ Erro operacional ao checar duplicidade de número no servidor.");
+                return;
+            }
+        } else {
             try {
                 const snapshot = await db.collection("remessas")
                     .where("numeroRemessa", ">=", "20260300")
@@ -797,6 +1013,7 @@
                 }
             } catch (err) {
                 console.error(err);
+                alert("❌ Erro ao gerar número sequencial.");
                 return;
             }
         }
@@ -846,12 +1063,16 @@
     }
 
     async function deletarRegistro(id, numero) {
-        if (confirm(`⚠️ Excluir permanentemente o Registro Nº ${numero}?`)) {
+        const mensagemConfirmacao = `⚠️ ATENÇÃO - EXCLUSÃO DE REGISTRO\n\nVocê tem certeza absoluta que deseja excluir permanentemente a Remessa Nº ${numero}?\n\nEsta ação é irreversível. O documento e todo o seu histórico de volumes vinculados serão apagados definitivamente do servidor do Firebase.`;
+        
+        if (confirm(mensagemConfirmacao)) {
             try {
                 await db.collection("remessas").doc(id).delete();
                 document.getElementById('preview-container').style.display = 'none';
+                alert(`✅ Registro Nº ${numero} removido com sucesso.`);
             } catch (error) {
-                console.error(error);
+                console.error("Erro durante exclusão: ", error);
+                alert(`❌ Falha operacional ao tentar excluir o registro Nº ${numero}. Verifique sua conexão ou permissões no banco.`);
             }
         }
     }
@@ -861,21 +1082,18 @@
         if(!dados) return;
         
         let dataObjeto = new Date();
-        let dataFormatada = dataObjeto.toLocaleDateString('pt-BR');
-        
         if (dados.dataRegistro) {
             if (typeof dados.dataRegistro.toDate === 'function') {
                 dataObjeto = dados.dataRegistro.toDate();
             } else {
                 dataObjeto = new Date(dados.dataRegistro);
             }
-            dataFormatada = dataObjeto.toLocaleDateString('pt-BR');
         }
 
         const horaCarimbo = dados.horaCarimbo || dataObjeto.toLocaleTimeString('pt-BR');
 
         numeroRemessaAtualParaPDF = dados.numeroRemessa;
-        renderizarLayoutA4(dados.numeroRemessa, dados.deSetor, dados.destinatario, dados.emissor, dataFormatada, horaCarimbo, dados.itens);
+        renderizarLayoutA4(dados.numeroRemessa, dados.deSetor, dados.destinatario, dados.emissor, dados._dataFormatada, horaCarimbo, dados.itens);
         document.getElementById('preview-container').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -897,7 +1115,10 @@
             <div class="via-block">
                 <table class="header-table">
                     <tr>
-                        <td style="width: 65%;" class="title-main">
+                        <td style="width: 14%; text-align: center; padding: 4px; border-right: none;">
+                            <img src="logo_ipen.png" style="max-height: 42px; max-width: 100%; object-fit: contain; display: block; margin: 0 auto;">
+                        </td>
+                        <td style="width: 51%; border-left: none;" class="title-main">
                             COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
                             INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
                             <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>

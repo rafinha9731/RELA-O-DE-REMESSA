@@ -68,13 +68,8 @@
             border-bottom-color: var(--primary);
         }
 
-        .screen {
-            display: none;
-        }
-
-        .screen.active {
-            display: block;
-        }
+        .screen { display: none; }
+        .screen.active { display: block; }
 
         h2 {
             margin-top: 0;
@@ -174,9 +169,7 @@
             transition: background-color 0.2s;
         }
         
-        .history-table th.sortable:hover {
-            background-color: #e2e8f0;
-        }
+        .history-table th.sortable:hover { background-color: #e2e8f0; }
 
         .sort-icon {
             font-size: 11px;
@@ -186,10 +179,7 @@
 
         .history-table tr:hover { background-color: #f8fafc; }
 
-        .actions-cell {
-            display: flex;
-            gap: 6px;
-        }
+        .actions-cell { display: flex; gap: 6px; }
 
         .btn-action {
             background-color: var(--success);
@@ -206,9 +196,7 @@
         }
         .btn-action:hover { background-color: var(--success-hover); }
 
-        .btn-delete {
-            background-color: var(--danger);
-        }
+        .btn-delete { background-color: var(--danger); }
         .btn-delete:hover { background-color: var(--danger-hover); }
 
         .pagination-container {
@@ -251,33 +239,25 @@
 
         #preview-container {
             display: none;
-            margin-top: 35px;
+            max-width: 900px;
             width: 100%;
+            margin: 35px auto 0;
+            box-sizing: border-box;
+            padding: 20px 25px 0;
             border-top: 2px dashed var(--border);
-            padding-top: 20px;
         }
 
-        .action-bar {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+        .action-bar { display: flex; gap: 15px; margin-bottom: 20px; }
 
         .btn-pdf { background-color: #3b82f6; }
         .btn-pdf:hover { background-color: #2563eb; }
         .btn-print { background-color: #6b7280; }
         .btn-print:hover { background-color: #4b5563; }
 
-        .btn-relatorio {
-            background-color: #8b5cf6;
-            max-width: 320px;
-        }
+        .btn-relatorio { background-color: #8b5cf6; max-width: 320px; }
         .btn-relatorio:hover { background-color: #7c3aed; }
 
-        .btn-massa-print {
-            background-color: #d97706;
-            max-width: 320px;
-        }
+        .btn-massa-print { background-color: #d97706; max-width: 320px; }
         .btn-massa-print:hover { background-color: #b45309; }
 
         #folha-a4-impressao, .pagina-a4-massa {
@@ -290,16 +270,9 @@
             margin: 0 auto;
             border: 1px solid #94a3b8;
             overflow: hidden;
-            
             width: 210mm;
             height: 297mm;
             padding: 8mm 10mm;
-        }
-
-        .pdf-strict-mode {
-            width: 794px !important;
-            height: 1123px !important;
-            padding: 30px 40px !important;
         }
 
         .via-block {
@@ -341,23 +314,10 @@
         
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
         .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 12px; text-transform: uppercase;}
-        .data-table td { 
-            border: 1px solid black; 
-            padding: 5px; 
-            font-size: 12px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-        }
+        .data-table td { border: 1px solid black; padding: 5px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .footer-sign { width: 100%; border-collapse: collapse; margin-top: auto; table-layout: fixed; }
-        .footer-sign td { 
-            border: 1px solid black; 
-            padding: 12px 8px; 
-            font-size: 12px; 
-            vertical-align: middle; 
-            box-sizing: border-box;
-        }
+        .footer-sign td { border: 1px solid black; padding: 12px 8px; font-size: 12px; vertical-align: middle; box-sizing: border-box; }
         .footer-sign td:first-child { width: 75%; }
         .footer-sign td:last-child { width: 25%; }
         
@@ -378,36 +338,73 @@
         .carimbo-title { font-size: 11px; font-weight: bold; color: #003366; text-transform: uppercase; margin-bottom: 2px;}
         .carimbo-data { font-size: 12px; font-family: monospace; font-weight: bold; color: #1e293b; }
 
+        .system-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
         @media print {
-            body * { visibility: hidden; }
-            #folha-a4-impressao, #folha-a4-impressao *,
-            .area-impressao-massa, .area-impressao-massa * { 
-                visibility: visible; 
+            @page { size: A4; margin: 0; }
+            
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
             }
+
+            body > *:not(#preview-container):not(.area-impressao-massa) {
+                display: none !important;
+            }
+
+            #preview-container {
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            #preview-container > *:not(#folha-a4-impressao) {
+                display: none !important;
+            }
+
             #folha-a4-impressao {
-                position: absolute;
-                left: 0;
-                top: 0;
                 border: none !important;
                 padding: 8mm 10mm !important;
                 margin: 0 !important;
+                box-shadow: none !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                overflow: hidden !important;
+                page-break-after: avoid;
+                break-after: avoid;
             }
+
             .area-impressao-massa {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 210mm;
+                width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
-            .pagina-a4-massa {
+
+            .area-impressao-massa > .pagina-a4-massa {
                 border: none !important;
                 padding: 8mm 10mm !important;
                 margin: 0 !important;
+                box-shadow: none !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                overflow: hidden !important;
                 page-break-after: always;
                 break-after: page;
             }
-            .pagina-a4-massa:last-child {
+
+            .area-impressao-massa > .pagina-a4-massa:last-child {
                 page-break-after: avoid;
                 break-after: avoid;
             }
@@ -425,6 +422,15 @@
     <div id="tela-cadastro" class="screen active">
         <h2>📋 Cadastrar Relação de Remessa</h2>
         
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">📌</span>
+            <div style="font-size: 14px; color: #1e3a8a;">
+                A última remessa registrada no sistema foi a de número:
+                <span id="ultima-remessa-info" style="font-weight: 800; font-size: 18px; color: var(--primary); margin: 0 5px;">Carregando...</span>
+                <div style="font-size: 12px; color: #3b82f6; margin-top: 2px;">Deixe o campo "Número da Remessa" em branco para que o sistema gere a próxima automaticamente.</div>
+            </div>
+        </div>
+
         <div class="form-row">
             <div class="form-group">
                 <label for="numero_remessa">🔢 Número da Remessa:</label>
@@ -494,15 +500,18 @@
         <div id="paginacao-historico" class="pagination-container"></div>
     </div>
 
-    <div id="preview-container">
-        <h3 style="font-size:14px; text-transform:uppercase; margin-bottom:10px;">📄 Gerenciamento do Documento Gerado:</h3>
-        <div class="action-bar">
-            <button class="btn btn-pdf" onclick="baixarPDF()">📥 Baixar Arquivo PDF</button>
-            <button class="btn btn-print" onclick="imprimirPDF()">🖨️ Enviar para Impressora</button>
-        </div>
-        
-        <div id="folha-a4-impressao"></div>
+    <div class="system-footer">
+        Sistema de Remessas - IPEN / CNEN | Versão 1.1
     </div>
+</div>
+
+<div id="preview-container">
+    <h3 style="font-size:14px; text-transform:uppercase; margin-bottom:10px;">📄 Gerenciamento do Documento Gerado:</h3>
+    <div class="action-bar">
+        <button class="btn btn-pdf" onclick="baixarPDF()">📥 Baixar Arquivo PDF</button>
+        <button class="btn btn-print" onclick="imprimirPDF()">🖨️ Enviar para Impressora</button>
+    </div>
+    <div id="folha-a4-impressao"></div>
 </div>
 
 <script>
@@ -526,13 +535,34 @@
     let campoOrdenacaoAtual = 'dataRegistro'; 
     let direcaoOrdenacaoAtual = 'desc'; 
     let numeroRemessaAtualParaPDF = "";
-
     let paginaAtual = 1;
     const REGISTROS_POR_PAGINA = 15;
 
     function escaparHTML(str) {
         if (!str) return '';
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    function atualizarUltimaRemessaInfo() {
+        const infoElement = document.getElementById('ultima-remessa-info');
+        if (!infoElement) return;
+
+        if (remessasListaGlobal.length === 0) {
+            infoElement.innerText = 'Nenhuma';
+            return;
+        }
+
+        let ultimaRemessaDados = null;
+        let maxTimestamp = -1;
+
+        remessasListaGlobal.forEach(dados => {
+            if (dados._dataTimestamp > maxTimestamp) {
+                maxTimestamp = dados._dataTimestamp;
+                ultimaRemessaDados = dados;
+            }
+        });
+
+        infoElement.innerText = (ultimaRemessaDados && ultimaRemessaDados.numeroRemessa) ? ultimaRemessaDados.numeroRemessa : 'Nenhuma';
     }
 
     db.collection("remessas").orderBy("dataRegistro", "desc").onSnapshot(snapshot => {
@@ -544,6 +574,7 @@
             dadosHistoricoCache = {};
             remessasListaGlobal = [];
             renderizarControlesPagina(0, 0);
+            atualizarUltimaRemessaInfo();
             return;
         }
 
@@ -562,24 +593,20 @@
             let dataFormatada = '-';
             if (dados.dataRegistro) {
                 let dt;
-                if (typeof dados.dataRegistro.toDate === 'function') {
-                    dt = dados.dataRegistro.toDate();
-                } else if (dados.dataRegistro instanceof Date) {
-                    dt = dados.dataRegistro;
-                } else {
-                    dt = new Date(dados.dataRegistro);
-                }
+                if (typeof dados.dataRegistro.toDate === 'function') dt = dados.dataRegistro.toDate();
+                else if (dados.dataRegistro instanceof Date) dt = dados.dataRegistro;
+                else dt = new Date(dados.dataRegistro);
+                
                 dataTimestamp = dt.getTime();
                 dataFormatada = dt.toLocaleDateString('pt-BR');
             }
             dados._dataTimestamp = dataTimestamp;
             dados._dataFormatada = dataFormatada;
-
             remessasListaGlobal.push(dados);
         });
 
         filtrarEOrdenarHistorico();
-
+        atualizarUltimaRemessaInfo();
     }, error => {
         console.error("Erro no Listener: ", error);
     });
@@ -609,11 +636,7 @@
 
         for (let key in icones) {
             if (icones[key]) {
-                if (campoOrdenacaoAtual === key) {
-                    icones[key].innerText = direcaoOrdenacaoAtual === 'asc' ? ' ▲' : ' ▼';
-                } else {
-                    icones[key].innerText = '';
-                }
+                icones[key].innerText = (campoOrdenacaoAtual === key) ? (direcaoOrdenacaoAtual === 'asc' ? ' ▲' : ' ▼') : '';
             }
         }
     }
@@ -630,23 +653,17 @@
             const emi = (dados.emissor || '').toLowerCase();
             const dataStr = (dados._dataFormatada || '').toLowerCase();
             
-            return num.includes(termoPesquisa) || 
-                   dest.includes(termoPesquisa) || 
-                   emi.includes(termoPesquisa) || 
-                   dataStr.includes(termoPesquisa);
+            return num.includes(termoPesquisa) || dest.includes(termoPesquisa) || emi.includes(termoPesquisa) || dataStr.includes(termoPesquisa);
         });
 
         dadosFiltrados.sort((a, b) => {
             let valA, valB;
-
             if (campoOrdenacaoAtual === 'dataRegistro') {
-                valA = a._dataTimestamp;
-                valB = b._dataTimestamp;
+                valA = a._dataTimestamp; valB = b._dataTimestamp;
             } else {
                 valA = (a[campoOrdenacaoAtual] || '').toString().toLowerCase();
                 valB = (b[campoOrdenacaoAtual] || '').toString().toLowerCase();
             }
-
             if (valA < valB) return direcaoOrdenacaoAtual === 'asc' ? -1 : 1;
             if (valA > valB) return direcaoOrdenacaoAtual === 'asc' ? 1 : -1;
             return 0;
@@ -660,15 +677,10 @@
             renderizarControlesPagina(0, 0);
         } else {
             const totalPaginas = Math.ceil(dadosFiltrados.length / REGISTROS_POR_PAGINA);
-            
-            if (paginaAtual > totalPaginas) {
-                paginaAtual = Math.max(1, totalPaginas);
-            }
+            if (paginaAtual > totalPaginas) paginaAtual = Math.max(1, totalPaginas);
 
             const indiceInicial = (paginaAtual - 1) * REGISTROS_POR_PAGINA;
-            const indiceFinal = indiceInicial + REGISTROS_POR_PAGINA;
-            
-            dadosParaExibir = dadosFiltrados.slice(indiceInicial, indiceFinal);
+            dadosParaExibir = dadosFiltrados.slice(indiceInicial, indiceInicial + REGISTROS_POR_PAGINA);
             renderizarControlesPagina(totalPaginas, paginaAtual);
         }
 
@@ -701,12 +713,7 @@
 
     function renderizarControlesPagina(totalPaginas, paginaAtiva) {
         const container = document.getElementById('paginacao-historico');
-        if (!container) return;
-
-        if (totalPaginas <= 1) {
-            container.innerHTML = '';
-            return;
-        }
+        if (!container || totalPaginas <= 1) { if(container) container.innerHTML = ''; return; }
 
         container.innerHTML = `
             <button class="pagination-btn" onclick="mudarPagina(1)" ${paginaAtiva === 1 ? 'disabled' : ''}>«</button>
@@ -724,24 +731,17 @@
     }
 
     function alternarTodosCheckboxes(master) {
-        const checkboxes = document.querySelectorAll('.select-item-history');
-        checkboxes.forEach(cb => cb.checked = master.checked);
+        document.querySelectorAll('.select-item-history').forEach(cb => cb.checked = master.checked);
     }
 
     function gerarRelatorioPDF() {
         const checkboxes = document.querySelectorAll('.select-item-history:checked');
-        if (checkboxes.length === 0) {
-            alert('⚠️ Selecione pelo menos um registro para gerar o relatório!');
-            return;
-        }
+        if (checkboxes.length === 0) { alert('⚠️ Selecione pelo menos um registro para gerar o relatório!'); return; }
 
         let tabelaLinhasHTML = '';
-        
         checkboxes.forEach(cb => {
-            const id = cb.getAttribute('data-id');
-            const dados = dadosHistoricoCache[id];
+            const dados = dadosHistoricoCache[cb.getAttribute('data-id')];
             if (!dados) return;
-
             tabelaLinhasHTML += `
                 <tr style="border-bottom: 1px solid #cbd5e1;">
                     <td style="padding: 10px; font-weight: bold; word-wrap: break-word;">${escaparHTML(dados.numeroRemessa)}</td>
@@ -753,7 +753,6 @@
         });
 
         const dataHoje = new Date().toLocaleDateString('pt-BR');
-
         const conteudoRelatorioHTML = `
             <div style="padding: 30px; font-family: system-ui, -apple-system, sans-serif; color: #1e293b; background-color: #ffffff;">
                 <div style="border-bottom: 2px solid #003366; padding-bottom: 15px; margin-bottom: 25px;">
@@ -769,9 +768,7 @@
                             <th style="padding: 12px 10px; color: #003366; width: 22%; font-weight: bold;">Emitido Por</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        ${tabelaLinhasHTML}
-                    </tbody>
+                    <tbody>${tabelaLinhasHTML}</tbody>
                 </table>
                 <div style="margin-top: 40px; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-align: right; font-size: 12px; color: #64748b; font-weight: bold;">
                     Quantidade total de remessas listadas: ${checkboxes.length}
@@ -779,21 +776,12 @@
             </div>
         `;
 
-        const opcoes = {
-            margin:       10,
-            filename:     `relatorio_remessas_${new Date().toISOString().slice(0,10)}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 2, 
-                logging: false, 
-                useCORS: true,
-                scrollX: 0, 
-                scrollY: 0  
-            },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opcoes).from(conteudoRelatorioHTML).save().catch(err => {
+        html2pdf().set({
+            margin: 10, filename: `relatorio_remessas_${new Date().toISOString().slice(0,10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, logging: false, useCORS: true, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(conteudoRelatorioHTML).save().catch(err => {
             console.error("Erro ao gerar relatório:", err);
             alert("❌ Erro ao tentar processar o arquivo PDF.");
         });
@@ -801,97 +789,72 @@
 
     function imprimirSelecionados() {
         const checkboxes = document.querySelectorAll('.select-item-history:checked');
-        if (checkboxes.length === 0) {
-            alert('⚠️ Selecione pelo menos um registro para fazer a impressão!');
-            return;
-        }
+        if (checkboxes.length === 0) { alert('⚠️ Selecione pelo menos um registro para fazer a impressão!'); return; }
+
+        const previewContainer = document.getElementById('preview-container');
+        const displaySalvo = previewContainer.style.display;
+        previewContainer.style.display = 'none';
 
         const containerMassa = document.createElement('div');
         containerMassa.className = 'area-impressao-massa';
         
         checkboxes.forEach(cb => {
-            const id = cb.getAttribute('data-id');
-            const dados = dadosHistoricoCache[id];
+            const dados = dadosHistoricoCache[cb.getAttribute('data-id')];
             if (!dados) return;
 
             let dataObjeto = new Date();
             if (dados.dataRegistro) {
-                if (typeof dados.dataRegistro.toDate === 'function') {
-                    dataObjeto = dados.dataRegistro.toDate();
-                } else {
-                    dataObjeto = new Date(dados.dataRegistro);
-                }
+                dataObjeto = typeof dados.dataRegistro.toDate === 'function' ? dados.dataRegistro.toDate() : new Date(dados.dataRegistro);
             }
             const horaCarimbo = dados.horaCarimbo || dataObjeto.toLocaleTimeString('pt-BR');
 
             let linesTabelaHTML = "";
             dados.itens.forEach(i => {
-                linesTabelaHTML += `
-                    <tr>
-                        <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
-                        <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
-                        <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.volume)}</td>
-                    </tr>
-                `;
+                linesTabelaHTML += `<tr>
+                    <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
+                    <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
+                    <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.volume)}</td>
+                </tr>`;
             });
 
             const anoAtual = new Date(dataObjeto).getFullYear();
-
             const montarVia = (tituloVia) => `
                 <div class="via-block">
-                    <table class="header-table">
-                        <tr>
-                            <td style="width: 14%; text-align: center; padding: 4px; border-right: none;">
-                                <img src="logo_ipen.png" style="max-height: 42px; max-width: 100%; object-fit: contain; display: block; margin: 0 auto;">
-                            </td>
-                            <td style="width: 51%; border-left: none;" class="title-main">
-                                COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
-                                INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
-                                <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
-                            </td>
-                            <td style="width: 35%; text-align: center; padding: 4px;">
-                                <div style="font-weight: bold; font-size: 9px; text-transform: uppercase;">NÚMERO:</div>
-                                <div style="font-size: 13px; font-weight: bold; color: #dc2626;">${escaparHTML(dados.numeroRemessa)}</div>
-                                <div class="carimbo-container">
-                                    <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
-                                    <div class="carimbo-data">${escaparHTML(dados._dataFormatada)} - ${escaparHTML(horaCarimbo)}</div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
+                    <table class="header-table"><tr>
+                        <td style="width: 14%; text-align: center; padding: 4px; border-right: none;">
+                            <img src="logo_ipen.png" style="max-height: 42px; max-width: 100%; object-fit: contain; display: block; margin: 0 auto;">
+                        </td>
+                        <td style="width: 51%; border-left: none;" class="title-main">
+                            COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
+                            INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
+                            <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
+                        </td>
+                        <td style="width: 35%; text-align: center; padding: 4px;">
+                            <div style="font-weight: bold; font-size: 9px; text-transform: uppercase;">NÚMERO:</div>
+                            <div style="font-size: 13px; font-weight: bold; color: #dc2626;">${escaparHTML(dados.numeroRemessa)}</div>
+                            <div class="carimbo-container">
+                                <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
+                                <div class="carimbo-data">${escaparHTML(dados._dataFormatada)} - ${escaparHTML(horaCarimbo)}</div>
+                            </div>
+                        </td>
+                    </tr></table>
                     <div class="title-doc">RELAÇÃO DE REMESSA</div>
-
-                    <table class="meta-grid">
-                        <tr>
-                            <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>DE:</strong> ${escaparHTML(dados.deSetor || "Setor de Protocolo")}</td>
-                            <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(dados._dataFormatada)}</td>
-                        </tr>
-                        <tr>
-                            <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>PARA:</strong> ${escaparHTML(dados.destinatario)}</td>
-                            <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>EMITIDO POR:</strong> ${escaparHTML(dados.emissor)}</td>
-                        </tr>
-                    </table>
-
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; width: 10%;">Item</th>
-                                <th style="width: 45%;">Remetente</th>
-                                <th style="width: 45%;">Referência do Volume</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${linesTabelaHTML}
-                        </tbody>
-                    </table>
-
-                    <table class="footer-sign">
-                        <tr>
-                            <td><strong>RECEBIDO POR:</strong></td>
-                            <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
-                        </tr>
-                    </table>
+                    <table class="meta-grid"><tr>
+                        <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>DE:</strong> ${escaparHTML(dados.deSetor || "Setor de Protocolo")}</td>
+                        <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(dados._dataFormatada)}</td>
+                    </tr><tr>
+                        <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>PARA:</strong> ${escaparHTML(dados.destinatario)}</td>
+                        <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>EMITIDO POR:</strong> ${escaparHTML(dados.emissor)}</td>
+                    </tr></table>
+                    <table class="data-table"><thead><tr>
+                        <th style="text-align: center; width: 10%;">Item</th>
+                        <th style="width: 45%;">Remetente</th>
+                        <th style="width: 45%;">Referência do Volume</th>
+                    </tr></thead><tbody>${linesTabelaHTML}</tbody></table>
+                    <table class="footer-sign"><tr>
+                        <td><strong>RECEBIDO POR:</strong></td>
+                        <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
+                    </tr></table>
                     <div class="via-label">${tituloVia}</div>
                 </div>
             `;
@@ -903,13 +866,13 @@
                 <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
                 ${montarVia('2ª via - Destinatário')}
             `;
-            
             containerMassa.appendChild(divPagina);
         });
 
         document.body.appendChild(containerMassa);
         window.print();
         document.body.removeChild(containerMassa);
+        previewContainer.style.display = displaySalvo;
     }
 
     function mudarTela(tela) {
@@ -945,9 +908,7 @@
                 container.appendChild(div);
             }
         } else if (blocksAtuais.length > qtd) {
-            for (let i = blocksAtuais.length; i > qtd; i--) {
-                container.lastElementChild.remove();
-            }
+            for (let i = blocksAtuais.length; i > qtd; i--) container.lastElementChild.remove();
         }
     }
 
@@ -965,96 +926,57 @@
         const emissor = document.getElementById('emissor').value;
         const deSetor = "Setor de Protocolo";
         const destinatario = document.getElementById('destinatario').value.trim();
-        
         const inputsRemetentes = document.querySelectorAll('.input-remetente');
         const inputsVolumes = document.querySelectorAll('.input-volume');
 
-        if (!destinatario) {
-            alert('⚠️ Preencha o campo obrigatório: Destinatário Final!');
-            return;
-        }
+        if (!destinatario) { alert('⚠️ Preencha o campo obrigatório: Destinatário Final!'); return; }
 
         if (numeroRemessa) {
-            const regexOitoDigitos = /^\d{8}$/;
-            if (!regexOitoDigitos.test(numeroRemessa)) {
-                alert('⚠️ O número da remessa inserido manualmente deve conter exatamente 8 números.\n\nPor favor, confira o número informado ou deixe o campo em branco para que o sistema gere automaticamente o número da remessa sequencial.');
+            if (!/^\d{8}$/.test(numeroRemessa)) {
+                alert('⚠️ O número da remessa inserido manualmente deve conter exatamente 8 números.\n\nDeixe em branco para gerar automaticamente.');
                 return;
             }
-
             try {
-                const snapshotDuplicado = await db.collection("remessas")
-                    .where("numeroRemessa", "==", numeroRemessa)
-                    .limit(1)
-                    .get();
-
-                if (!snapshotDuplicado.empty) {
-                    alert(`⚠️ O número de registro "${numeroRemessa}" já existe no sistema!\n\nPor favor, insira um número que ainda não tenha sido usado ou deixe o campo totalmente em branco para o sistema gerar um número sequencial automático.`);
+                const snap = await db.collection("remessas").where("numeroRemessa", "==", numeroRemessa).limit(1).get();
+                if (!snap.empty) {
+                    alert(`⚠️ O número "${numeroRemessa}" já existe no sistema!\n\nInsira outro ou deixe em branco para sequencial automático.`);
                     return;
                 }
             } catch (err) {
-                console.error("Erro ao validar duplicidade:", err);
-                alert("❌ Erro operacional ao checar duplicidade de número no servidor.");
-                return;
+                console.error(err); alert("❌ Erro ao checar duplicidade."); return;
             }
         } else {
             try {
-                const snapshot = await db.collection("remessas")
-                    .where("numeroRemessa", ">=", "20260300")
-                    .where("numeroRemessa", "<=", "20269999")
-                    .orderBy("numeroRemessa", "desc")
-                    .limit(1)
-                    .get();
-
-                if (!snapshot.empty) {
-                    const ultimoNumero = parseInt(snapshot.docs[0].data().numeroRemessa, 10);
-                    numeroRemessa = String(ultimoNumero + 1);
-                } else {
-                    numeroRemessa = "20260300";
-                }
+                const snap = await db.collection("remessas").where("numeroRemessa", ">=", "20260300").where("numeroRemessa", "<=", "20269999").orderBy("numeroRemessa", "desc").limit(1).get();
+                numeroRemessa = !snap.empty ? String(parseInt(snap.docs[0].data().numeroRemessa, 10) + 1) : "20260300";
             } catch (err) {
-                console.error(err);
-                alert("❌ Erro ao gerar número sequencial.");
-                return;
+                console.error(err); alert("❌ Erro ao gerar número sequencial."); return;
             }
         }
 
         let itensDados = [];
         let camposIncompletos = false;
-
         for (let i = 0; i < inputsRemetentes.length; i++) {
             const nome = inputsRemetentes[i].value.trim();
             const vol = inputsVolumes[i].value.trim();
             const num = String(inputsRemetentes[i].getAttribute('data-item')).padStart(2, '0');
-
             if (!nome || !vol) { camposIncompletos = true; break; }
-
             itensDados.push({ item: num, remetente: nome, volume: vol });
         }
 
-        if (camposIncompletos || itensDados.length === 0) {
-            alert('⚠️ Por favor preencha todos os campos.');
-            return;
-        }
+        if (camposIncompletos || itensDados.length === 0) { alert('⚠️ Por favor preencha todos os campos.'); return; }
 
         const agora = new Date();
-        const dataAtualIso = agora.toISOString();
-        const horaCarimbo = agora.toLocaleTimeString('pt-BR');
-
         const payload = {
-            numeroRemessa,
-            emissor,
-            deSetor,
-            destinatario,
-            qtdItens: itensDados.length,
-            itens: itensDados,
-            dataRegistro: dataAtualIso,
-            horaCarimbo: horaCarimbo
+            numeroRemessa, emissor, deSetor, destinatario,
+            qtdItens: itensDados.length, itens: itensDados,
+            dataRegistro: agora.toISOString(), horaCarimbo: agora.toLocaleTimeString('pt-BR')
         };
 
         try {
             await db.collection("remessas").add(payload);
             numeroRemessaAtualParaPDF = numeroRemessa;
-            renderizarLayoutA4(numeroRemessa, deSetor, destinatario, emissor, agora.toLocaleDateString('pt-BR'), horaCarimbo, itensDados);
+            renderizarLayoutA4(numeroRemessa, deSetor, destinatario, emissor, agora.toLocaleDateString('pt-BR'), agora.toLocaleTimeString('pt-BR'), itensDados);
             alert(`🚀 Sucesso! Remessa Nº ${numeroRemessa} gravada.`);
             limparFormularioCadastro();
         } catch (error) {
@@ -1063,16 +985,14 @@
     }
 
     async function deletarRegistro(id, numero) {
-        const mensagemConfirmacao = `⚠️ ATENÇÃO - EXCLUSÃO DE REGISTRO\n\nVocê tem certeza absoluta que deseja excluir permanentemente a Remessa Nº ${numero}?\n\nEsta ação é irreversível. O documento e todo o seu histórico de volumes vinculados serão apagados definitivamente do servidor do Firebase.`;
-        
-        if (confirm(mensagemConfirmacao)) {
+        if (confirm(`⚠️ ATENÇÃO\n\nDeseja excluir permanentemente a Remessa Nº ${numero}?\n\nAção irreversível.`)) {
             try {
                 await db.collection("remessas").doc(id).delete();
                 document.getElementById('preview-container').style.display = 'none';
                 alert(`✅ Registro Nº ${numero} removido com sucesso.`);
             } catch (error) {
-                console.error("Erro durante exclusão: ", error);
-                alert(`❌ Falha operacional ao tentar excluir o registro Nº ${numero}. Verifique sua conexão ou permissões no banco.`);
+                console.error(error);
+                alert(`❌ Falha ao excluir o registro Nº ${numero}.`);
             }
         }
     }
@@ -1083,134 +1003,162 @@
         
         let dataObjeto = new Date();
         if (dados.dataRegistro) {
-            if (typeof dados.dataRegistro.toDate === 'function') {
-                dataObjeto = dados.dataRegistro.toDate();
-            } else {
-                dataObjeto = new Date(dados.dataRegistro);
-            }
+            dataObjeto = typeof dados.dataRegistro.toDate === 'function' ? dados.dataRegistro.toDate() : new Date(dados.dataRegistro);
         }
 
-        const horaCarimbo = dados.horaCarimbo || dataObjeto.toLocaleTimeString('pt-BR');
-
         numeroRemessaAtualParaPDF = dados.numeroRemessa;
-        renderizarLayoutA4(dados.numeroRemessa, dados.deSetor, dados.destinatario, dados.emissor, dados._dataFormatada, horaCarimbo, dados.itens);
+        renderizarLayoutA4(dados.numeroRemessa, dados.deSetor, dados.destinatario, dados.emissor, dados._dataFormatada, dados.horaCarimbo || dataObjeto.toLocaleTimeString('pt-BR'), dados.itens);
         document.getElementById('preview-container').scrollIntoView({ behavior: 'smooth' });
     }
 
     function renderizarLayoutA4(numero, de, para, por, data, hora, itens) {
         let linesTabelaHTML = "";
         itens.forEach(i => {
-            linesTabelaHTML += `
-                <tr>
-                    <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
-                    <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
-                    <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.volume)}</td>
-                </tr>
-            `;
+            linesTabelaHTML += `<tr>
+                <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
+                <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
+                <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.volume)}</td>
+            </tr>`;
         });
 
         const anoAtual = new Date().getFullYear();
-
         const montarVia = (tituloVia) => `
             <div class="via-block">
-                <table class="header-table">
-                    <tr>
-                        <td style="width: 14%; text-align: center; padding: 4px; border-right: none;">
-                            <img src="logo_ipen.png" style="max-height: 42px; max-width: 100%; object-fit: contain; display: block; margin: 0 auto;">
-                        </td>
-                        <td style="width: 51%; border-left: none;" class="title-main">
-                            COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
-                            INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
-                            <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
-                        </td>
-                        <td style="width: 35%; text-align: center; padding: 4px;">
-                            <div style="font-weight: bold; font-size: 9px; text-transform: uppercase;">NÚMERO:</div>
-                            <div style="font-size: 13px; font-weight: bold; color: #dc2626;">${escaparHTML(numero)}</div>
-                            <div class="carimbo-container">
-                                <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
-                                <div class="carimbo-data">${escaparHTML(data)} - ${escaparHTML(hora)}</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
+                <table class="header-table"><tr>
+                    <td style="width: 14%; text-align: center; padding: 4px; border-right: none;">
+                        <img src="logo_ipen.png" style="max-height: 42px; max-width: 100%; object-fit: contain; display: block; margin: 0 auto;">
+                    </td>
+                    <td style="width: 51%; border-left: none;" class="title-main">
+                        COMISSÃO NACIONAL DE ENERGIA NUCLEAR - SÃO PAULO<br>
+                        INSTITUTO DE PESQUISAS ENERGÉTICAS E NUCLEARES - IPEN<br>
+                        <span class="title-subtext">SETOR DE PROTOCOLO - RAMAIS: 8180 E 5551</span>
+                    </td>
+                    <td style="width: 35%; text-align: center; padding: 4px;">
+                        <div style="font-weight: bold; font-size: 9px; text-transform: uppercase;">NÚMERO:</div>
+                        <div style="font-size: 13px; font-weight: bold; color: #dc2626;">${escaparHTML(numero)}</div>
+                        <div class="carimbo-container">
+                            <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
+                            <div class="carimbo-data">${escaparHTML(data)} - ${escaparHTML(hora)}</div>
+                        </div>
+                    </td>
+                </tr></table>
                 <div class="title-doc">RELAÇÃO DE REMESSA</div>
-
-                <table class="meta-grid">
-                    <tr>
-                        <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>DE:</strong> ${escaparHTML(de)}</td>
-                        <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(data)}</td>
-                    </tr>
-                    <tr>
-                        <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>PARA:</strong> ${escaparHTML(para)}</td>
-                        <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>EMITIDO POR:</strong> ${escaparHTML(por)}</td>
-                    </tr>
-                </table>
-
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="text-align: center; width: 10%;">Item</th>
-                            <th style="width: 45%;">Remetente</th>
-                            <th style="width: 45%;">Referência do Volume</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${linesTabelaHTML}
-                    </tbody>
-                </table>
-
-                <table class="footer-sign">
-                    <tr>
-                        <td><strong>RECEBIDO POR:</strong></td>
-                        <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
-                    </tr>
-                </table>
+                <table class="meta-grid"><tr>
+                    <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>DE:</strong> ${escaparHTML(de)}</td>
+                    <td><strong>DATA DE EMISSÃO:</strong> ${escaparHTML(data)}</td>
+                </tr><tr>
+                    <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>PARA:</strong> ${escaparHTML(para)}</td>
+                    <td style="max-width: 0; text-overflow: ellipsis; overflow: hidden;"><strong>EMITIDO POR:</strong> ${escaparHTML(por)}</td>
+                </tr></table>
+                <table class="data-table"><thead><tr>
+                    <th style="text-align: center; width: 10%;">Item</th>
+                    <th style="width: 45%;">Remetente</th>
+                    <th style="width: 45%;">Referência do Volume</th>
+                </tr></thead><tbody>${linesTabelaHTML}</tbody></table>
+                <table class="footer-sign"><tr>
+                    <td><strong>RECEBIDO POR:</strong></td>
+                    <td><strong>DATA:</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / ${anoAtual}</td>
+                </tr></table>
                 <div class="via-label">${tituloVia}</div>
             </div>
         `;
 
-        const alvoA4 = document.getElementById('folha-a4-impressao');
-        alvoA4.innerHTML = `
+        document.getElementById('folha-a4-impressao').innerHTML = `
             ${montarVia('1ª via - Emitente (Setor de Protocolo)')}
             <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
             ${montarVia('2ª via - Destinatário')}
         `;
-
         document.getElementById('preview-container').style.display = 'block';
     }
 
+    /* ====================================================================
+       FUNÇÃO DE DOWNLOAD PDF REESCRITA DO ZERO (ISOLAMENTO DE DOM)
+       Evita o bug do html2canvas com display:flex e height fixo em milimetros.
+    ==================================================================== */
     function baixarPDF() {
-        const elemento = document.getElementById('folha-a4-impressao');
-        const nomeRef = (numeroRemessaAtualParaPDF || 'remessa').replace(/\//g, '-');
-        
-        elemento.classList.add('pdf-strict-mode');
+        const folha = document.getElementById('folha-a4-impressao');
+        if (!folha || folha.innerHTML.trim() === '') {
+            alert('⚠️ Nenhum documento carregado para gerar o PDF!');
+            return;
+        }
+
+        const nomeArquivo = numeroRemessaAtualParaPDF 
+            ? `remessa_${numeroRemessaAtualParaPDF}.pdf` 
+            : `remessa_${new Date().toISOString().slice(0,10)}.pdf`;
+
+        // 1. Cria um contêiner temporário INVISÍVEL fora da tela
+        // Usamos pixels estritos (794x1123) pois o html2canvas calcula melhor assim.
+        const tempContainer = document.createElement('div');
+        tempContainer.id = 'temp-pdf-render';
+        tempContainer.style.cssText = `
+            position: absolute; 
+            left: -9999px; 
+            top: 0; 
+            width: 794px; 
+            height: 1123px; 
+            background: white; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            box-sizing: border-box; 
+            padding: 30px 40px; 
+            overflow: hidden;
+        `;
+
+        // 2. Clona apenas o HTML interno para o nosso contêiner isolado
+        tempContainer.innerHTML = folha.innerHTML;
+        document.body.appendChild(tempContainer);
 
         const opcoes = {
-            margin:       0, 
-            filename:     `remessa_${nomeRef}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
+            margin: 0,
+            filename: nomeArquivo,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
                 scale: 2, 
                 logging: false, 
-                useCORS: true,
+                useCORS: true, 
+                allowTaint: true, // Permite ler imagens locais sem bloquear o canvas
                 width: 794,
-                height: 1123
+                height: 1123,
+                windowWidth: 794
             },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: ['avoid-all'] } 
+            jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait', hotfixes: ['px_scaling'] }
         };
 
-        html2pdf().set(opcoes).from(elemento).save().then(() => {
-            elemento.classList.remove('pdf-strict-mode');
-        }).catch((err) => {
-            elemento.classList.remove('pdf-strict-mode');
-            console.error(err);
+        // 3. Gera o PDF a partir do clone isolado
+        html2pdf().set(opcoes).from(tempContainer).save().then(() => {
+            // 4. Sucesso! Remove o lixo da memória
+            document.body.removeChild(tempContainer);
+        }).catch(err => {
+            console.warn("Falha na 1ª tentativa de PDF (Possível bloqueio de Imagem/CORS). Tentando sem a logomarca...", err);
+            
+            // 5. FALLBACK: Se falhou por causa da imagem (comum em arquivo aberto localmente), 
+            // remove a imagem e tenta gerar novamente.
+            const imagens = tempContainer.querySelectorAll('img');
+            imagens.forEach(img => img.remove());
+
+            html2pdf().set(opcoes).from(tempContainer).save().then(() => {
+                document.body.removeChild(tempContainer);
+                alert("⚠️ O PDF foi gerado com sucesso, mas sem a logomarca IPEN.\n\nIsso acontece por uma restrição de segurança do navegador (CORS) ao abrir o arquivo HTML diretamente pelo Windows (Ex: C:/pasta/...).\n\nPara ter a logo no PDF, acesse o sistema via um servidor web (ex: hospedagem ou VS Code Live Server).");
+            }).catch(err2 => {
+                document.body.removeChild(tempContainer);
+                console.error("Falha crítica:", err2);
+                alert("❌ Erro crítico ao processar o PDF.\n\nSugestão: Use o botão 'Enviar para Impressora' e no diálogo que abrir, escolha 'Salvar como PDF'.");
+            });
         });
     }
 
     function imprimirPDF() {
-        window.print();
+        const previewContainer = document.getElementById('preview-container');
+        const folhaImpressao = document.getElementById('folha-a4-impressao');
+        
+        if (!folhaImpressao || folhaImpressao.innerHTML.trim() === '') {
+            alert('⚠️ Nenhum documento carregado para impressão!');
+            return;
+        }
+        
+        previewContainer.style.display = 'block';
+        setTimeout(() => { window.print(); }, 200);
     }
 
     gerarCamposRemetentes();

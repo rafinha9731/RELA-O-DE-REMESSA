@@ -315,12 +315,12 @@
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
         .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 12px; text-transform: uppercase;}
         .data-table td { 
-    border: 1px solid black; 
-    padding: 5px; 
-    font-size: 12px; 
-    word-wrap: break-word; 
-    word-break: break-word; 
-}
+            border: 1px solid black; 
+            padding: 5px; 
+            font-size: 12px; 
+            word-wrap: break-word; 
+            word-break: break-word; 
+        }
         
         .footer-sign { width: 100%; border-collapse: collapse; margin-top: auto; table-layout: fixed; }
         .footer-sign td { border: 1px solid black; padding: 12px 8px; font-size: 12px; vertical-align: middle; box-sizing: border-box; }
@@ -473,7 +473,10 @@
     </div>
 
     <div id="tela-historico" class="screen">
-        <h2>📋 Histórico de Remessas Salvas</h2>
+        <h2 style="display: flex; align-items: center; gap: 10px;">
+            📋 Histórico de Remessas Salvas
+            <span id="contador-remessas" style="background-color: var(--primary); color: white; padding: 2px 10px; border-radius: 12px; font-size: 14px; font-weight: bold;">0</span>
+        </h2>
         
         <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;">
             <button class="btn btn-relatorio" onclick="gerarRelatorioPDF()">📄 Gerar Relatório PDF dos Selecionados</button>
@@ -573,12 +576,17 @@
 
     db.collection("remessas").orderBy("dataRegistro", "desc").onSnapshot(snapshot => {
         const tabela = document.getElementById('lista-historico');
+        const contador = document.getElementById('contador-remessas');
+
         if(!tabela) return;
 
         if(snapshot.empty) {
             tabela.innerHTML = `<tr><td colspan="6" style="text-align:center;">Nenhuma remessa encontrada.</td></tr>`;
             dadosHistoricoCache = {};
             remessasListaGlobal = [];
+            
+            if(contador) contador.innerText = '0';
+            
             renderizarControlesPagina(0, 0);
             atualizarUltimaRemessaInfo();
             return;
@@ -610,6 +618,8 @@
             dados._dataFormatada = dataFormatada;
             remessasListaGlobal.push(dados);
         });
+
+        if(contador) contador.innerText = remessasListaGlobal.length;
 
         filtrarEOrdenarHistorico();
         atualizarUltimaRemessaInfo();
@@ -1077,10 +1087,6 @@
         document.getElementById('preview-container').style.display = 'block';
     }
 
-    /* ====================================================================
-       FUNÇÃO DE DOWNLOAD PDF REESCRITA DO ZERO (ISOLAMENTO DE DOM)
-       Evita o bug do html2canvas com display:flex e height fixo em milimetros.
-    ==================================================================== */
     function baixarPDF() {
         const folha = document.getElementById('folha-a4-impressao');
         if (!folha || folha.innerHTML.trim() === '') {
@@ -1092,8 +1098,6 @@
             ? `remessa_${numeroRemessaAtualParaPDF}.pdf` 
             : `remessa_${new Date().toISOString().slice(0,10)}.pdf`;
 
-        // 1. Cria um contêiner temporário INVISÍVEL fora da tela
-        // Usamos pixels estritos (794x1123) pois o html2canvas calcula melhor assim.
         const tempContainer = document.createElement('div');
         tempContainer.id = 'temp-pdf-render';
         tempContainer.style.cssText = `
@@ -1111,7 +1115,6 @@
             overflow: hidden;
         `;
 
-        // 2. Clona apenas o HTML interno para o nosso contêiner isolado
         tempContainer.innerHTML = folha.innerHTML;
         document.body.appendChild(tempContainer);
 
@@ -1123,7 +1126,7 @@
                 scale: 2, 
                 logging: false, 
                 useCORS: true, 
-                allowTaint: true, // Permite ler imagens locais sem bloquear o canvas
+                allowTaint: true, 
                 width: 794,
                 height: 1123,
                 windowWidth: 794
@@ -1131,15 +1134,11 @@
             jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait', hotfixes: ['px_scaling'] }
         };
 
-        // 3. Gera o PDF a partir do clone isolado
         html2pdf().set(opcoes).from(tempContainer).save().then(() => {
-            // 4. Sucesso! Remove o lixo da memória
             document.body.removeChild(tempContainer);
         }).catch(err => {
             console.warn("Falha na 1ª tentativa de PDF (Possível bloqueio de Imagem/CORS). Tentando sem a logomarca...", err);
             
-            // 5. FALLBACK: Se falhou por causa da imagem (comum em arquivo aberto localmente), 
-            // remove a imagem e tenta gerar novamente.
             const imagens = tempContainer.querySelectorAll('img');
             imagens.forEach(img => img.remove());
 

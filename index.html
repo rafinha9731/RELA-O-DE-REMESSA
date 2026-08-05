@@ -314,7 +314,13 @@
         
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
         .data-table th { border: 1px solid black; background-color: #eaeaea; padding: 5px; font-weight: bold; text-align: left; font-size: 12px; text-transform: uppercase;}
-        .data-table td { border: 1px solid black; padding: 5px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .data-table td { 
+    border: 1px solid black; 
+    padding: 5px; 
+    font-size: 12px; 
+    word-wrap: break-word; 
+    word-break: break-word; 
+}
         
         .footer-sign { width: 100%; border-collapse: collapse; margin-top: auto; table-layout: fixed; }
         .footer-sign td { border: 1px solid black; padding: 12px 8px; font-size: 12px; vertical-align: middle; box-sizing: border-box; }
@@ -1015,10 +1021,10 @@
         let linesTabelaHTML = "";
         itens.forEach(i => {
             linesTabelaHTML += `<tr>
-                <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
-                <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.remetente)}</td>
-                <td style="width: 45%; max-width: 0; text-overflow: ellipsis; overflow: hidden;">${escaparHTML(i.volume)}</td>
-            </tr>`;
+            <td style="text-align: center; font-weight: bold; width: 10%;">${escaparHTML(i.item)}</td>
+            <td style="width: 45%; word-wrap: break-word; word-break: break-word;">${escaparHTML(i.remetente)}</td>
+            <td style="width: 45%; word-wrap: break-word; word-break: break-word;">${escaparHTML(i.volume)}</td>
+        </tr>`;
         });
 
         const anoAtual = new Date().getFullYear();

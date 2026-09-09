@@ -353,69 +353,154 @@
             color: #94a3b8;
             font-weight: 500;
         }
+/* ===== MANIFESTO DE MOVIMENTAÇÃO ===== */
+.man-item-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+.man-item-card h4 { margin: 0 0 10px; font-size: 13px; color: var(--primary); }
 
+.man-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.man-grid .span-2 { grid-column: span 2; }
+.man-grid .full { grid-column: 1 / -1; }
+
+.folha-manifesto-wrapper { overflow-x: auto; padding-bottom: 10px; }
+
+.folha-manifesto {
+    background: white;
+    color: black;
+    box-sizing: border-box;
+    width: 297mm;
+    min-height: 210mm;
+    padding: 8mm 9mm;
+    margin: 0 auto;
+    border: 1px solid #94a3b8;
+    display: flex;
+    flex-direction: column;
+}
+
+.man-titulo { text-align: center; font-weight: bold; font-size: 12px; text-transform: uppercase; padding: 2px; border: 1px solid black; border-bottom: none; }
+.man-subtitulo { text-align: center; font-weight: bold; font-style: italic; font-size: 10px; padding: 2px; border: 1px solid black; border-bottom: none; }
+
+.man-barra-info { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.man-barra-info td { border: 1px solid black; padding: 3px 6px; font-size: 10px; }
+
+.man-tabela { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.man-tabela th, .man-tabela td { border: 1px solid black; padding: 2px 3px; font-size: 9px; word-wrap: break-word; word-break: break-word; vertical-align: top; }
+.man-tabela th { background-color: #eaeaea; font-weight: bold; text-align: center; text-transform: uppercase; font-size: 7.5px; line-height: 1.2; word-break: normal; overflow-wrap: break-word; }
+.man-tabela td.c-item { text-align: center; font-weight: bold; }
+
+.man-texto-legal { margin-top: 8px; font-size: 7.5px; line-height: 1.35; text-align: justify; }
+.man-texto-legal p { margin: 0 0 4px; }
+.man-texto-legal b { display: inline; }
+.man-texto-legal ul { margin: 2px 0 4px 14px; padding: 0; }
+.man-texto-legal li { margin-bottom: 2px; }
+.area-impressao-massa .folha-manifesto { margin-bottom: 15px; }
+/* ===== Bloco de Assinaturas Manuais ===== */
+.man-assinaturas-secao { margin-top: 10px; border: 1px solid black; padding: 3px; font-size: 9.5px; font-weight: bold; text-align: center; text-transform: uppercase; background-color: #eaeaea; }
+.man-assinaturas-tabela { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.man-assinaturas-tabela th { border: 1px solid black; background-color: #eaeaea; padding: 3px; font-size: 8.5px; font-weight: bold; text-align: center; text-transform: uppercase; }
+.man-assinaturas-tabela td { border: 1px solid black; padding: 3px 4px; font-size: 9px; vertical-align: middle; }
+.man-assinaturas-tabela td.c-assinatura { height: 16mm; }
+.man-assinaturas-tabela td.c-data-linhas { text-align: center; font-family: monospace; letter-spacing: 1px; }
         @media print {
-            @page { size: A4; margin: 0; }
-            
-            html, body {
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-            }
+    @page { size: A4; margin: 0; }
+    
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
 
-            body > *:not(#preview-container):not(.area-impressao-massa) {
-                display: none !important;
-            }
+    body > *:not(#preview-container):not(.area-impressao-massa) {
+        display: none !important;
+    }
 
-            #preview-container {
-                border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: none !important;
-                max-width: 100% !important;
-                width: 100% !important;
-            }
+    #preview-container {
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
 
-            #preview-container > *:not(#folha-a4-impressao) {
-                display: none !important;
-            }
+    #preview-container > *:not(#folha-a4-impressao):not(#bloco-preview-manifesto) {
+        display: none !important;
+    }
 
-            #folha-a4-impressao {
-                border: none !important;
-                padding: 8mm 10mm !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                overflow: hidden !important;
-                page-break-after: avoid;
-                break-after: avoid;
-            }
+    #folha-a4-impressao {
+        border: none !important;
+        padding: 8mm 10mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        overflow: hidden !important;
+        page-break-after: avoid;
+        break-after: avoid;
+    }
 
-            .area-impressao-massa {
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
+    .area-impressao-massa {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-            .area-impressao-massa > .pagina-a4-massa {
-                border: none !important;
-                padding: 8mm 10mm !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                width: 210mm !important;
-                height: 297mm !important;
-                overflow: hidden !important;
-                page-break-after: always;
-                break-after: page;
-            }
+    .area-impressao-massa > .pagina-a4-massa {
+        border: none !important;
+        padding: 8mm 10mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        overflow: hidden !important;
+        page-break-after: always;
+        break-after: page;
+    }
 
-            .area-impressao-massa > .pagina-a4-massa:last-child {
-                page-break-after: avoid;
-                break-after: avoid;
-            }
-        }
+    .area-impressao-massa > .pagina-a4-massa:last-child {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+        /* Controle de impressão do Manifesto (paisagem) */
+    #bloco-preview-manifesto { display: none !important; }
+    body.modo-impressao-manifesto #bloco-preview-manifesto { display: block !important; padding: 0 !important; margin: 0 !important; }
+    body.modo-impressao-manifesto #bloco-preview-manifesto > *:not(.folha-manifesto-wrapper) { display: none !important; }
+    body.modo-impressao-manifesto #folha-a4-impressao { display: none !important; }
+    body.modo-impressao-manifesto .folha-manifesto-wrapper { overflow: visible !important; padding: 0 !important; margin: 0 !important; }
+    body.modo-impressao-manifesto .folha-manifesto { min-height: auto !important; height: auto !important; }
+    body.modo-impressao-manifesto #folha-manifesto-impressao {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 297mm !important;
+        overflow: visible !important;
+    }
+    .man-tabela thead, .man-assinaturas-tabela thead { display: table-header-group; }
+    .man-tabela tr, .man-assinaturas-tabela tr { page-break-inside: avoid; break-inside: avoid; }
+    .area-impressao-massa > .folha-manifesto {
+        border: none !important;
+        padding: 8mm 9mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        width: 297mm !important;
+        overflow: visible !important;
+        page-break-after: always;
+        break-after: page;
+    }
+    .area-impressao-massa > .folha-manifesto:last-child {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+    }
+}
     </style>
+<style id="estilo-orientacao-dinamica">@page { size: A4 portrait; margin: 0; }</style>
 </head>
 <body>
 
@@ -423,15 +508,54 @@
     <div class="tabs">
         <button id="tab-cadastro" class="tab-btn active" onclick="mudarTela('cadastro')">📝 Nova Remessa</button>
         <button id="tab-historico" class="tab-btn" onclick="mudarTela('historico')">📋 Histórico de Registros</button>
+<button id="tab-manifesto" class="tab-btn" onclick="mudarTela('manifesto')">📦 Manifesto de Movimentação</button>
+<button id="tab-manifestos-historico" class="tab-btn" onclick="mudarTela('manifestos-historico')">📚 Histórico de Manifestos</button>
+    </div>
+<div id="tela-manifestos-historico" class="screen">
+    <h2 style="display: flex; align-items: center; gap: 10px;">
+        📦 Histórico de Manifestos
+        <span id="contador-manifestos" style="background-color: var(--primary); color: white; padding: 2px 10px; border-radius: 12px; font-size: 14px; font-weight: bold;">0</span>
+    </h2>
+
+    <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: flex-end;">
+        <button class="btn btn-relatorio" onclick="gerarRelatorioManifestosPDF()">📄 Gerar Relatório PDF dos Selecionados</button>
+        <button class="btn btn-massa-print" onclick="imprimirManifestosSelecionados()">🖨️ Imprimir Manifestos Selecionados</button>
+            <button class="btn btn-print" onclick="imprimirManifestosAssinatura()">✍️ Imprimir Manifestos para Assinatura</button>
+</div>
+
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="pesquisa-manifestos" style="font-size: 14px;">🔍 Filtrar e Pesquisar Manifestos:</label>
+        <input type="text" id="pesquisa-manifestos" placeholder="Pesquise por data, emitente, protocolo SEI ou nome nos itens..." oninput="pesquisarManifestos()">
     </div>
 
+    <div style="overflow-x: auto;">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th style="width: 40px; text-align: center;"><input type="checkbox" id="select-all-manifestos" onclick="alternarTodosCheckboxesManifestos(this)"></th>
+<th class="sortable" onclick="alterarOrdenacaoManifesto('numeroManifesto')">Nº Manifesto <span id="icon-man-numeroManifesto" class="sort-icon"></span></th>
+                    <th class="sortable" onclick="alterarOrdenacaoManifesto('dataRegistro')">Data Registro <span id="icon-man-dataRegistro" class="sort-icon">▼</span></th>
+                    <th class="sortable" onclick="alterarOrdenacaoManifesto('dataGeracaoFormatada')">Data Geração <span id="icon-man-dataGeracaoFormatada" class="sort-icon"></span></th>
+                    <th class="sortable" onclick="alterarOrdenacaoManifesto('emitidoPor')">Emitido Por <span id="icon-man-emitidoPor" class="sort-icon"></span></th>
+                    <th class="sortable" onclick="alterarOrdenacaoManifesto('qtdItens')">Itens <span id="icon-man-qtdItens" class="sort-icon"></span></th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="lista-manifestos">
+                <tr><td colspan="7" style="text-align:center;">Buscando manifestos no servidor...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="paginacao-manifestos" class="pagination-container"></div>
+</div>
     <div id="tela-cadastro" class="screen active">
         <h2>📋 Cadastrar Relação de Remessa</h2>
         
         <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
             <span style="font-size: 24px;">📌</span>
             <div style="font-size: 14px; color: #1e3a8a;">
-                A última remessa registrada no sistema foi a de número:
+                O último número gerado na sequência (remessas + manifestos) foi:
                 <span id="ultima-remessa-info" style="font-weight: 800; font-size: 18px; color: var(--primary); margin: 0 5px;">Carregando...</span>
                 <div style="font-size: 12px; color: #3b82f6; margin-top: 2px;">Deixe o campo "Número da Remessa" em branco para que o sistema gere a próxima automaticamente.</div>
             </div>
@@ -508,19 +632,65 @@
 
         <div id="paginacao-historico" class="pagination-container"></div>
     </div>
+<div id="tela-manifesto" class="screen">
+    <h2>📦 Manifesto de Registro de Movimentação (Entrada e Saída)</h2>
 
+     <div class="form-row">
+        <div class="form-group">
+            <label for="man-numero-manifesto">🔢 Protocolo / Número do Registro:</label>
+            <input type="text" id="man-numero-manifesto" maxlength="8" placeholder="Nº inicial (em branco = automático)">
+        </div>
+        <div class="form-group">
+            <label>📅 Data de Geração do Manifesto:</label>
+            <input type="text" id="man-data-geracao" disabled>
+        </div>
+        <div class="form-group">
+            <label for="man-emitido-por">👤 Documento Emitido por:</label>
+            <select id="man-emitido-por">
+                <option value="Juliana">Juliana</option>
+                <option value="Rafael">Rafael</option>
+                <option value="Washington">Washington</option>
+            </select>
+        </div>
+        <div class="form-group" style="max-width: 180px;">
+            <label for="man-qtd-itens">🔢 Quantidade de Itens:</label>
+            <input type="number" id="man-qtd-itens" min="1" max="30" value="1" oninput="gerarCardsManifesto()">
+        </div>
+    </div>
+
+    <div class="items-box">
+        <h3 style="margin-top:0; font-size:14px; text-transform: uppercase; color: var(--primary);">Itens Movimentados</h3>
+        <div id="container-itens-manifesto"></div>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn" onclick="gerarManifestoDocumento()">🚀 Gerar Manifesto (A4 Paisagem)</button>
+        <button class="btn btn-print" style="max-width: 220px;" onclick="limparManifesto()">🧹 Limpar Formulário</button>
+    </div>
+</div>
     <div class="system-footer">
         Sistema de Remessas - IPEN / CNEN | Versão 1.1
     </div>
 </div>
 
 <div id="preview-container">
-    <h3 style="font-size:14px; text-transform:uppercase; margin-bottom:10px;">📄 Gerenciamento do Documento Gerado:</h3>
-    <div class="action-bar">
+    <h3 id="titulo-preview-remessa" style="font-size:14px; text-transform:uppercase; margin-bottom:10px;">📄 Gerenciamento do Documento Gerado:</h3>
+    <div class="action-bar" id="acoes-preview-remessa">
         <button class="btn btn-pdf" onclick="baixarPDF()">📥 Baixar Arquivo PDF</button>
         <button class="btn btn-print" onclick="imprimirPDF()">🖨️ Enviar para Impressora</button>
     </div>
     <div id="folha-a4-impressao"></div>
+<div id="bloco-preview-manifesto" style="display: none;">
+    <h3 style="font-size:14px; text-transform:uppercase; margin-bottom:10px;">📄 Gerenciamento do Manifesto Gerado:</h3>
+    <div class="action-bar">
+        <button class="btn btn-pdf" onclick="baixarPDFManifesto()">📥 Baixar Arquivo PDF</button>
+        <button class="btn btn-print" onclick="imprimirManifesto()">🖨️ Enviar para Impressora</button>
+            <button class="btn btn-relatorio" onclick="imprimirManifestoAtualAssinatura()">✍️ Imprimir para Assinatura</button>
+    </div>
+    <div class="folha-manifesto-wrapper">
+        <div id="folha-manifesto-impressao" class="folha-manifesto"></div>
+    </div>
+</div>
 </div>
 
 <script>
@@ -538,9 +708,61 @@
         firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
+/* ==================== IMPRESSÃO PARA ASSINATURA ==================== */
+
+    let manifestoAtualParaAssinatura = null;
+
+    function imprimirFolhasAssinatura(listaManifestos) {
+        const previewContainer = document.getElementById('preview-container');
+        const displaySalvo = previewContainer.style.display;
+        previewContainer.style.display = 'none';
+
+        const containerMassa = document.createElement('div');
+        containerMassa.className = 'area-impressao-massa';
+
+        listaManifestos.forEach(d => {
+            if (!d || !d.itens) return;
+            const folha = document.createElement('div');
+            folha.className = 'folha-manifesto';
+            folha.innerHTML = montarConteudoFolhaManifesto(d.dataGeracao, d.emitidoPor, d.itens, true);
+            containerMassa.appendChild(folha);
+        });
+
+        document.body.appendChild(containerMassa);
+        document.body.classList.add('modo-impressao-manifesto');
+        definirOrientacaoImpressao('landscape');
+        window.print();
+        document.body.removeChild(containerMassa);
+        document.body.classList.remove('modo-impressao-manifesto');
+        definirOrientacaoImpressao('portrait');
+        previewContainer.style.display = displaySalvo;
+    }
+
+    function imprimirManifestosAssinatura() {
+        const checkboxes = document.querySelectorAll('.select-item-manifestos:checked');
+        if (checkboxes.length === 0) { alert('⚠️ Selecione pelo menos um manifesto para a impressão para assinatura!'); return; }
+
+        const lista = [];
+        checkboxes.forEach(cb => {
+            const d = manifestosHistoricoCache[cb.getAttribute('data-id')];
+            if (d) lista.push({ dataGeracao: d.dataGeracaoFormatada, emitidoPor: d.emitidoPor, itens: d.itens });
+        });
+        if (lista.length === 0) { alert('⚠️ Nenhum manifesto válido selecionado!'); return; }
+        imprimirFolhasAssinatura(lista);
+    }
+
+    function imprimirManifestoAtualAssinatura() {
+        if (!manifestoAtualParaAssinatura) { alert('⚠️ Nenhum manifesto carregado! Gere ou abra um manifesto primeiro.'); return; }
+        imprimirFolhasAssinatura([manifestoAtualParaAssinatura]);
+    }
 
     let dadosHistoricoCache = {};
-    let remessasListaGlobal = []; 
+    let remessasListaGlobal = [];
+    let manifestosHistoricoCache = {};
+    let manifestosListaGlobal = [];
+    let campoOrdenacaoManifestoAtual = 'dataRegistro';
+    let direcaoOrdenacaoManifestoAtual = 'desc';
+    let paginaAtualManifestos = 1;
     let campoOrdenacaoAtual = 'dataRegistro'; 
     let direcaoOrdenacaoAtual = 'desc'; 
     let numeroRemessaAtualParaPDF = "";
@@ -552,26 +774,26 @@
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function atualizarUltimaRemessaInfo() {
+       function atualizarUltimaRemessaInfo() {
         const infoElement = document.getElementById('ultima-remessa-info');
         if (!infoElement) return;
 
-        if (remessasListaGlobal.length === 0) {
-            infoElement.innerText = 'Nenhuma';
-            return;
-        }
-
-        let ultimaRemessaDados = null;
-        let maxTimestamp = -1;
+        let maiorNumero = 0;
 
         remessasListaGlobal.forEach(dados => {
-            if (dados._dataTimestamp > maxTimestamp) {
-                maxTimestamp = dados._dataTimestamp;
-                ultimaRemessaDados = dados;
+            const n = parseInt(dados.numeroRemessa, 10);
+            if (!isNaN(n) && n > maiorNumero) maiorNumero = n;
+        });
+
+        manifestosListaGlobal.forEach(dados => {
+            const n = parseInt(dados.numeroManifesto, 10);
+            if (!isNaN(n)) {
+                const fimLote = n + (dados.qtdItens || 1) - 1;
+                if (fimLote > maiorNumero) maiorNumero = fimLote;
             }
         });
 
-        infoElement.innerText = (ultimaRemessaDados && ultimaRemessaDados.numeroRemessa) ? ultimaRemessaDados.numeroRemessa : 'Nenhuma';
+        infoElement.innerText = maiorNumero > 0 ? String(maiorNumero) : 'Nenhuma';
     }
 
     db.collection("remessas").orderBy("dataRegistro", "desc").onSnapshot(snapshot => {
@@ -891,14 +1113,28 @@
         previewContainer.style.display = displaySalvo;
     }
 
-    function mudarTela(tela) {
+       function mudarTela(tela) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('preview-container').style.display = 'none';
 
-        if(tela === 'cadastro') {
+        if (tela === 'cadastro') {
             document.getElementById('tela-cadastro').classList.add('active');
             document.getElementById('tab-cadastro').classList.add('active');
+        } else if (tela === 'manifesto') {
+            document.getElementById('tela-manifesto').classList.add('active');
+            document.getElementById('tab-manifesto').classList.add('active');
+            if (!document.getElementById('container-itens-manifesto').children.length) gerarCardsManifesto();
+            if (!document.getElementById('man-data-geracao').value) {
+                document.getElementById('man-data-geracao').value = new Date().toLocaleDateString('pt-BR');
+            }
+                        if (document.getElementById('folha-manifesto-impressao').innerHTML.trim()) {
+                alternarPreviewRemessa(false);
+            }
+        } else if (tela === 'manifestos-historico') {
+            document.getElementById('tela-manifestos-historico').classList.add('active');
+            document.getElementById('tab-manifestos-historico').classList.add('active');
+            filtrarEOrdenarManifestos();
         } else {
             document.getElementById('tela-historico').classList.add('active');
             document.getElementById('tab-historico').classList.add('active');
@@ -934,7 +1170,9 @@
         document.getElementById('destinatario').value = '';
         document.getElementById('qtd_itens').value = 1;
         document.getElementById('container-remetentes').innerHTML = '';
-        gerarCamposRemetentes();
+        
+
+    gerarCamposRemetentes();
     }
 
     async function salvarERegistrar() {
@@ -952,19 +1190,35 @@
                 alert('⚠️ O número da remessa inserido manualmente deve conter exatamente 8 números.\n\nDeixe em branco para gerar automaticamente.');
                 return;
             }
-            try {
+                        try {
                 const snap = await db.collection("remessas").where("numeroRemessa", "==", numeroRemessa).limit(1).get();
                 if (!snap.empty) {
                     alert(`⚠️ O número "${numeroRemessa}" já existe no sistema!\n\nInsira outro ou deixe em branco para sequencial automático.`);
+                    return;
+                }
+                const snapM = await db.collection("manifestos").where("numeroManifesto", "<=", numeroRemessa).get();
+                let conflitoMan = false;
+                snapM.forEach(doc => {
+                    const d = doc.data();
+                    if (!d.numeroManifesto || conflitoMan) return;
+                    const a = parseInt(d.numeroManifesto, 10);
+                    const z = a + (d.qtdItens || 1) - 1;
+                    if (parseInt(numeroRemessa, 10) >= a && parseInt(numeroRemessa, 10) <= z) conflitoMan = true;
+                });
+                if (conflitoMan) {
+                    alert(`⚠️ O número "${numeroRemessa}" já está em uso por um MANIFESTO!\n\nA numeração é compartilhada. Insira outro ou deixe em branco.`);
                     return;
                 }
             } catch (err) {
                 console.error(err); alert("❌ Erro ao checar duplicidade."); return;
             }
         } else {
-            try {
-                const snap = await db.collection("remessas").where("numeroRemessa", ">=", "20260300").where("numeroRemessa", "<=", "20269999").orderBy("numeroRemessa", "desc").limit(1).get();
-                numeroRemessa = !snap.empty ? String(parseInt(snap.docs[0].data().numeroRemessa, 10) + 1) : "20260300";
+                        try {
+                const anoCorrente = new Date().getFullYear();
+                const baseSequencial = `${anoCorrente}0300`;
+                const tetoSequencial = `${anoCorrente}9999`;
+                const snap = await db.collection("remessas").where("numeroRemessa", ">=", baseSequencial).where("numeroRemessa", "<=", tetoSequencial).orderBy("numeroRemessa", "desc").limit(1).get();
+                numeroRemessa = !snap.empty ? String(parseInt(snap.docs[0].data().numeroRemessa, 10) + 1) : baseSequencial;
             } catch (err) {
                 console.error(err); alert("❌ Erro ao gerar número sequencial."); return;
             }
@@ -1079,12 +1333,13 @@
             </div>
         `;
 
-        document.getElementById('folha-a4-impressao').innerHTML = `
+                document.getElementById('folha-a4-impressao').innerHTML = `
             ${montarVia('1ª via - Emitente (Setor de Protocolo)')}
             <div class="corte-linha"><span>✂️ LINHA DE CORTE (DESTACAR AQUI)</span></div>
             ${montarVia('2ª via - Destinatário')}
         `;
         document.getElementById('preview-container').style.display = 'block';
+        alternarPreviewRemessa(true);
     }
 
     function baixarPDF() {
@@ -1165,7 +1420,626 @@
         previewContainer.style.display = 'block';
         setTimeout(() => { window.print(); }, 200);
     }
+/* ==================== MANIFESTO DE MOVIMENTAÇÃO ==================== */
 
+const MAN_MODALIDADES = ['Entrega em Mãos','Sedex','Sedex 10','Sedex Hoje','Sedex 12','Carta Registrada','Motoboy/Transportadora','Retirada no Local'];
+const MAN_EMBALAGENS = ['Envelope','Caixa de Papelão','Pacote','Tubo'];
+const MAN_CLASSIFICACOES = ['Não Sigiloso','Sigiloso','Perecivel'];
+const MAN_STATUS = ['Integro','Pacote Avariado','Caixa Avariada'];
+
+function definirOrientacaoImpressao(orientacao) {
+    const el = document.getElementById('estilo-orientacao-dinamica');
+    if (el) el.textContent = `@page { size: A4 ${orientacao}; margin: 0; }`;
+}
+
+window.addEventListener('afterprint', () => {
+    document.body.classList.remove('modo-impressao-manifesto');
+    definirOrientacaoImpressao('portrait');
+});
+
+function formatarDataISO(iso) {
+    if (!iso) return '';
+    const p = iso.split('-');
+    return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
+}
+
+function gerarCardsManifesto() {
+    const inputQtd = document.getElementById('man-qtd-itens');
+    const qtd = Math.max(1, Math.min(30, parseInt(inputQtd.value, 10) || 1));
+    inputQtd.value = qtd;
+    const container = document.getElementById('container-itens-manifesto');
+    const cardsAtuais = container.querySelectorAll('.man-item-card');
+
+    if (cardsAtuais.length < qtd) {
+        for (let i = cardsAtuais.length + 1; i <= qtd; i++) container.appendChild(criarCardItemManifesto(i));
+    } else if (cardsAtuais.length > qtd) {
+        for (let i = cardsAtuais.length; i > qtd; i--) container.lastElementChild.remove();
+    }
+}
+
+function criarCardItemManifesto(num) {
+    const agora = new Date();
+    const dataHoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
+    const horaAgora = agora.toTimeString().slice(0, 5);
+    const opt = (arr) => arr.map(v => `<option value="${v}">${v}</option>`).join('');
+
+    const div = document.createElement('div');
+    div.className = 'man-item-card';
+    div.innerHTML = `
+        <h4>📦 Item ${String(num).padStart(2, '0')}</h4>
+        <div class="man-grid">
+            <div class="form-group"><label>Data de Entrada:</label><input type="date" class="man-campo" data-campo="dataEntrada" value="${dataHoje}"></div>
+            <div class="form-group"><label>Hora:</label><input type="time" class="man-campo" data-campo="hora" value="${horaAgora}"></div>
+            <div class="form-group"><label>Destinatário (Interno ou Externo):</label><input type="text" class="man-campo" data-campo="internoExterno" placeholder="Unidade/Servidor IPEN ou nome externo"></div>
+            <div class="form-group span-2"><label>Nome Completo ou Razão Social:</label><input type="text" class="man-campo" data-campo="nome" placeholder="Nome do Remetente"></div>
+            <div class="form-group"><label>Modalidade de Entrega:</label><select class="man-campo" data-campo="modalidade">${opt(MAN_MODALIDADES)}</select></div>
+            <div class="form-group"><label>Nº Registro Postal/Encomenda:</label><input type="text" class="man-campo" data-campo="registroPostal" placeholder="Ex: SS123456789BR"></div>
+            <div class="form-group"><label>Tipo de Objeto (Embalagem):</label><select class="man-campo" data-campo="embalagem">${opt(MAN_EMBALAGENS)}</select></div>
+            <div class="form-group"><label>Classificação:</label><select class="man-campo" data-campo="classificacao">${opt(MAN_CLASSIFICACOES)}</select></div>
+            <div class="form-group"><label>Status do Volume:</label><select class="man-campo" data-campo="status">${opt(MAN_STATUS)}</select></div>
+            <div class="form-group full"><label>Resumo do Conteúdo/Assunto:</label><select class="man-campo" data-campo="resumo"><option>Lacrado</option><option>Não Lacrado</option></select></div>
+            <div class="form-group full"><label>Observações:</label><input type="text" class="man-campo" data-campo="observacoes" placeholder="Campo livre (opcional)"></div>
+        </div>`;
+    return div;
+}
+
+function coletarItensManifesto() {
+    const itens = [];
+    let itemIncompleto = null;
+    document.querySelectorAll('#container-itens-manifesto .man-item-card').forEach((card, idx) => {
+        const d = { item: String(idx + 1).padStart(2, '0') };
+        card.querySelectorAll('.man-campo').forEach(inp => d[inp.dataset.campo] = inp.value.trim());
+                if (!d.nome && itemIncompleto === null) itemIncompleto = idx + 1;
+        itens.push(d);
+    });
+    return { itens, itemIncompleto };
+}
+
+function limparManifesto() {
+    if (!confirm('Limpar todos os campos do Manifesto?')) return;
+    document.getElementById('man-qtd-itens').value = 1;
+    document.getElementById('container-itens-manifesto').innerHTML = '';
+    document.getElementById('folha-manifesto-impressao').innerHTML = '';
+    document.getElementById('bloco-preview-manifesto').style.display = 'none';
+    gerarCardsManifesto();
+}
+        async function obterProximoNumeroCompartilhado() {
+        const anoCorrente = new Date().getFullYear();
+        const baseSequencial = `${anoCorrente}0300`;
+        const tetoSequencial = `${anoCorrente}9999`;
+        let maiorEncontrado = 0;
+
+        const snapRemessas = await db.collection("remessas")
+            .where("numeroRemessa", ">=", baseSequencial)
+            .where("numeroRemessa", "<=", tetoSequencial)
+            .orderBy("numeroRemessa", "desc").limit(1).get();
+        if (!snapRemessas.empty) maiorEncontrado = parseInt(snapRemessas.docs[0].data().numeroRemessa, 10);
+
+        const snapManifestos = await db.collection("manifestos")
+            .where("numeroManifesto", ">=", baseSequencial)
+            .where("numeroManifesto", "<=", tetoSequencial)
+            .get();
+        snapManifestos.forEach(doc => {
+            const d = doc.data();
+            if (!d.numeroManifesto) return;
+            const fimLote = parseInt(d.numeroManifesto, 10) + (d.qtdItens || 1) - 1;
+            if (fimLote > maiorEncontrado) maiorEncontrado = fimLote;
+        });
+
+        return maiorEncontrado > 0 ? String(maiorEncontrado + 1) : baseSequencial;
+    }
+       async function gerarManifestoDocumento() {
+        const emitidoPor = document.getElementById('man-emitido-por').value;
+        let numeroManifesto = document.getElementById('man-numero-manifesto').value.trim();
+        const dataGeracao = document.getElementById('man-data-geracao').value || new Date().toLocaleDateString('pt-BR');
+        const { itens, itemIncompleto } = coletarItensManifesto();
+
+        if (itemIncompleto) {
+            alert(`⚠️ O Item ${String(itemIncompleto).padStart(2, '0')} está incompleto.\n\nCampo obrigatório: "Nome Completo ou Razão Social".`);
+            return;
+        }
+
+        const qtd = itens.length;
+
+        if (numeroManifesto) {
+            if (!/^\d{8}$/.test(numeroManifesto)) {
+                alert('⚠️ O número inserido manualmente deve conter exatamente 8 números.\n\nDeixe em branco para gerar automaticamente.');
+                return;
+            }
+            const inicio = parseInt(numeroManifesto, 10);
+            const fim = inicio + qtd - 1;
+            const anoCorrente = new Date().getFullYear();
+
+            if (fim > parseInt(`${anoCorrente}9999`, 10)) {
+                alert(`⚠️ A faixa de números (${numeroManifesto} até ${fim}) excede o limite do ano ${anoCorrente}.\n\nEscolha um número inicial menor.`);
+                return;
+            }
+            try {
+                const snapR = await db.collection("remessas").where("numeroRemessa", ">=", String(inicio)).where("numeroRemessa", "<=", String(fim)).limit(1).get();
+                if (!snapR.empty) {
+                    alert(`⚠️ A faixa "${inicio} a ${fim}" conflita com uma REMESSA já registrada!\n\nA numeração é compartilhada. Insira outro número ou deixe em branco.`);
+                    return;
+                }
+                const snapM = await db.collection("manifestos").where("numeroManifesto", "<=", String(fim)).get();
+                let conflito = null;
+                snapM.forEach(doc => {
+                    const d = doc.data();
+                    if (!d.numeroManifesto || conflito) return;
+                    const a = parseInt(d.numeroManifesto, 10);
+                    const z = a + (d.qtdItens || 1) - 1;
+                    if (z >= inicio) conflito = `${a} a ${z}`;
+                });
+                if (conflito) {
+                    alert(`⚠️ A faixa "${inicio} a ${fim}" conflita com um MANIFESTO existente (${conflito})!\n\nInsira outro número ou deixe em branco.`);
+                    return;
+                }
+            } catch (err) {
+                console.error(err); alert("❌ Erro ao checar duplicidade da faixa de números."); return;
+            }
+        } else {
+            try {
+                numeroManifesto = await obterProximoNumeroCompartilhado();
+            } catch (err) {
+                console.error(err); alert("❌ Erro ao gerar número sequencial."); return;
+            }
+        }
+
+        const inicioNum = parseInt(numeroManifesto, 10);
+        itens.forEach((item, idx) => { item.protocolo = String(inicioNum + idx); });
+
+        renderizarFolhaManifesto(dataGeracao, emitidoPor, itens);
+        salvarManifestoFirestore(numeroManifesto, emitidoPor, itens, dataGeracao);
+
+        document.getElementById('man-numero-manifesto').value = '';
+    }
+
+          function montarTabelaAssinaturas(itens) {
+        const c = v => escaparHTML(v || '');
+        let linhas = '';
+        itens.forEach(i => {
+            linhas += `
+                <tr>
+                    <td class="c-item">${c(i.item)}</td>
+                    <td>${c(i.protocolo) || '—'}</td>
+                    <td class="c-assinatura">&nbsp;</td>
+                    <td class="c-assinatura c-data-linhas">____ / ____ / ______</td>
+                </tr>`;
+        });
+
+        return `
+            <div class="man-assinaturas-secao">VI. Registro de Recebimento por Item — Assinatura Manual</div>
+            <table class="man-assinaturas-tabela">
+                <thead>
+                    <tr>
+                        <th style="width:7%">Item</th>
+                        <th style="width:20%">Protocolo/Núm. de Registro</th>
+                        <th style="width:48%">Recebedor (Nome Completo e Assinatura)</th>
+                        <th style="width:25%">Data do Recebimento</th>
+                    </tr>
+                </thead>
+                <tbody>${linhas}</tbody>
+            </table>`;
+    }
+          function montarConteudoFolhaManifesto(dataGeracao, emitidoPor, itens, comAssinaturas = false) {
+        const c = v => escaparHTML(v || '');
+        let linhas = '';
+        itens.forEach(i => {
+            linhas += `<tr>
+                                <td class="c-item">${c(i.item)}</td><td>${c(i.protocolo)}</td><td>${c(formatarDataISO(i.dataEntrada))}</td><td>${c(i.hora)}</td>
+                <td>${c(i.internoExterno)}</td>
+                <td>${c(i.nome)}</td><td>${c(i.modalidade)}</td><td>${c(i.registroPostal)}</td>
+                <td>${c(i.embalagem)}</td><td>${c(i.resumo)}</td><td>${c(i.classificacao)}</td><td>${c(i.status)}</td><td>${c(i.observacoes)}</td>
+            </tr>`;
+        });
+
+        const textoLegal = `
+            <p><b>I. DADOS GERAIS DA MOVIMENTAÇÃO</b></p>
+            <ul>
+                <li><b>Origem de Registro e Identificação Única:</b> Refere-se às Remessas de Entrada e Saída, seja para entrega Interna no IPEN-CNEN ou Expedição Externa.</li>
+                <li><b>Data de Registro:</b> Corresponde à data de geração do Manifesto no Sistema Eletrônico de Informações (SEI).</li>
+            </ul>
+            <p><b>II. DETALHAMENTO E REGISTRO DOS ITENS</b><br>
+            Esta tabela lista individualmente cada item/volume movimentado (recebido ou expedido). Cada linha representa um item rastreável para fins de conferência e atribuição de responsabilidade.</p>
+            <ul>
+                <li><b>Critério de Preenchimento da Coluna Destinatário:</b>
+                    <ul>
+                        <li><b>Movimentação Interna ou Entrada:</b> Preencher com a Unidade/Servidor (IPEN-CNEN).</li>
+                        <li><b>Expedição Externa:</b> Preencher com a Razão Social/Nome de Pessoa Física do destinatário externo.</li>
+                    </ul>
+                </li>
+            </ul>
+            <p><b>III. INSTRUÇÕES GERAIS E TERMO DE MOVIMENTAÇÃO</b></p>
+            <ul>
+                <li>Este Manifesto consolida a movimentação (entrada, entrega e expedição) de diversos itens, abrangendo tanto remessas destinadas a diferentes unidades internas do IPEN-CNEN (Natureza Plural Interna) quanto expedições a entidades/empresas ou pessoas externas (Natureza Externa).</li>
+                <li>Este Termo é ativado no Bloco de Assinatura do SEI e destina-se ao Servidor Responsável pela Formalização da Movimentação (Expedição ou Recebimento) e, quando aplicável, ao Servidor Receptor/Destinatário Final.</li>
+            </ul>
+            <p><b>IV. PROCEDIMENTOS PARA A FORMALIZAÇÃO ELETRÔNICA</b></p>
+            <ul>
+                <li><b>1. Consulta e Rastreamento no SEI:</b> O número do Protocolo inserido na coluna Protocolo/Nº de Registro (Item Individual)" serve como link direto para a consulta integral e o rastreamento de todos os registros da movimentação no Sistema Eletrônico de Informações (SEI).</li>
+                <li><b>2. Responsabilidade pela Formalização:</b> O servidor deve apor sua Assinatura Eletrônica (como Expedidor, Receptor Provisório ou Destinatário Final) apenas se seu nome ou sua Unidade estiver expressamente vinculado ao ato na tabela de itens ou no registro de movimentação.</li>
+                <li><b>3. Vínculo Formal do Ato:</b> A assinatura eletrônica constitui o Termo de Movimentação e Conferência somente do(s) item(ns) em que o Servidor signatário esteja expressamente vinculado à respectiva fase (expedição ou recebimento).</li>
+                <li><b>4. Validade do Ato:</b> A aposição da assinatura atesta a efetiva entrega do objeto físico e certifica o início/fim da responsabilidade pelo item movimentado, na data automaticamente registrada pelo sistema.</li>
+            </ul>
+            <p><b>V. TERMO DE CONFERÊNCIA E RESPONSABILIDADE</b><br>
+            Declaro, na qualidade de Servidor(a) Responsável pela Movimentação (do Setor de Protocolo ou da Unidade Destinatária), que formalizei o ato de <b>Expedição/Entrega ou de Recebimento e Conferência física visual da integridade</b> do(s) objeto(s) e/ou correspondência(s) listado(s) na tabela acima, assumindo a respectiva responsabilidade pela custódia ou transmissão do item, conforme as instruções contidas neste documento.</p>
+            <p><b>Nota sobre a Cadeia de Custódia (Transição de Responsabilidade):</b></p>
+            <ul>
+                <li><b>Setor de Protocolo (Registro de Entrada/Distribuição):</b> A assinatura do servidor do Protocolo atesta o recebimento da remessa (entrada) no IPEN-CNEN ou o registro da expedição/distribuição interna. O ato formaliza a validação inicial da quantidade de volumes e da integridade externa do objeto, transferindo-se a responsabilidade para a etapa subsequente da Cadeia de Custódia (Unidade Destinatária ou Destinatário Externo).</li>
+                <li><b>Unidade Destinatária Interna (Recebimento Definitivo):</b> A assinatura eletrônica formaliza o ato final de recebimento, validando a posse e a custódia interna. Inicia-se, a partir deste momento, a responsabilidade integral pela conferência do conteúdo e pela guarda do objeto.</li>
+                <li><b>Destinatário Externo:</b> A assinatura no Comprovante de Entrega (por exemplo: Aviso de Recebimento – AR, Lista de Postagem ou documento similar), anexo ao registro, formaliza o encerramento da Cadeia de Custódia do IPEN-CNEN para o item expedido.</li>
+            </ul>`;
+
+        return `
+            <div class="man-titulo">Manifesto de Registro de Movimentação (Entrada e Saída) IPEN/CNEN</div>
+            <div class="man-subtitulo">SETOR DE PROTOCOLO/ADMINISTRAÇÃO <i>(Documento Gerado Eletronicamente)</i></div>
+             <table class="man-barra-info"><tr>
+                <td style="width: 40%;"><strong>Data de geração do Manifesto:</strong> ${c(dataGeracao)}</td>
+                <td style="width: 60%;"><strong>Documento Emitido por:</strong> ${c(emitidoPor)}</td>
+            </tr></table>
+            <table class="man-tabela">
+                <colgroup>
+                    <col style="width:3%"><col style="width:8%"><col style="width:6.5%"><col style="width:4%">
+                    <col style="width:8%">
+                    <col style="width:12%"><col style="width:8%"><col style="width:9%">
+                    <col style="width:7%"><col style="width:12%"><col style="width:7.5%"><col style="width:7%"><col style="width:8%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th colspan="4">Informações de Registro</th>
+                        <th>Identificação do Destinatário</th>
+                        <th colspan="3">Dados do Remetente e da Encomenda (Pessoa Física ou Jurídica)</th>
+                        <th colspan="5">Dados Informativos sobre o Volume</th>
+                    </tr>
+                    <tr>
+                        <th>Item</th>
+                        <th>Protocolo/Núm. de Registro</th>
+                        <th>Data de Entrada</th>
+                        <th>Hora</th>
+                        <th>Destinatário (Interno ou Externo)</th>
+                        <th>Nome Completo ou Razão Social</th>
+                        <th>Modalidade de Entrega</th>
+                        <th>Número de Registro Postal/Encomenda</th>
+                        <th>Tipo de Objeto (Embalagem)</th>
+                        <th>Resumo do Conteúdo/Assunto</th>
+                        <th>Classificação</th>
+                        <th>Status do Volume</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody>${linhas}</tbody>
+            </table>
+                        <div class="man-texto-legal">${textoLegal}</div>
+            ${comAssinaturas ? montarTabelaAssinaturas(itens) : ''}`;
+    }
+        function alternarPreviewRemessa(mostrarRemessa) {
+        document.getElementById('titulo-preview-remessa').style.display = mostrarRemessa ? 'block' : 'none';
+        document.getElementById('acoes-preview-remessa').style.display = mostrarRemessa ? 'flex' : 'none';
+        document.getElementById('folha-a4-impressao').style.display = mostrarRemessa ? 'flex' : 'none';
+        document.getElementById('bloco-preview-manifesto').style.display = mostrarRemessa ? 'none' : 'block';
+    }
+            function renderizarFolhaManifesto(dataGeracao, emitidoPor, itens) {
+        manifestoAtualParaAssinatura = { dataGeracao, emitidoPor, itens: JSON.parse(JSON.stringify(itens)) };
+        document.getElementById('folha-manifesto-impressao').innerHTML = montarConteudoFolhaManifesto(dataGeracao, emitidoPor, itens);
+        alternarPreviewRemessa(false);
+        document.getElementById('preview-container').style.display = 'block';
+        document.getElementById('bloco-preview-manifesto').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function salvarManifestoFirestore(numeroManifesto, emitidoPor, itens, dataGeracao) {
+        try {
+            await db.collection("manifestos").add({
+                numeroManifesto, emitidoPor, itens, qtdItens: itens.length,
+                dataGeracaoFormatada: dataGeracao,
+                dataRegistro: new Date().toISOString()
+            });
+        } catch (e) {
+            console.warn("Manifesto gerado, mas o salvamento no histórico falhou:", e);
+        }
+    }
+
+function imprimirManifesto() {
+    const folha = document.getElementById('folha-manifesto-impressao');
+    if (!folha || !folha.innerHTML.trim()) { alert('⚠️ Nenhum manifesto carregado!'); return; }
+    document.body.classList.add('modo-impressao-manifesto');
+    definirOrientacaoImpressao('landscape');
+    setTimeout(() => { window.print(); }, 200);
+}
+
+function baixarPDFManifesto() {
+    const folha = document.getElementById('folha-manifesto-impressao');
+    if (!folha || !folha.innerHTML.trim()) { alert('⚠️ Nenhum manifesto carregado!'); return; }
+
+    const tempContainer = document.createElement('div');
+    tempContainer.style.cssText = `position:absolute; left:-9999px; top:0; width:1122px; background:white; box-sizing:border-box; padding:30px 34px;`;
+    tempContainer.innerHTML = folha.innerHTML;
+    document.body.appendChild(tempContainer);
+
+    html2pdf().set({
+        margin: 0,
+        filename: `manifesto_movimentacao_${new Date().toISOString().slice(0, 10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: false, useCORS: true, scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+    }).from(tempContainer).save().then(() => {
+        document.body.removeChild(tempContainer);
+    }).catch(err => {
+        document.body.removeChild(tempContainer);
+        console.error(err);
+        alert('❌ Erro ao gerar o PDF do Manifesto.\n\nSugestão: use o botão "Enviar para Impressora" e escolha "Salvar como PDF".');
+    });
+}
+    /* ==================== HISTÓRICO DE MANIFESTOS ==================== */
+
+    db.collection("manifestos").orderBy("dataRegistro", "desc").onSnapshot(snapshot => {
+        const tabela = document.getElementById('lista-manifestos');
+        const contador = document.getElementById('contador-manifestos');
+        if (!tabela) return;
+
+        if (snapshot.empty) {
+            tabela.innerHTML = `<tr><td colspan="7" style="text-align:center;">Nenhum manifesto encontrado.</td></tr>`;
+            manifestosHistoricoCache = {};
+            manifestosListaGlobal = [];
+            if (contador) contador.innerText = '0';
+            renderizarControlesPaginaManifestos(0, 0);
+            return;
+        }
+
+        manifestosHistoricoCache = {};
+        manifestosListaGlobal = [];
+        const selectAll = document.getElementById('select-all-manifestos');
+        if (selectAll) selectAll.checked = false;
+
+        snapshot.forEach(doc => {
+            const dados = doc.data();
+            dados.id = doc.id;
+            let ts = 0, fmt = '-';
+            if (dados.dataRegistro) {
+                const dt = new Date(dados.dataRegistro);
+                if (!isNaN(dt.getTime())) { ts = dt.getTime(); fmt = dt.toLocaleDateString('pt-BR'); }
+            }
+            dados._dataTimestamp = ts;
+            dados._dataFormatada = fmt;
+            dados._buscaItens = (dados.itens || []).map(i => `${i.nome || ''} ${i.registroPostal || ''} ${i.resumo || ''}`).join(' ').toLowerCase();
+            manifestosHistoricoCache[doc.id] = dados;
+            manifestosListaGlobal.push(dados);
+        });
+
+        if (contador) contador.innerText = manifestosListaGlobal.length;
+        filtrarEOrdenarManifestos();
+        atualizarUltimaRemessaInfo();
+    }, error => {
+        console.error("Erro no Listener de Manifestos: ", error);
+    });
+
+    function alterarOrdenacaoManifesto(campo) {
+        if (campoOrdenacaoManifestoAtual === campo) {
+            direcaoOrdenacaoManifestoAtual = direcaoOrdenacaoManifestoAtual === 'asc' ? 'desc' : 'asc';
+        } else {
+            campoOrdenacaoManifestoAtual = campo;
+            direcaoOrdenacaoManifestoAtual = 'asc';
+        }
+        paginaAtualManifestos = 1;
+        filtrarEOrdenarManifestos();
+    }
+
+    function pesquisarManifestos() {
+        paginaAtualManifestos = 1;
+        filtrarEOrdenarManifestos();
+    }
+
+        function atualizarIconesCabecalhoManifestos() {
+        const icones = {
+            numeroManifesto: document.getElementById('icon-man-numeroManifesto'),
+            dataRegistro: document.getElementById('icon-man-dataRegistro'),
+            dataGeracaoFormatada: document.getElementById('icon-man-dataGeracaoFormatada'),
+            emitidoPor: document.getElementById('icon-man-emitidoPor'),
+            qtdItens: document.getElementById('icon-man-qtdItens')
+        };
+        for (let key in icones) {
+            if (icones[key]) {
+                icones[key].innerText = (campoOrdenacaoManifestoAtual === key) ? (direcaoOrdenacaoManifestoAtual === 'asc' ? ' ▲' : ' ▼') : '';
+            }
+        }
+    }
+
+        function filtrarEOrdenarManifestos() {
+        const tabela = document.getElementById('lista-manifestos');
+        if (!tabela) return;
+
+        const termoPesquisa = (document.getElementById('pesquisa-manifestos')?.value || '').toLowerCase().trim();
+
+        let dadosFiltrados = manifestosListaGlobal.filter(d => {
+            const num = (d.numeroManifesto || '').toLowerCase();
+            const dReg = (d._dataFormatada || '').toLowerCase();
+            const dGer = (d.dataGeracaoFormatada || '').toLowerCase();
+            const emi = (d.emitidoPor || '').toLowerCase();
+            return num.includes(termoPesquisa) || dReg.includes(termoPesquisa) || dGer.includes(termoPesquisa) || emi.includes(termoPesquisa) || (d._buscaItens || '').includes(termoPesquisa);
+        });
+
+        dadosFiltrados.sort((a, b) => {
+            let vA, vB;
+            if (campoOrdenacaoManifestoAtual === 'dataRegistro') { vA = a._dataTimestamp; vB = b._dataTimestamp; }
+            else if (campoOrdenacaoManifestoAtual === 'qtdItens') { vA = a.qtdItens || 0; vB = b.qtdItens || 0; }
+            else {
+                vA = (a[campoOrdenacaoManifestoAtual] || '').toString().toLowerCase();
+                vB = (b[campoOrdenacaoManifestoAtual] || '').toString().toLowerCase();
+            }
+            if (vA < vB) return direcaoOrdenacaoManifestoAtual === 'asc' ? -1 : 1;
+            if (vA > vB) return direcaoOrdenacaoManifestoAtual === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        let dadosParaExibir = [];
+        const temFiltroAtivo = termoPesquisa.length > 0;
+
+        if (temFiltroAtivo) {
+            dadosParaExibir = dadosFiltrados;
+            renderizarControlesPaginaManifestos(0, 0);
+        } else {
+            const totalPaginas = Math.ceil(dadosFiltrados.length / REGISTROS_POR_PAGINA);
+            if (paginaAtualManifestos > totalPaginas) paginaAtualManifestos = Math.max(1, totalPaginas);
+            const ini = (paginaAtualManifestos - 1) * REGISTROS_POR_PAGINA;
+            dadosParaExibir = dadosFiltrados.slice(ini, ini + REGISTROS_POR_PAGINA);
+            renderizarControlesPaginaManifestos(totalPaginas, paginaAtualManifestos);
+        }
+
+        tabela.innerHTML = '';
+        atualizarIconesCabecalhoManifestos();
+
+        if (dadosParaExibir.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="7" style="text-align:center;">Nenhum manifesto corresponde à pesquisa aplicada.</td></tr>`;
+            return;
+        }
+
+        dadosParaExibir.forEach(d => {
+            const tr = document.createElement('tr');
+            const qtd = d.qtdItens || (d.itens ? d.itens.length : 0);
+            tr.innerHTML = `
+                <td style="text-align: center;"><input type="checkbox" class="select-item-manifestos" data-id="${d.id}"></td>
+                                <td style="font-weight:bold; color:var(--primary);">${(() => { const n = d.numeroManifesto; if (!n) return '—'; const q = d.qtdItens || 1; return q > 1 ? escaparHTML(`${n} – ${String(parseInt(n, 10) + q - 1)}`) : escaparHTML(n); })()}</td>
+                <td>${d._dataFormatada}</td>
+                <td>${escaparHTML(d.dataGeracaoFormatada)}</td>
+                <td>${escaparHTML(d.emitidoPor)}</td>
+                <td style="text-align:center; font-weight:bold; color:var(--primary);">${qtd}</td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-action" onclick="visualizarManifestoHistorico('${d.id}')">👁️ Abrir</button>
+                        <button class="btn-action btn-delete" onclick="deletarManifesto('${d.id}')">🗑️ Excluir</button>
+                    </div>
+                </td>
+            `;
+            tabela.appendChild(tr);
+        });
+    }
+
+    function renderizarControlesPaginaManifestos(totalPaginas, paginaAtiva) {
+        const container = document.getElementById('paginacao-manifestos');
+        if (!container || totalPaginas <= 1) { if (container) container.innerHTML = ''; return; }
+
+        container.innerHTML = `
+            <button class="pagination-btn" onclick="mudarPaginaManifestos(1)" ${paginaAtiva === 1 ? 'disabled' : ''}>«</button>
+            <button class="pagination-btn" onclick="mudarPaginaManifestos(${paginaAtiva - 1})" ${paginaAtiva === 1 ? 'disabled' : ''}>Anterior</button>
+            <span class="pagination-info">Página ${paginaAtiva} de ${totalPaginas}</span>
+            <button class="pagination-btn" onclick="mudarPaginaManifestos(${paginaAtiva + 1})" ${paginaAtiva === totalPaginas ? 'disabled' : ''}>Próxima</button>
+            <button class="pagination-btn" onclick="mudarPaginaManifestos(${totalPaginas})" ${paginaAtiva === totalPaginas ? 'disabled' : ''}>»</button>
+        `;
+    }
+
+    function mudarPaginaManifestos(novaPagina) {
+        paginaAtualManifestos = novaPagina;
+        filtrarEOrdenarManifestos();
+    }
+
+    function alternarTodosCheckboxesManifestos(master) {
+        document.querySelectorAll('.select-item-manifestos').forEach(cb => cb.checked = master.checked);
+    }
+
+    function visualizarManifestoHistorico(id) {
+        const d = manifestosHistoricoCache[id];
+        if (!d || !d.itens) return;
+        renderizarFolhaManifesto(d.dataGeracaoFormatada, d.emitidoPor, d.itens);
+    }
+
+    async function deletarManifesto(id) {
+        const d = manifestosHistoricoCache[id];
+        const detalhe = d ? `gerado em ${d.dataGeracaoFormatada} por ${d.emitidoPor} (${d.qtdItens || (d.itens || []).length} itens)` : 'selecionado';
+        if (confirm(`⚠️ ATENÇÃO\n\nDeseja excluir permanentemente este Manifesto ${detalhe}?\n\nAção irreversível.`)) {
+            try {
+                await db.collection("manifestos").doc(id).delete();
+                document.getElementById('bloco-preview-manifesto').style.display = 'none';
+                alert('✅ Manifesto removido com sucesso.');
+            } catch (error) {
+                console.error(error);
+                alert('❌ Falha ao excluir o manifesto.');
+            }
+        }
+    }
+
+    function imprimirManifestosSelecionados() {
+        const checkboxes = document.querySelectorAll('.select-item-manifestos:checked');
+        if (checkboxes.length === 0) { alert('⚠️ Selecione pelo menos um manifesto para fazer a impressão!'); return; }
+
+        const previewContainer = document.getElementById('preview-container');
+        const displaySalvo = previewContainer.style.display;
+        previewContainer.style.display = 'none';
+
+        const containerMassa = document.createElement('div');
+        containerMassa.className = 'area-impressao-massa';
+
+        checkboxes.forEach(cb => {
+            const d = manifestosHistoricoCache[cb.getAttribute('data-id')];
+            if (!d || !d.itens) return;
+            const folha = document.createElement('div');
+            folha.className = 'folha-manifesto';
+            folha.innerHTML = montarConteudoFolhaManifesto(d.dataGeracaoFormatada, d.emitidoPor, d.itens);
+            containerMassa.appendChild(folha);
+        });
+
+        document.body.appendChild(containerMassa);
+        document.body.classList.add('modo-impressao-manifesto');
+        definirOrientacaoImpressao('landscape');
+        window.print();
+        document.body.removeChild(containerMassa);
+        document.body.classList.remove('modo-impressao-manifesto');
+        definirOrientacaoImpressao('portrait');
+        previewContainer.style.display = displaySalvo;
+    }
+
+    function gerarRelatorioManifestosPDF() {
+        const checkboxes = document.querySelectorAll('.select-item-manifestos:checked');
+        if (checkboxes.length === 0) { alert('⚠️ Selecione pelo menos um manifesto para gerar o relatório!'); return; }
+
+        let tabelaLinhasHTML = '';
+        let totalItens = 0;
+        checkboxes.forEach(cb => {
+            const d = manifestosHistoricoCache[cb.getAttribute('data-id')];
+            if (!d) return;
+            const qtd = d.qtdItens || (d.itens || []).length;
+            totalItens += qtd;
+            tabelaLinhasHTML += `
+                <tr style="border-bottom: 1px solid #cbd5e1;">
+                    <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(d._dataFormatada)}</td>
+                    <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(d.dataGeracaoFormatada)}</td>
+                    <td style="padding: 10px; word-wrap: break-word;">${escaparHTML(d.emitidoPor)}</td>
+                    <td style="padding: 10px; text-align: center; font-weight: bold;">${qtd}</td>
+                </tr>
+            `;
+        });
+
+        const dataHoje = new Date().toLocaleDateString('pt-BR');
+        const conteudoRelatorioHTML = `
+            <div style="padding: 30px; font-family: system-ui, -apple-system, sans-serif; color: #1e293b; background-color: #ffffff;">
+                <div style="border-bottom: 2px solid #003366; padding-bottom: 15px; margin-bottom: 25px;">
+                    <h1 style="font-size: 22px; color: #003366; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">Relatório Resumido de Manifestos de Movimentação</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 6px 0 0 0; font-weight: 500;">IPEN / CNEN — Documento emitido em: ${dataHoje}</p>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed;">
+                    <thead>
+                        <tr style="background-color: #f1f5f9; text-align: left; border-bottom: 2px solid #94a3b8;">
+                            <th style="padding: 12px 10px; color: #003366; width: 25%; font-weight: bold;">Data Registro</th>
+                            <th style="padding: 12px 10px; color: #003366; width: 25%; font-weight: bold;">Data Geração</th>
+                            <th style="padding: 12px 10px; color: #003366; width: 30%; font-weight: bold;">Emitido Por</th>
+                            <th style="padding: 12px 10px; color: #003366; width: 20%; font-weight: bold; text-align: center;">Qtd. Itens</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tabelaLinhasHTML}</tbody>
+                </table>
+                <div style="margin-top: 40px; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-align: right; font-size: 12px; color: #64748b; font-weight: bold;">
+                    Quantidade total de manifestos listados: ${checkboxes.length} &nbsp;|&nbsp; Total de itens movimentados: ${totalItens}
+                </div>
+            </div>
+        `;
+
+        html2pdf().set({
+            margin: 10, filename: `relatorio_manifestos_${new Date().toISOString().slice(0,10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, logging: false, useCORS: true, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(conteudoRelatorioHTML).save().catch(err => {
+            console.error("Erro ao gerar relatório de manifestos:", err);
+            alert("❌ Erro ao tentar processar o arquivo PDF.");
+        });
+    }
     gerarCamposRemetentes();
 </script>
 

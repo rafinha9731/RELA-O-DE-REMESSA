@@ -109,6 +109,12 @@
             outline: 2px solid var(--primary);
         }
 
+        input:disabled {
+            background-color: #f1f5f9;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
         .items-box {
             background: #f8fafc;
             padding: 15px;
@@ -179,7 +185,7 @@
 
         .history-table tr:hover { background-color: #f8fafc; }
 
-        .actions-cell { display: flex; gap: 6px; }
+        .actions-cell { display: flex; gap: 6px; flex-wrap: wrap; }
 
         .btn-action {
             background-color: var(--success);
@@ -198,6 +204,9 @@
 
         .btn-delete { background-color: var(--danger); }
         .btn-delete:hover { background-color: var(--danger-hover); }
+
+        .btn-editar { background-color: #0ea5e9; }
+        .btn-editar:hover { background-color: #0284c7; }
 
         .pagination-container {
             display: flex;
@@ -259,6 +268,9 @@
 
         .btn-massa-print { background-color: #d97706; max-width: 320px; }
         .btn-massa-print:hover { background-color: #b45309; }
+
+        .btn-cancelar { background-color: var(--danger); max-width: 260px; margin-top: 12px; }
+        .btn-cancelar:hover { background-color: var(--danger-hover); }
 
         #folha-a4-impressao, .pagina-a4-massa {
             background: white;
@@ -353,6 +365,120 @@
             color: #94a3b8;
             font-weight: 500;
         }
+
+        .link-auditoria {
+            color: #94a3b8;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: underline;
+            margin-top: 6px;
+            padding: 4px 8px;
+        }
+        .link-auditoria:hover { color: var(--primary); }
+
+/* ===== 🆕 v1.2 — EDIÇÃO COM AUDITORIA ===== */
+.banner-edicao {
+    background: #fef9c3;
+    border: 1px solid #facc15;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #854d0e;
+}
+
+.badge-edicao {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 6px;
+    white-space: nowrap;
+}
+.badge-edicao:hover { background: #fde68a; }
+
+#modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+#modal-caixa {
+    background: white;
+    border-radius: 12px;
+    max-width: 780px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+.modal-header {
+    position: sticky;
+    top: 0;
+    background: var(--primary);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 12px 12px 0 0;
+    z-index: 1;
+}
+.modal-header h3 { margin: 0; font-size: 15px; text-transform: uppercase; }
+.modal-header button {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+.modal-header button:hover { background: rgba(255,255,255,0.3); }
+.modal-body { padding: 20px; }
+
+.bloco-edicao {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+.bloco-edicao-topo {
+    background: #f1f5f9;
+    padding: 8px 12px;
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+.tabela-diff { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tabela-diff th { background: #e2e8f0; padding: 6px 8px; text-align: left; color: var(--primary); }
+.tabela-diff td { border-top: 1px solid var(--border); padding: 6px 8px; word-wrap: break-word; word-break: break-word; vertical-align: top; }
+.tabela-diff td:nth-child(2) { color: #b91c1c; }
+.tabela-diff td:nth-child(3) { color: #15803d; }
+
+.tag-acao { padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: bold; white-space: nowrap; }
+.acao-criacao { background: #dcfce7; color: #166534; }
+.acao-edicao { background: #fef9c3; color: #854d0e; }
+.acao-exclusao { background: #fee2e2; color: #991b1b; }
+
 /* ===== MANIFESTO DE MOVIMENTAÇÃO ===== */
 .man-item-card {
     background: #fff;
@@ -497,7 +623,6 @@
         page-break-after: avoid;
         break-after: avoid;
     }
-    }
 }
     </style>
 <style id="estilo-orientacao-dinamica">@page { size: A4 portrait; margin: 0; }</style>
@@ -525,7 +650,7 @@
 
     <div class="form-group" style="margin-bottom: 20px;">
         <label for="pesquisa-manifestos" style="font-size: 14px;">🔍 Filtrar e Pesquisar Manifestos:</label>
-        <input type="text" id="pesquisa-manifestos" placeholder="Pesquise por data, emitente, protocolo SEI ou nome nos itens..." oninput="pesquisarManifestos()">
+        <input type="text" id="pesquisa-manifestos" placeholder="Pesquise por data, emitente, protocolo SEI, destinatário ou nome nos itens..." oninput="pesquisarManifestos()">
     </div>
 
     <div style="overflow-x: auto;">
@@ -552,6 +677,15 @@
     <div id="tela-cadastro" class="screen active">
         <h2>📋 Cadastrar Relação de Remessa</h2>
         
+        <!-- 🆕 v1.2 Banner do modo de edição -->
+        <div id="banner-edicao-remessa" class="banner-edicao">
+            <span style="font-size: 22px;">✏️</span>
+            <div>
+                <strong>MODO DE EDIÇÃO — Remessa Nº <span id="banner-num-remessa"></span></strong><br>
+                O número do documento está travado. As alterações serão registradas no histórico de auditoria do sistema.
+            </div>
+        </div>
+
         <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
             <span style="font-size: 24px;">📌</span>
             <div style="font-size: 14px; color: #1e3a8a;">
@@ -593,7 +727,8 @@
             <div id="container-remetentes"></div>
         </div>
 
-        <button class="btn" style="margin-top: 20px;" onclick="salvarERegistrar()">🚀 Salvar Registro e Gerar Vias</button>
+        <button class="btn" id="btn-salvar-remessa" style="margin-top: 20px;" onclick="salvarERegistrar()">🚀 Salvar Registro e Gerar Vias</button>
+        <button class="btn btn-cancelar" id="btn-cancelar-edicao-remessa" style="display:none;" onclick="cancelarEdicaoRemessa()">✖ Cancelar Edição (descartar alterações)</button>
     </div>
 
     <div id="tela-historico" class="screen">
@@ -635,6 +770,15 @@
 <div id="tela-manifesto" class="screen">
     <h2>📦 Manifesto de Registro de Movimentação (Entrada e Saída)</h2>
 
+    <!-- 🆕 v1.2 Banner do modo de edição -->
+    <div id="banner-edicao-manifesto" class="banner-edicao">
+        <span style="font-size: 22px;">✏️</span>
+        <div>
+            <strong>MODO DE EDIÇÃO — Manifesto Nº <span id="banner-num-manifesto"></span></strong><br>
+                        O número do registro está travado. É possível <strong>adicionar ou remover itens</strong> — os novos recebem protocolos sequenciais a partir do número travado. As alterações serão registradas na auditoria do sistema.
+        </div>
+    </div>
+
      <div class="form-row">
         <div class="form-group">
             <label for="man-numero-manifesto">🔢 Protocolo / Número do Registro:</label>
@@ -664,12 +808,55 @@
     </div>
 
     <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button class="btn" onclick="gerarManifestoDocumento()">🚀 Gerar Manifesto (A4 Paisagem)</button>
-        <button class="btn btn-print" style="max-width: 220px;" onclick="limparManifesto()">🧹 Limpar Formulário</button>
+        <button class="btn" id="btn-gerar-manifesto" onclick="gerarManifestoDocumento()">🚀 Gerar Manifesto (A4 Paisagem)</button>
+        <button class="btn btn-print" id="btn-limpar-manifesto" style="max-width: 220px;" onclick="limparManifesto()">🧹 Limpar Formulário</button>
+        <button class="btn btn-cancelar" id="btn-cancelar-edicao-manifesto" style="max-width: 260px; margin-top: 0; display:none;" onclick="cancelarEdicaoManifesto()">✖ Cancelar Edição</button>
     </div>
 </div>
+
+<!-- 🆕 v1.2 Tela de Auditoria Geral (acessível pelo rodapé) -->
+<div id="tela-auditoria" class="screen">
+    <h2 style="display: flex; align-items: center; gap: 10px;">
+        🕘 Auditoria de Alterações do Sistema
+        <span id="contador-auditoria" style="background-color: #8b5cf6; color: white; padding: 2px 10px; border-radius: 12px; font-size: 14px; font-weight: bold;">0</span>
+    </h2>
+
+    <p style="font-size: 13px; color: #64748b; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;">
+        Registro interno e cronológico de <strong>criações, edições e exclusões</strong> de Remessas e Manifestos.
+        As alterações do documento original nunca são apagadas — cada edição guarda o valor <em>antes → depois</em> de cada campo.
+    </p>
+
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="pesquisa-auditoria" style="font-size: 14px;">🔍 Pesquisar na Auditoria:</label>
+        <input type="text" id="pesquisa-auditoria" placeholder="Pesquise por nº, responsável, ação (criação/edição/exclusão) ou campo alterado..." oninput="filtrarAuditoria()">
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th style="width: 16%;">Data / Hora</th>
+                    <th style="width: 12%;">Ação</th>
+                    <th style="width: 12%;">Tipo</th>
+                    <th style="width: 14%;">Nº Documento</th>
+                    <th style="width: 16%;">Responsável</th>
+                    <th>Detalhes</th>
+                </tr>
+            </thead>
+            <tbody id="lista-auditoria">
+                <tr><td colspan="6" style="text-align:center;">Buscando registros de auditoria...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button class="btn btn-print" style="max-width: 280px; margin-top: 20px;" onclick="voltarDaAuditoria()">← Voltar para a tela anterior</button>
+</div>
+
     <div class="system-footer">
-        Sistema de Remessas - IPEN / CNEN | Versão 1.1
+        Sistema de Remessas - IPEN / CNEN | Versão 1.2
+        <div>
+            <button class="link-auditoria" onclick="abrirTelaAuditoria()">🕘 Auditoria de Alterações (controle interno)</button>
+        </div>
     </div>
 </div>
 
@@ -691,6 +878,17 @@
         <div id="folha-manifesto-impressao" class="folha-manifesto"></div>
     </div>
 </div>
+</div>
+
+<!-- 🆕 v1.2 Modal de detalhes de edições -->
+<div id="modal-overlay" onclick="fecharModalEdicoes(event)">
+    <div id="modal-caixa" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>🕘 Histórico de Alterações</h3>
+            <button onclick="fecharModalEdicoes(event)">✕</button>
+        </div>
+        <div class="modal-body" id="modal-conteudo"></div>
+    </div>
 </div>
 
 <script>
@@ -731,11 +929,13 @@
         document.body.appendChild(containerMassa);
         document.body.classList.add('modo-impressao-manifesto');
         definirOrientacaoImpressao('landscape');
-        window.print();
-        document.body.removeChild(containerMassa);
-        document.body.classList.remove('modo-impressao-manifesto');
-        definirOrientacaoImpressao('portrait');
-        previewContainer.style.display = displaySalvo;
+        setTimeout(() => {
+            window.print();
+            document.body.removeChild(containerMassa);
+            document.body.classList.remove('modo-impressao-manifesto');
+            definirOrientacaoImpressao('portrait');
+            previewContainer.style.display = displaySalvo;
+        }, 200);
     }
 
     function imprimirManifestosAssinatura() {
@@ -768,6 +968,12 @@
     let numeroRemessaAtualParaPDF = "";
     let paginaAtual = 1;
     const REGISTROS_POR_PAGINA = 15;
+
+    /* 🆕 v1.2 — Estado do modo de edição e auditoria */
+    let idRemessaEmEdicao = null;
+    let idManifestoEmEdicao = null;
+    let auditoriaListaGlobal = [];
+    let telaAtivaAtual = 'cadastro';
 
     function escaparHTML(str) {
         if (!str) return '';
@@ -931,16 +1137,21 @@
         }
 
         dadosParaExibir.forEach(dados => {
+            // 🆕 v1.2 — badge de edições ao lado do número
+            const badgeEdicao = dados.editado
+                ? `<span class="badge-edicao" title="Este documento foi editado — clique para ver o histórico de alterações" onclick="verEdicoesDocumento('${dados.id}')">🕘 ${dados.totalEdicoes || 1}</span>`
+                : '';
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td style="text-align: center;"><input type="checkbox" class="select-item-history" data-id="${dados.id}"></td>
-                <td style="font-weight:bold; color:var(--primary);">${escaparHTML(dados.numeroRemessa)}</td>
+                <td style="font-weight:bold; color:var(--primary);">${escaparHTML(dados.numeroRemessa)}${badgeEdicao}</td>
                 <td>${dados._dataFormatada}</td>
                 <td>${escaparHTML(dados.destinatario)}</td>
                 <td>${escaparHTML(dados.emissor)}</td>
                 <td>
                     <div class="actions-cell">
                         <button class="btn-action" onclick="visualizarRemessaHistorico('${dados.id}')">👁️ Abrir</button>
+                        <button class="btn-action btn-editar" onclick="editarRemessa('${dados.id}')">✏️ Editar</button>
                         <button class="btn-action btn-delete" onclick="deletarRegistro('${dados.id}', '${escaparHTML(dados.numeroRemessa)}')">🗑️ Excluir</button>
                     </div>
                 </td>
@@ -1108,12 +1319,15 @@
         });
 
         document.body.appendChild(containerMassa);
-        window.print();
-        document.body.removeChild(containerMassa);
-        previewContainer.style.display = displaySalvo;
+        setTimeout(() => {
+            window.print();
+            document.body.removeChild(containerMassa);
+            previewContainer.style.display = displaySalvo;
+        }, 200);
     }
 
        function mudarTela(tela) {
+        telaAtivaAtual = tela; // 🆕 v1.2 — memória da tela ativa (para voltar da auditoria)
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('preview-container').style.display = 'none';
@@ -1175,6 +1389,135 @@
     gerarCamposRemetentes();
     }
 
+    /* ==================== 🆕 v1.2 AUDITORIA (gravação) ==================== */
+
+    async function registrarAuditoria({ tipo, acao, documentoId, numero, responsavel, detalhes = [] }) {
+        try {
+            const agora = new Date();
+            await db.collection("auditoria").add({
+                tipo, acao, documentoId,
+                numero: String(numero || '—'),
+                responsavel: responsavel || '—',
+                dataHora: agora.toISOString(),
+                dataHoraFormatada: agora.toLocaleString('pt-BR'),
+                detalhes
+            });
+        } catch (e) {
+            console.warn("Falha ao registrar evento na auditoria (não crítico):", e);
+        }
+    }
+
+    function compararItensRemessa(itensAntigos, itensNovos, alteracoes) {
+        const max = Math.max(itensAntigos.length, itensNovos.length);
+        for (let i = 0; i < max; i++) {
+            const a = itensAntigos[i], n = itensNovos[i];
+            if (a && !n) {
+                alteracoes.push({ campo: `Item ${a.item}`, de: `Remetente: ${a.remetente} | Volume: ${a.volume}`, para: '(item removido)' });
+            } else if (!a && n) {
+                alteracoes.push({ campo: `Item ${n.item}`, de: '(não existia)', para: `Remetente: ${n.remetente} | Volume: ${n.volume}` });
+            } else {
+                if ((a.remetente || '') !== (n.remetente || '')) alteracoes.push({ campo: `Item ${n.item} — Remetente`, de: a.remetente || '', para: n.remetente || '' });
+                if ((a.volume || '') !== (n.volume || '')) alteracoes.push({ campo: `Item ${n.item} — Volume`, de: a.volume || '', para: n.volume || '' });
+            }
+        }
+    }
+
+    /* ==================== 🆕 v1.2 EDIÇÃO DE REMESSA ==================== */
+
+    function editarRemessa(id) {
+        const dados = dadosHistoricoCache[id];
+        if (!dados) return;
+        idRemessaEmEdicao = id;
+        mudarTela('cadastro');
+
+        document.getElementById('numero_remessa').value = dados.numeroRemessa || '';
+        document.getElementById('numero_remessa').disabled = true;
+        document.getElementById('emissor').value = dados.emissor || 'Juliana';
+        document.getElementById('destinatario').value = dados.destinatario || '';
+        document.getElementById('qtd_itens').value = Math.max(1, dados.qtdItens || (dados.itens || []).length || 1);
+        document.getElementById('container-remetentes').innerHTML = '';
+        gerarCamposRemetentes();
+
+        const inputsRem = document.querySelectorAll('.input-remetente');
+        const inputsVol = document.querySelectorAll('.input-volume');
+        (dados.itens || []).forEach((it, idx) => {
+            if (inputsRem[idx]) inputsRem[idx].value = it.remetente || '';
+            if (inputsVol[idx]) inputsVol[idx].value = it.volume || '';
+        });
+
+        document.getElementById('banner-num-remessa').innerText = dados.numeroRemessa || '—';
+        document.getElementById('banner-edicao-remessa').style.display = 'flex';
+        document.getElementById('btn-salvar-remessa').innerHTML = '💾 Salvar Alterações (registro auditado)';
+        document.getElementById('btn-cancelar-edicao-remessa').style.display = 'inline-block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function sairModoEdicaoRemessa() {
+        idRemessaEmEdicao = null;
+        document.getElementById('numero_remessa').disabled = false;
+        document.getElementById('banner-edicao-remessa').style.display = 'none';
+        document.getElementById('btn-salvar-remessa').innerHTML = '🚀 Salvar Registro e Gerar Vias';
+        document.getElementById('btn-cancelar-edicao-remessa').style.display = 'none';
+    }
+
+    function cancelarEdicaoRemessa() {
+        if (!confirm('Cancelar a edição?\n\nAs alterações ainda não salvas serão descartadas.')) return;
+        sairModoEdicaoRemessa();
+        limparFormularioCadastro();
+    }
+
+    async function concluirEdicaoRemessa(emissor, destinatario, itensDados) {
+        try {
+            const docRef = db.collection("remessas").doc(idRemessaEmEdicao);
+            const snapDoc = await docRef.get();
+            if (!snapDoc.exists) { alert('❌ O registro original não foi encontrado (pode ter sido excluído).'); cancelarEdicaoRemessa(); return; }
+            const antigo = snapDoc.data();
+
+            const alteracoes = [];
+            if ((antigo.destinatario || '') !== destinatario) alteracoes.push({ campo: 'Destinatário (Para)', de: antigo.destinatario || '', para: destinatario });
+            if ((antigo.emissor || '') !== emissor) alteracoes.push({ campo: 'Emitido Por', de: antigo.emissor || '', para: emissor });
+            compararItensRemessa(antigo.itens || [], itensDados, alteracoes);
+
+            if (alteracoes.length === 0) {
+                alert('ℹ️ Nenhuma alteração foi detectada. Nada foi modificado.');
+                sairModoEdicaoRemessa();
+                limparFormularioCadastro();
+                return;
+            }
+
+            const agora = new Date();
+            await docRef.update({
+                destinatario, emissor,
+                itens: itensDados, qtdItens: itensDados.length,
+                editado: true,
+                totalEdicoes: (antigo.totalEdicoes || 0) + 1,
+                ultimaEdicaoEm: agora.toISOString(),
+                ultimaEdicaoPor: emissor
+            });
+
+            await registrarAuditoria({
+                tipo: 'remessa', acao: 'edicao',
+                documentoId: idRemessaEmEdicao,
+                numero: antigo.numeroRemessa,
+                responsavel: emissor,
+                detalhes: alteracoes
+            });
+
+            // Preview atualizado — mantém data/hora originais do carimbo (nada é alterado no documento físico)
+            let dt = new Date();
+            if (antigo.dataRegistro) dt = typeof antigo.dataRegistro.toDate === 'function' ? antigo.dataRegistro.toDate() : new Date(antigo.dataRegistro);
+            numeroRemessaAtualParaPDF = antigo.numeroRemessa;
+            renderizarLayoutA4(antigo.numeroRemessa, antigo.deSetor || 'Setor de Protocolo', destinatario, emissor, dt.toLocaleDateString('pt-BR'), antigo.horaCarimbo || dt.toLocaleTimeString('pt-BR'), itensDados);
+
+            alert('✅ Alterações salvas com sucesso!\n\nO registro da edição foi gravado na auditoria do sistema.');
+            sairModoEdicaoRemessa();
+            limparFormularioCadastro();
+        } catch (e) {
+            console.error(e);
+            alert('❌ Falha ao salvar as alterações da remessa.');
+        }
+    }
+
     async function salvarERegistrar() {
         let numeroRemessa = document.getElementById('numero_remessa').value.trim();
         const emissor = document.getElementById('emissor').value;
@@ -1184,6 +1527,24 @@
         const inputsVolumes = document.querySelectorAll('.input-volume');
 
         if (!destinatario) { alert('⚠️ Preencha o campo obrigatório: Destinatário Final!'); return; }
+
+        let itensDados = [];
+        let camposIncompletos = false;
+        for (let i = 0; i < inputsRemetentes.length; i++) {
+            const nome = inputsRemetentes[i].value.trim();
+            const vol = inputsVolumes[i].value.trim();
+            const num = String(inputsRemetentes[i].getAttribute('data-item')).padStart(2, '0');
+            if (!nome || !vol) { camposIncompletos = true; break; }
+            itensDados.push({ item: num, remetente: nome, volume: vol });
+        }
+
+        if (camposIncompletos || itensDados.length === 0) { alert('⚠️ Por favor preencha todos os campos.'); return; }
+
+        // 🆕 v1.2 — Ramo do modo de edição (número travado, sem checagem de duplicidade)
+        if (idRemessaEmEdicao) {
+            await concluirEdicaoRemessa(emissor, destinatario, itensDados);
+            return;
+        }
 
         if (numeroRemessa) {
             if (!/^\d{8}$/.test(numeroRemessa)) {
@@ -1212,29 +1573,15 @@
             } catch (err) {
                 console.error(err); alert("❌ Erro ao checar duplicidade."); return;
             }
+
+            await sincronizarContadorManual(parseInt(numeroRemessa, 10));
         } else {
-                        try {
-                const anoCorrente = new Date().getFullYear();
-                const baseSequencial = `${anoCorrente}0300`;
-                const tetoSequencial = `${anoCorrente}9999`;
-                const snap = await db.collection("remessas").where("numeroRemessa", ">=", baseSequencial).where("numeroRemessa", "<=", tetoSequencial).orderBy("numeroRemessa", "desc").limit(1).get();
-                numeroRemessa = !snap.empty ? String(parseInt(snap.docs[0].data().numeroRemessa, 10) + 1) : baseSequencial;
+            try {
+                numeroRemessa = await reservarNumerosSequenciais(1);
             } catch (err) {
-                console.error(err); alert("❌ Erro ao gerar número sequencial."); return;
+                console.error(err); alert("❌ Erro ao gerar número sequencial (numeração atômica). Tente novamente."); return;
             }
         }
-
-        let itensDados = [];
-        let camposIncompletos = false;
-        for (let i = 0; i < inputsRemetentes.length; i++) {
-            const nome = inputsRemetentes[i].value.trim();
-            const vol = inputsVolumes[i].value.trim();
-            const num = String(inputsRemetentes[i].getAttribute('data-item')).padStart(2, '0');
-            if (!nome || !vol) { camposIncompletos = true; break; }
-            itensDados.push({ item: num, remetente: nome, volume: vol });
-        }
-
-        if (camposIncompletos || itensDados.length === 0) { alert('⚠️ Por favor preencha todos os campos.'); return; }
 
         const agora = new Date();
         const payload = {
@@ -1244,7 +1591,9 @@
         };
 
         try {
-            await db.collection("remessas").add(payload);
+            const docRef = await db.collection("remessas").add(payload);
+            // 🆕 v1.2 — registro de criação na auditoria
+            await registrarAuditoria({ tipo: 'remessa', acao: 'criacao', documentoId: docRef.id, numero: numeroRemessa, responsavel: emissor, detalhes: [] });
             numeroRemessaAtualParaPDF = numeroRemessa;
             renderizarLayoutA4(numeroRemessa, deSetor, destinatario, emissor, agora.toLocaleDateString('pt-BR'), agora.toLocaleTimeString('pt-BR'), itensDados);
             alert(`🚀 Sucesso! Remessa Nº ${numeroRemessa} gravada.`);
@@ -1256,10 +1605,20 @@
 
     async function deletarRegistro(id, numero) {
         if (confirm(`⚠️ ATENÇÃO\n\nDeseja excluir permanentemente a Remessa Nº ${numero}?\n\nAção irreversível.`)) {
+            // 🆕 v1.2 — responsável obrigatório para o registro de auditoria
+            const responsavel = (prompt('👤 Registro de Auditoria\n\nInforme o seu nome para constar na exclusão:') || '').trim();
+            if (!responsavel) { alert('⚠️ Exclusão cancelada: é obrigatório informar o responsável.'); return; }
             try {
+                const snapDoc = await db.collection("remessas").doc(id).get();
+                const d = snapDoc.exists ? snapDoc.data() : null;
+                const resumo = d
+                    ? `Remessa de ${d.deSetor || 'Setor de Protocolo'} para ${d.destinatario || '?'} — ${d.qtdItens || 0} item(ns) — Emitida por ${d.emissor || '?'}`
+                    : 'Dados não localizados no momento da exclusão';
+
                 await db.collection("remessas").doc(id).delete();
+                await registrarAuditoria({ tipo: 'remessa', acao: 'exclusao', documentoId: id, numero: numero, responsavel: responsavel, detalhes: [{ campo: 'Conteúdo excluído', de: resumo, para: '—' }] });
                 document.getElementById('preview-container').style.display = 'none';
-                alert(`✅ Registro Nº ${numero} removido com sucesso.`);
+                alert(`✅ Registro Nº ${numero} removido com sucesso.\n\nA exclusão foi registrada na auditoria.`);
             } catch (error) {
                 console.error(error);
                 alert(`❌ Falha ao excluir o registro Nº ${numero}.`);
@@ -1503,31 +1862,319 @@ function limparManifesto() {
     document.getElementById('bloco-preview-manifesto').style.display = 'none';
     gerarCardsManifesto();
 }
-        async function obterProximoNumeroCompartilhado() {
+
+    /* ==================== 🆕 v1.2 EDIÇÃO DE MANIFESTO ==================== */
+
+       function editarManifesto(id) {
+        const d = manifestosHistoricoCache[id];
+        if (!d || !d.itens) return;
+        idManifestoEmEdicao = id;
+        mudarTela('manifesto');
+
+        const numInput = document.getElementById('man-numero-manifesto');
+        numInput.value = d.numeroManifesto || '';
+        numInput.disabled = true; // número do registro permanece travado
+
+        document.getElementById('man-data-geracao').value = d.dataGeracaoFormatada || '';
+
+        const emitSelect = document.getElementById('man-emitido-por');
+        emitSelect.value = d.emitidoPor || 'Juliana';
+        if (emitSelect.selectedIndex === -1) emitSelect.selectedIndex = 0;
+
+        const qtdInput = document.getElementById('man-qtd-itens');
+        qtdInput.value = d.qtdItens || d.itens.length;
+        qtdInput.disabled = false; // 🆕 quantidade editável: permite adicionar/remover itens
+
+        document.getElementById('container-itens-manifesto').innerHTML = '';
+        gerarCardsManifesto();
+        preencherCardsManifesto(d.itens);
+
+        document.getElementById('banner-num-manifesto').innerText = d.numeroManifesto || '—';
+        document.getElementById('banner-edicao-manifesto').style.display = 'flex';
+        document.getElementById('btn-gerar-manifesto').innerHTML = '💾 Salvar Alterações (registro auditado)';
+        document.getElementById('btn-cancelar-edicao-manifesto').style.display = 'inline-block';
+        document.getElementById('btn-limpar-manifesto').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function preencherCardsManifesto(itens) {
+        const cards = document.querySelectorAll('#container-itens-manifesto .man-item-card');
+        cards.forEach((card, idx) => {
+            const dados = itens[idx];
+            if (!dados) return;
+            card.querySelectorAll('.man-campo').forEach(inp => {
+                const v = dados[inp.dataset.campo];
+                if (v !== undefined && v !== null) inp.value = v;
+            });
+        });
+    }
+
+    function sairModoEdicaoManifesto() {
+        idManifestoEmEdicao = null;
+        const numInput = document.getElementById('man-numero-manifesto');
+        numInput.disabled = false;
+        numInput.value = '';
+        const qtdInput = document.getElementById('man-qtd-itens');
+        qtdInput.disabled = false;
+        qtdInput.value = 1;
+        document.getElementById('banner-edicao-manifesto').style.display = 'none';
+        document.getElementById('btn-gerar-manifesto').innerHTML = '🚀 Gerar Manifesto (A4 Paisagem)';
+        document.getElementById('btn-cancelar-edicao-manifesto').style.display = 'none';
+        document.getElementById('btn-limpar-manifesto').style.display = 'inline-block';
+        document.getElementById('container-itens-manifesto').innerHTML = '';
+        gerarCardsManifesto();
+    }
+
+    function cancelarEdicaoManifesto() {
+        if (!confirm('Cancelar a edição?\n\nAs alterações ainda não salvas serão descartadas.')) return;
+        document.getElementById('folha-manifesto-impressao').innerHTML = '';
+        document.getElementById('bloco-preview-manifesto').style.display = 'none';
+        sairModoEdicaoManifesto();
+    }
+
+        async function concluirEdicaoManifesto(emitidoPor, itensNovos) {
+        try {
+            const docRef = db.collection("manifestos").doc(idManifestoEmEdicao);
+            const snapDoc = await docRef.get();
+            if (!snapDoc.exists) { alert('❌ O manifesto original não foi encontrado (pode ter sido excluído).'); cancelarEdicaoManifesto(); return; }
+            const antigo = snapDoc.data();
+            const itensAntigos = antigo.itens || [];
+            const numeroBase = parseInt(antigo.numeroManifesto, 10);
+            if (isNaN(numeroBase)) { alert('❌ Número do manifesto original inválido.'); return; }
+
+            const qtdAntiga = itensAntigos.length;
+            const qtdNova = itensNovos.length;
+            const fimAntigo = numeroBase + qtdAntiga - 1;
+            const fimNovo = numeroBase + qtdNova - 1;
+
+            // 🆕 Faixa expandida? Valida conflitos apenas na ÁREA NOVA estendida
+            if (fimNovo > fimAntigo) {
+                const inicioExtensao = fimAntigo + 1;
+                const anoCorrente = new Date().getFullYear();
+                if (fimNovo > parseInt(`${anoCorrente}9999`, 10)) {
+                    alert(`⚠️ A nova faixa do manifesto (${numeroBase} a ${fimNovo}) excede o limite do ano ${anoCorrente}.\n\nReduza a quantidade de itens.`);
+                    return;
+                }
+                try {
+                    const snapR = await db.collection("remessas")
+                        .where("numeroRemessa", ">=", String(inicioExtensao))
+                        .where("numeroRemessa", "<=", String(fimNovo)).limit(1).get();
+                    if (!snapR.empty) {
+                        alert(`⚠️ Não é possível expandir: a faixa ${inicioExtensao} a ${fimNovo} conflita com a REMESSA Nº ${snapR.docs[0].data().numeroRemessa}.\n\nA numeração é compartilhada.`);
+                        return;
+                    }
+                    const snapM = await db.collection("manifestos")
+                        .where("numeroManifesto", "<=", String(fimNovo)).get();
+                    let conflito = null;
+                    snapM.forEach(doc => {
+                        if (conflito) return;
+                        if (doc.id === idManifestoEmEdicao) return; // ignora o próprio manifesto
+                        const dd = doc.data();
+                        if (!dd.numeroManifesto) return;
+                        const a = parseInt(dd.numeroManifesto, 10);
+                        const z = a + (dd.qtdItens || 1) - 1;
+                        if (z >= inicioExtensao) conflito = `${a} a ${z}`;
+                    });
+                    if (conflito) {
+                        alert(`⚠️ Não é possível expandir: a faixa ${inicioExtensao} a ${fimNovo} conflita com o MANIFESTO ${conflito}.\n\nA numeração é compartilhada.`);
+                        return;
+                    }
+                } catch (err) {
+                    console.error(err); alert('❌ Erro ao validar a nova faixa de números.'); return;
+                }
+                // Avança o contador compartilhado para o novo fim da faixa
+                await sincronizarContadorManual(fimNovo);
+            }
+
+            const ROTULOS = {
+                dataEntrada: 'Data de Entrada', hora: 'Hora',
+                internoExterno: 'Destinatário (Interno/Externo)', nome: 'Nome/Razão Social',
+                modalidade: 'Modalidade de Entrega', registroPostal: 'Nº Registro Postal',
+                embalagem: 'Embalagem', classificacao: 'Classificação',
+                status: 'Status do Volume', resumo: 'Resumo do Conteúdo', observacoes: 'Observações'
+            };
+
+            const alteracoes = [];
+            if ((antigo.emitidoPor || '') !== emitidoPor) alteracoes.push({ campo: 'Documento Emitido por', de: antigo.emitidoPor || '', para: emitidoPor });
+            if (qtdNova !== qtdAntiga) alteracoes.push({ campo: 'Quantidade de itens', de: String(qtdAntiga), para: String(qtdNova) });
+
+            // 🆕 Itens mantidos preservam o protocolo original; itens novos recebem protocolo sequencial
+            itensNovos.forEach((it, idx) => {
+                it.protocolo = (idx < qtdAntiga && itensAntigos[idx] && itensAntigos[idx].protocolo)
+                    ? itensAntigos[idx].protocolo
+                    : String(numeroBase + idx);
+            });
+
+            const max = Math.max(qtdAntiga, qtdNova);
+            for (let idx = 0; idx < max; idx++) {
+                const a = itensAntigos[idx], n = itensNovos[idx];
+                const prefixo = `Item ${String(idx + 1).padStart(2, '0')}`;
+                if (a && !n) {
+                    alteracoes.push({ campo: `${prefixo} (protocolo ${a.protocolo || '?'})`, de: '(item existia)', para: '(item removido)' });
+                    continue;
+                }
+                if (!a && n) {
+                    alteracoes.push({ campo: `${prefixo} (NOVO — protocolo ${n.protocolo})`, de: '(não existia)', para: `Destinatário: ${n.internoExterno || '—'} | Nome: ${n.nome || '—'} | Postal: ${n.registroPostal || '—'}` });
+                    continue;
+                }
+                for (const campo in ROTULOS) {
+                    let va = (a[campo] || '').toString(), vn = (n[campo] || '').toString();
+                    if (campo === 'dataEntrada') { va = formatarDataISO(va); vn = formatarDataISO(vn); }
+                    if (va !== vn) alteracoes.push({ campo: `${prefixo} — ${ROTULOS[campo]}`, de: va, para: vn });
+                }
+            }
+
+            if (alteracoes.length === 0) {
+                alert('ℹ️ Nenhuma alteração foi detectada. Nada foi modificado.');
+                sairModoEdicaoManifesto();
+                return;
+            }
+
+            const agora = new Date();
+            await docRef.update({
+                emitidoPor, itens: itensNovos, qtdItens: qtdNova,
+                editado: true,
+                totalEdicoes: (antigo.totalEdicoes || 0) + 1,
+                ultimaEdicaoEm: agora.toISOString(),
+                ultimaEdicaoPor: emitidoPor
+            });
+
+            await registrarAuditoria({
+                tipo: 'manifesto', acao: 'edicao',
+                documentoId: idManifestoEmEdicao,
+                numero: antigo.numeroManifesto,
+                responsavel: emitidoPor,
+                detalhes: alteracoes
+            });
+
+            const dataOriginal = antigo.dataGeracaoFormatada || document.getElementById('man-data-geracao').value;
+            renderizarFolhaManifesto(dataOriginal, emitidoPor, itensNovos);
+
+            let msgFinal = '✅ Alterações salvas com sucesso!\n\nO registro da edição foi gravado na auditoria do sistema.';
+            if (qtdNova > qtdAntiga) msgFinal += `\n\n🆕 Novos protocolos atribuídos: ${fimAntigo + 1} a ${fimNovo}.`;
+            if (qtdNova < qtdAntiga) msgFinal += `\n\n⚠️ Itens removidos — os números dos protocolos excedentes (${fimNovo + 1} a ${fimAntigo}) não são reaproveitados.`;
+            alert(msgFinal);
+            sairModoEdicaoManifesto();
+        } catch (e) {
+            console.error(e);
+            alert('❌ Falha ao salvar as alterações do manifesto.');
+        }
+    }
+
+    /* ==================== NUMERAÇÃO ATÔMICA (COM CONTADOR) ==================== */
+
+        /* 🆕 Derivação do maior número usado no ano (FORA da transação, via get() normal) */
+    async function derivarMaiorNumeroUsado() {
         const anoCorrente = new Date().getFullYear();
-        const baseSequencial = `${anoCorrente}0300`;
-        const tetoSequencial = `${anoCorrente}9999`;
-        let maiorEncontrado = 0;
+        const baseSequencial = parseInt(`${anoCorrente}0300`, 10);
+        const tetoSequencial = parseInt(`${anoCorrente}9999`, 10);
+        let maior = 0;
 
-        const snapRemessas = await db.collection("remessas")
-            .where("numeroRemessa", ">=", baseSequencial)
-            .where("numeroRemessa", "<=", tetoSequencial)
+        const snapR = await db.collection("remessas")
+            .where("numeroRemessa", ">=", String(baseSequencial))
+            .where("numeroRemessa", "<=", String(tetoSequencial))
             .orderBy("numeroRemessa", "desc").limit(1).get();
-        if (!snapRemessas.empty) maiorEncontrado = parseInt(snapRemessas.docs[0].data().numeroRemessa, 10);
+        if (!snapR.empty) {
+            const n = parseInt(snapR.docs[0].data().numeroRemessa, 10);
+            if (!isNaN(n) && n > maior) maior = n;
+        }
 
-        const snapManifestos = await db.collection("manifestos")
-            .where("numeroManifesto", ">=", baseSequencial)
-            .where("numeroManifesto", "<=", tetoSequencial)
-            .get();
-        snapManifestos.forEach(doc => {
+        const snapM = await db.collection("manifestos")
+            .where("numeroManifesto", ">=", String(baseSequencial))
+            .where("numeroManifesto", "<=", String(tetoSequencial)).get();
+        snapM.forEach(doc => {
             const d = doc.data();
             if (!d.numeroManifesto) return;
-            const fimLote = parseInt(d.numeroManifesto, 10) + (d.qtdItens || 1) - 1;
-            if (fimLote > maiorEncontrado) maiorEncontrado = fimLote;
+            const n = parseInt(d.numeroManifesto, 10);
+            if (isNaN(n)) return;
+            const fimLote = n + (d.qtdItens || 1) - 1;
+            if (fimLote > maior) maior = fimLote;
         });
 
-        return maiorEncontrado > 0 ? String(maiorEncontrado + 1) : baseSequencial;
+        return maior;
     }
+
+    async function reservarNumerosSequenciais(quantidade = 1) {
+        try {
+            return await reservarNumerosViaTransacao(quantidade);
+        } catch (err) {
+            // Limite do ano é regra de negócio — NÃO usar fallback, propagar
+            if (err && err.message && err.message.startsWith('LIMITE_ANO')) throw err;
+            console.warn("⚠️ Transação de numeração falhou (permissões da coleção 'contadores'?). Usando método alternativo por consulta...", err);
+            return await reservarNumerosPorConsulta(quantidade);
+        }
+    }
+
+    async function reservarNumerosViaTransacao(quantidade = 1) {
+        const anoCorrente = new Date().getFullYear();
+        const baseSequencial = parseInt(`${anoCorrente}0300`, 10);
+        const tetoSequencial = parseInt(`${anoCorrente}9999`, 10);
+        const campoAno = String(anoCorrente);
+        const docRef = db.collection("contadores").doc("numeracao");
+
+        // Consultas executadas FORA da transação (tx.get() do SDK compat não aceita Query)
+        const docPre = await docRef.get();
+        const contadorJaPreenchido = docPre.exists && Number(docPre.data()[campoAno]) > 0;
+        const ultimoDerivado = contadorJaPreenchido ? 0 : await derivarMaiorNumeroUsado();
+
+        return db.runTransaction(async (tx) => {
+            const doc = await tx.get(docRef); // apenas DocumentReference ✔
+            let ultimo = 0;
+
+            if (doc.exists && Number(doc.data()[campoAno]) > 0) {
+                ultimo = Number(doc.data()[campoAno]);
+            } else {
+                // Contador ausente (primeira execução do ano): usa o valor derivado fora da transação
+                ultimo = ultimoDerivado;
+            }
+
+            const proximo = Math.max(ultimo + 1, baseSequencial);
+            const fimFaixa = proximo + quantidade - 1;
+
+            if (fimFaixa > tetoSequencial) {
+                throw new Error(`LIMITE_ANO: A faixa de números (${proximo} a ${fimFaixa}) excede o limite ${tetoSequencial} do ano ${anoCorrente}.`);
+            }
+
+            tx.set(docRef, { [campoAno]: fimFaixa }, { merge: true });
+            return String(proximo);
+        });
+    }
+
+    /* Fallback: numeração por consulta, sem tocar na coleção 'contadores' */
+    async function reservarNumerosPorConsulta(quantidade = 1) {
+        const maior = await derivarMaiorNumeroUsado();
+        const anoCorrente = new Date().getFullYear();
+        const baseSequencial = parseInt(`${anoCorrente}0300`, 10);
+        const tetoSequencial = parseInt(`${anoCorrente}9999`, 10);
+
+        const proximo = Math.max(maior + 1, baseSequencial);
+        const fimFaixa = proximo + quantidade - 1;
+        if (fimFaixa > tetoSequencial) {
+            throw new Error(`LIMITE_ANO: A faixa de números (${proximo} a ${fimFaixa}) excede o limite ${tetoSequencial} do ano ${anoCorrente}.`);
+        }
+        return String(proximo);
+    }
+
+    async function sincronizarContadorManual(numeroFinal) {
+        try {
+            const anoCorrente = new Date().getFullYear();
+            const baseSequencial = parseInt(`${anoCorrente}0300`, 10);
+            const tetoSequencial = parseInt(`${anoCorrente}9999`, 10);
+            const campoAno = String(anoCorrente);
+            const docRef = db.collection("contadores").doc("numeracao");
+
+            if (numeroFinal < baseSequencial || numeroFinal > tetoSequencial) return;
+
+            await db.runTransaction(async (tx) => {
+                const doc = await tx.get(docRef);
+                const atual = (doc.exists && Number(doc.data()[campoAno]) > 0) ? Number(doc.data()[campoAno]) : 0;
+                if (numeroFinal > atual) tx.set(docRef, { [campoAno]: numeroFinal }, { merge: true });
+            });
+        } catch (e) {
+            console.warn("Contador não sincronizado (não crítico):", e);
+        }
+    }
+
        async function gerarManifestoDocumento() {
         const emitidoPor = document.getElementById('man-emitido-por').value;
         let numeroManifesto = document.getElementById('man-numero-manifesto').value.trim();
@@ -1540,6 +2187,12 @@ function limparManifesto() {
         }
 
         const qtd = itens.length;
+
+        // 🆕 v1.2 — Ramo do modo de edição (número e quantidade travados)
+        if (idManifestoEmEdicao) {
+            await concluirEdicaoManifesto(emitidoPor, itens);
+            return;
+        }
 
         if (numeroManifesto) {
             if (!/^\d{8}$/.test(numeroManifesto)) {
@@ -1576,11 +2229,19 @@ function limparManifesto() {
             } catch (err) {
                 console.error(err); alert("❌ Erro ao checar duplicidade da faixa de números."); return;
             }
+
+            await sincronizarContadorManual(fim);
         } else {
             try {
-                numeroManifesto = await obterProximoNumeroCompartilhado();
+                numeroManifesto = await reservarNumerosSequenciais(qtd);
             } catch (err) {
-                console.error(err); alert("❌ Erro ao gerar número sequencial."); return;
+                console.error(err);
+                if (err && err.message && err.message.startsWith('LIMITE_ANO')) {
+                    alert(`⚠️ ${err.message.replace('LIMITE_ANO: ', '')}\n\nReduza a quantidade de itens ou insira um número inicial manualmente.`);
+                } else {
+                    alert("❌ Erro ao gerar número sequencial (numeração atômica). Tente novamente.");
+                }
+                return;
             }
         }
 
@@ -1588,7 +2249,13 @@ function limparManifesto() {
         itens.forEach((item, idx) => { item.protocolo = String(inicioNum + idx); });
 
         renderizarFolhaManifesto(dataGeracao, emitidoPor, itens);
-        salvarManifestoFirestore(numeroManifesto, emitidoPor, itens, dataGeracao);
+        const docId = await salvarManifestoFirestore(numeroManifesto, emitidoPor, itens, dataGeracao);
+
+        // 🆕 v1.2 — registro de criação na auditoria
+        if (docId) {
+            const numeroExibivel = qtd > 1 ? `${numeroManifesto} – ${String(inicioNum + qtd - 1)}` : numeroManifesto;
+            await registrarAuditoria({ tipo: 'manifesto', acao: 'criacao', documentoId: docId, numero: numeroExibivel, responsavel: emitidoPor, detalhes: [] });
+        }
 
         document.getElementById('man-numero-manifesto').value = '';
     }
@@ -1727,13 +2394,15 @@ function limparManifesto() {
 
     async function salvarManifestoFirestore(numeroManifesto, emitidoPor, itens, dataGeracao) {
         try {
-            await db.collection("manifestos").add({
+            const docRef = await db.collection("manifestos").add({
                 numeroManifesto, emitidoPor, itens, qtdItens: itens.length,
                 dataGeracaoFormatada: dataGeracao,
                 dataRegistro: new Date().toISOString()
             });
+            return docRef.id;
         } catch (e) {
             console.warn("Manifesto gerado, mas o salvamento no histórico falhou:", e);
+            return null;
         }
     }
 
@@ -1799,7 +2468,7 @@ function baixarPDFManifesto() {
             }
             dados._dataTimestamp = ts;
             dados._dataFormatada = fmt;
-            dados._buscaItens = (dados.itens || []).map(i => `${i.nome || ''} ${i.registroPostal || ''} ${i.resumo || ''}`).join(' ').toLowerCase();
+            dados._buscaItens = (dados.itens || []).map(i => `${i.nome || ''} ${i.internoExterno || ''} ${i.registroPostal || ''} ${i.resumo || ''}`).join(' ').toLowerCase();
             manifestosHistoricoCache[doc.id] = dados;
             manifestosListaGlobal.push(dados);
         });
@@ -1894,9 +2563,13 @@ function baixarPDFManifesto() {
         dadosParaExibir.forEach(d => {
             const tr = document.createElement('tr');
             const qtd = d.qtdItens || (d.itens ? d.itens.length : 0);
+            // 🆕 v1.2 — badge de edições ao lado do número
+            const badgeEdicao = d.editado
+                ? `<span class="badge-edicao" title="Este manifesto foi editado — clique para ver o histórico de alterações" onclick="verEdicoesDocumento('${d.id}')">🕘 ${d.totalEdicoes || 1}</span>`
+                : '';
             tr.innerHTML = `
                 <td style="text-align: center;"><input type="checkbox" class="select-item-manifestos" data-id="${d.id}"></td>
-                                <td style="font-weight:bold; color:var(--primary);">${(() => { const n = d.numeroManifesto; if (!n) return '—'; const q = d.qtdItens || 1; return q > 1 ? escaparHTML(`${n} – ${String(parseInt(n, 10) + q - 1)}`) : escaparHTML(n); })()}</td>
+                                <td style="font-weight:bold; color:var(--primary);">${(() => { const n = d.numeroManifesto; if (!n) return '—'; const q = d.qtdItens || 1; return q > 1 ? escaparHTML(`${n} – ${String(parseInt(n, 10) + q - 1)}`) : escaparHTML(n); })()}${badgeEdicao}</td>
                 <td>${d._dataFormatada}</td>
                 <td>${escaparHTML(d.dataGeracaoFormatada)}</td>
                 <td>${escaparHTML(d.emitidoPor)}</td>
@@ -1904,6 +2577,7 @@ function baixarPDFManifesto() {
                 <td>
                     <div class="actions-cell">
                         <button class="btn-action" onclick="visualizarManifestoHistorico('${d.id}')">👁️ Abrir</button>
+                        <button class="btn-action btn-editar" onclick="editarManifesto('${d.id}')">✏️ Editar</button>
                         <button class="btn-action btn-delete" onclick="deletarManifesto('${d.id}')">🗑️ Excluir</button>
                     </div>
                 </td>
@@ -1944,10 +2618,21 @@ function baixarPDFManifesto() {
         const d = manifestosHistoricoCache[id];
         const detalhe = d ? `gerado em ${d.dataGeracaoFormatada} por ${d.emitidoPor} (${d.qtdItens || (d.itens || []).length} itens)` : 'selecionado';
         if (confirm(`⚠️ ATENÇÃO\n\nDeseja excluir permanentemente este Manifesto ${detalhe}?\n\nAção irreversível.`)) {
+            // 🆕 v1.2 — responsável obrigatório para o registro de auditoria
+            const responsavel = (prompt('👤 Registro de Auditoria\n\nInforme o seu nome para constar na exclusão:') || '').trim();
+            if (!responsavel) { alert('⚠️ Exclusão cancelada: é obrigatório informar o responsável.'); return; }
             try {
+                let numeroExibivel = '—';
+                if (d && d.numeroManifesto) {
+                    const q = d.qtdItens || (d.itens || []).length || 1;
+                    numeroExibivel = q > 1 ? `${d.numeroManifesto} – ${String(parseInt(d.numeroManifesto, 10) + q - 1)}` : d.numeroManifesto;
+                }
+                const resumo = d ? `Manifesto gerado em ${d.dataGeracaoFormatada || '?'} por ${d.emitidoPor || '?'} — ${d.qtdItens || (d.itens || []).length || 0} item(ns)` : 'Dados não localizados no momento da exclusão';
+
                 await db.collection("manifestos").doc(id).delete();
+                await registrarAuditoria({ tipo: 'manifesto', acao: 'exclusao', documentoId: id, numero: numeroExibivel, responsavel: responsavel, detalhes: [{ campo: 'Conteúdo excluído', de: resumo, para: '—' }] });
                 document.getElementById('bloco-preview-manifesto').style.display = 'none';
-                alert('✅ Manifesto removido com sucesso.');
+                alert('✅ Manifesto removido com sucesso.\n\nA exclusão foi registrada na auditoria.');
             } catch (error) {
                 console.error(error);
                 alert('❌ Falha ao excluir o manifesto.');
@@ -1978,11 +2663,13 @@ function baixarPDFManifesto() {
         document.body.appendChild(containerMassa);
         document.body.classList.add('modo-impressao-manifesto');
         definirOrientacaoImpressao('landscape');
-        window.print();
-        document.body.removeChild(containerMassa);
-        document.body.classList.remove('modo-impressao-manifesto');
-        definirOrientacaoImpressao('portrait');
-        previewContainer.style.display = displaySalvo;
+        setTimeout(() => {
+            window.print();
+            document.body.removeChild(containerMassa);
+            document.body.classList.remove('modo-impressao-manifesto');
+            definirOrientacaoImpressao('portrait');
+            previewContainer.style.display = displaySalvo;
+        }, 200);
     }
 
         function gerarRelatorioManifestosPDF() {
@@ -1992,7 +2679,7 @@ function baixarPDFManifesto() {
         const formatarFaixa = (d) => {
             const n = d.numeroManifesto;
             if (!n) return '—';
-            const q = d.qtdItens || (d.itens || []).length || 1;
+            const q = Number(d.qtdItens) > 0 ? Number(d.qtdItens) : ((d.itens || []).length || 1);
             return q > 1 ? `${n} – ${String(parseInt(n, 10) + q - 1)}` : n;
         };
 
@@ -2001,7 +2688,7 @@ function baixarPDFManifesto() {
         checkboxes.forEach(cb => {
             const d = manifestosHistoricoCache[cb.getAttribute('data-id')];
             if (!d) return;
-            const qtd = d.qtdItens || (d.itens || []).length;
+            const qtd = Number(d.qtdItens) > 0 ? Number(d.qtdItens) : ((d.itens || []).length || 0);
             totalItens += qtd;
             tabelaLinhasHTML += `
                 <tr style="border-bottom: 1px solid #cbd5e1;">
@@ -2049,6 +2736,127 @@ function baixarPDFManifesto() {
             alert("❌ Erro ao tentar processar o arquivo PDF.");
         });
     }
+
+    /* ==================== 🆕 v1.2 AUDITORIA (consulta e visualização) ==================== */
+
+    const ROTULO_ACAO = { criacao: '🟢 Criação', edicao: '🟡 Edição', exclusao: '🔴 Exclusão' };
+
+    db.collection("auditoria").orderBy("dataHora", "desc").limit(300).onSnapshot(snapshot => {
+        auditoriaListaGlobal = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const cont = document.getElementById('contador-auditoria');
+        if (cont) cont.innerText = auditoriaListaGlobal.length;
+        filtrarAuditoria();
+    }, err => {
+        console.error("Erro no Listener de Auditoria: ", err);
+    });
+
+    function abrirTelaAuditoria() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('preview-container').style.display = 'none';
+        document.getElementById('tela-auditoria').classList.add('active');
+        filtrarAuditoria();
+    }
+
+    function voltarDaAuditoria() {
+        mudarTela(telaAtivaAtual || 'cadastro');
+    }
+
+    function filtrarAuditoria() {
+        const tbody = document.getElementById('lista-auditoria');
+        if (!tbody) return;
+        const termo = (document.getElementById('pesquisa-auditoria')?.value || '').toLowerCase().trim();
+
+        const dados = auditoriaListaGlobal.filter(r => {
+            if (!termo) return true;
+            const det = (r.detalhes || []).map(x => `${x.campo} ${x.de} ${x.para}`).join(' ').toLowerCase();
+            const tipoTxt = r.tipo === 'remessa' ? 'remessa' : 'manifesto';
+            const acaoTxt = ROTULO_ACAO[r.acao] || (r.acao || '');
+            return `${r.numero || ''} ${r.responsavel || ''} ${acaoTxt} ${tipoTxt} ${r.dataHoraFormatada || ''} ${det}`.toLowerCase().includes(termo);
+        });
+
+        tbody.innerHTML = '';
+        if (dados.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Nenhum registro de auditoria encontrado.</td></tr>`;
+            return;
+        }
+
+        dados.forEach(r => {
+            const tr = document.createElement('tr');
+            const temDetalhes = r.detalhes && r.detalhes.length > 0;
+            tr.innerHTML = `
+                <td style="white-space:nowrap;">${escaparHTML(r.dataHoraFormatada || '')}</td>
+                <td><span class="tag-acao acao-${escaparHTML(r.acao)}">${ROTULO_ACAO[r.acao] || escaparHTML(r.acao || '—')}</span></td>
+                <td>${r.tipo === 'remessa' ? 'Remessa' : (r.tipo === 'manifesto' ? 'Manifesto' : escaparHTML(r.tipo || '—'))}</td>
+                <td style="font-weight:bold; color:var(--primary);">${escaparHTML(r.numero || '—')}</td>
+                <td>${escaparHTML(r.responsavel || '—')}</td>
+                <td>${temDetalhes ? `<button class="btn-action" style="background:#8b5cf6;" onclick="verDetalhesAuditoria('${r.id}')">👁️ Detalhes</button>` : '—'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function verDetalhesAuditoria(id) {
+        const r = auditoriaListaGlobal.find(x => x.id === id);
+        if (!r) return;
+        mostrarModalEdicoes([r]);
+    }
+
+    function verEdicoesDocumento(documentoId) {
+        db.collection('auditoria').where('documentoId', '==', documentoId).get().then(snap => {
+            const lista = snap.docs.map(d => d.data())
+                .filter(r => r.acao === 'edicao' || r.acao === 'exclusao' || r.acao === 'criacao')
+                .sort((a, b) => (b.dataHora || '').localeCompare(a.dataHora || ''));
+            if (!lista.length) { alert('Nenhum registro de auditoria encontrado para este documento.'); return; }
+            mostrarModalEdicoes(lista);
+        }).catch(err => {
+            console.error(err);
+            alert('❌ Erro ao consultar o histórico de alterações.');
+        });
+    }
+
+    function mostrarModalEdicoes(registros) {
+        const conteudo = document.getElementById('modal-conteudo');
+        let html = '';
+        registros.forEach(r => {
+            const acaoTxt = ROTULO_ACAO[r.acao] || escaparHTML(r.acao || '—');
+            const tipoTxt = r.tipo === 'remessa' ? 'Remessa' : 'Manifesto';
+            html += `
+                <div class="bloco-edicao">
+                    <div class="bloco-edicao-topo">
+                        <span class="tag-acao acao-${escaparHTML(r.acao)}">${acaoTxt}</span>
+                        <strong>${tipoTxt} Nº ${escaparHTML(r.numero || '—')}</strong>
+                        <span>• ${escaparHTML(r.dataHoraFormatada || '')}</span>
+                        <span>• Responsável: <strong>${escaparHTML(r.responsavel || '—')}</strong></span>
+                    </div>`;
+            if (r.acao === 'criacao' && (!r.detalhes || !r.detalhes.length)) {
+                html += `<div style="padding:10px 12px; font-size:13px; color:#166534;">✅ Documento criado no sistema.</div>`;
+            } else if (r.detalhes && r.detalhes.length) {
+                html += `<table class="tabela-diff">
+                    <thead><tr><th style="width:34%;">Campo</th><th style="width:33%;">Antes</th><th style="width:33%;">Depois</th></tr></thead>
+                    <tbody>`;
+                r.detalhes.forEach(d => {
+                    html += `<tr>
+                        <td style="font-weight:bold;">${escaparHTML(d.campo || '')}</td>
+                        <td>${escaparHTML(d.de || '(vazio)')}</td>
+                        <td>${escaparHTML(d.para || '(vazio)')}</td>
+                    </tr>`;
+                });
+                html += `</tbody></table>`;
+            } else {
+                html += `<div style="padding:10px 12px; font-size:13px;">Sem detalhes registrados.</div>`;
+            }
+            html += `</div>`;
+        });
+        conteudo.innerHTML = html;
+        document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function fecharModalEdicoes(event) {
+        if (event && event.target && event.target.id !== 'modal-overlay' && event.target.tagName !== 'BUTTON') return;
+        document.getElementById('modal-overlay').style.display = 'none';
+    }
+
     gerarCamposRemetentes();
 </script>
 

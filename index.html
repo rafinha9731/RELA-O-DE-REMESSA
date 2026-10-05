@@ -524,6 +524,7 @@
 .man-texto-legal b { display: inline; }
 .man-texto-legal ul { margin: 2px 0 4px 14px; padding: 0; }
 .man-texto-legal li { margin-bottom: 2px; }
+.man-texto-legal p, .man-texto-legal li { break-inside: avoid; page-break-inside: avoid; }
 .area-impressao-massa .folha-manifesto { margin-bottom: 15px; }
 /* ===== Bloco de Assinaturas Manuais ===== */
 .man-assinaturas-tabela td.c-item { font-size: 13px; font-weight: bold; text-align: center; vertical-align: middle; }
@@ -640,9 +641,13 @@
         page-break-after: avoid;
         break-after: avoid;
     }
+    /* 🆕 v1.3.5 — no modo massa, as folhas seguintes já recebem a margem @page (30mm),
+       então o padding-top do container é compensado para não duplicar o espaço */
+    body.modo-impressao-manifesto .area-impressao-massa > .folha-manifesto { padding-top: 0 !important; }
+    body.modo-impressao-manifesto .area-impressao-massa > .folha-manifesto:first-child { padding-top: 8mm !important; }
 }
     </style>
-<style id="estilo-orientacao-dinamica">@page { size: A4 portrait; margin: 0; }</style>
+<style id="estilo-orientacao-dinamica">@page { size: A4 portrait; margin: 0; } @page :first { margin: 0; }</style>
 </head>
 <body>
 
@@ -945,7 +950,7 @@
 
         document.body.appendChild(containerMassa);
         document.body.classList.add('modo-impressao-manifesto');
-        definirOrientacaoImpressao('landscape');
+        definirOrientacaoImpressao('landscape', 10, 8);
         setTimeout(() => {
             window.print();
             document.body.removeChild(containerMassa);
@@ -1819,9 +1824,11 @@ const MAN_EMBALAGENS = ['Envelope','Caixa de Papelão','Pacote','Tubo'];
 const MAN_CLASSIFICACOES = ['Não Sigiloso','Sigiloso','Perecivel'];
 const MAN_STATUS = ['Integro','Pacote Avariado','Caixa Avariada'];
 
-function definirOrientacaoImpressao(orientacao) {
+/* 🆕 v1.3.5 — margens nas páginas 2+; a 1ª página (@page :first) mantém margem 0
+   (o respiro dela vem do padding próprio do container, como sempre foi). */
+function definirOrientacaoImpressao(orientacao, margemTopoMm = 0, margemBaseMm = 0) {
     const el = document.getElementById('estilo-orientacao-dinamica');
-    if (el) el.textContent = `@page { size: A4 ${orientacao}; margin: 0; }`;
+    if (el) el.textContent = `@page { size: A4 ${orientacao}; margin: ${margemTopoMm}mm 0 ${margemBaseMm}mm 0; } @page :first { margin: 0; }`;
 }
 
 window.addEventListener('afterprint', () => {
@@ -2331,7 +2338,7 @@ function limparManifesto() {
                 <table class="man-atesto-tabela">
                     <tr>
                         <td class="c-atesto-texto">
-                            Após a conferência visual e externa da(s) correspondência(s) e do(s) volume(s), ATESTO o recebimento quantitativo do(s) objeto(s), em condições aparentes de conformidade, de acordo com o registro de entrada constante do Manifesto do Setor de Protocolo.
+                            Após a conferência visual e externa da(s) correspondência(s) e do(s) volume(s), atesto o recebimento quantitativo do(s) objeto(s), em condições aparentes de conformidade, de acordo com o registro de entrada constante do Manifesto do Setor de Protocolo.
                         </td>
                         <td class="c-atesto-assinatura">
                             <div class="atesto-linha-assinatura"></div>
@@ -2486,7 +2493,7 @@ function imprimirManifesto() {
     const folha = document.getElementById('folha-manifesto-impressao');
     if (!folha || !folha.innerHTML.trim()) { alert('⚠️ Nenhum manifesto carregado!'); return; }
     document.body.classList.add('modo-impressao-manifesto');
-    definirOrientacaoImpressao('landscape');
+    definirOrientacaoImpressao('landscape', 10, 8);
     setTimeout(() => { window.print(); }, 200);
 }
 
@@ -2738,7 +2745,7 @@ function baixarPDFManifesto() {
 
         document.body.appendChild(containerMassa);
         document.body.classList.add('modo-impressao-manifesto');
-        definirOrientacaoImpressao('landscape');
+        definirOrientacaoImpressao('landscape', 10, 8);
         setTimeout(() => {
             window.print();
             document.body.removeChild(containerMassa);

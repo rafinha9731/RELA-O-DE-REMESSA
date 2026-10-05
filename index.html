@@ -526,12 +526,29 @@
 .man-texto-legal li { margin-bottom: 2px; }
 .area-impressao-massa .folha-manifesto { margin-bottom: 15px; }
 /* ===== Bloco de Assinaturas Manuais ===== */
+.man-assinaturas-tabela td.c-item { font-size: 13px; font-weight: bold; text-align: center; vertical-align: middle; }
+.man-assinaturas-tabela td.c-protocolo { font-size: 13px; font-weight: bold; text-align: center; vertical-align: middle; letter-spacing: 0.5px; }
 .man-assinaturas-secao { margin-top: 10px; border: 1px solid black; padding: 3px; font-size: 9.5px; font-weight: bold; text-align: center; text-transform: uppercase; background-color: #eaeaea; }
 .man-assinaturas-tabela { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .man-assinaturas-tabela th { border: 1px solid black; background-color: #eaeaea; padding: 3px; font-size: 8.5px; font-weight: bold; text-align: center; text-transform: uppercase; }
 .man-assinaturas-tabela td { border: 1px solid black; padding: 3px 4px; font-size: 9px; vertical-align: middle; }
 .man-assinaturas-tabela td.c-assinatura { height: 16mm; }
 .man-assinaturas-tabela td.c-data-linhas { text-align: center; font-family: monospace; letter-spacing: 1px; }
+/* 🆕 v1.3.3 — Título da seção VI integrado ao thead (não fica órfão na quebra de página) */
+.man-assinaturas-com-secao { margin-top: 10px; }
+.man-assinaturas-tabela th.th-titulo-secao { font-size: 9.5px; letter-spacing: 0.3px; }
+/* ===== 🆕 v1.3.2 — Bloco de Atesto do Responsável pelo Protocolo ===== */
+.man-atesto-wrapper { break-inside: avoid; page-break-inside: avoid; }
+.man-atesto-titulo { border: 1px solid black; border-bottom: none; padding: 3px; font-size: 9px; font-weight: bold; text-align: center; text-transform: uppercase; background-color: #eaeaea; letter-spacing: 0.3px; }
+.man-atesto-tabela { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.man-atesto-tabela tr { height: 12mm; } /* altura física travada: o bloco não cresce */
+.man-atesto-tabela td { border: 1px solid black; padding: 4px 6px; }
+.man-atesto-tabela td.c-atesto-texto { width: 48%; font-size: 9px; text-align: justify; line-height: 1.35; vertical-align: middle; }
+.man-atesto-tabela td.c-atesto-assinatura { width: 32%; text-align: center; vertical-align: bottom; }
+.man-atesto-tabela td.c-atesto-carimbo { width: 20%; vertical-align: middle; }
+.atesto-linha-assinatura { border-top: 1px solid black; margin: 0 10px; }
+.atesto-rotulo { font-size: 7px; font-weight: bold; text-transform: uppercase; text-align: center; color: #1e293b; line-height: 1.3; margin-top: 2px; }
+.man-atesto-tabela .carimbo-data { font-size: 10px; }
         @media print {
     @page { size: A4; margin: 0; }
     
@@ -702,10 +719,10 @@
             </div>
             <div class="form-group">
                 <label for="emissor">👤 Emitido Por:</label>
-                <select id="emissor">
-                    <option value="Juliana">Juliana</option>
-                    <option value="Rafael">Rafael</option>
-                    <option value="Washington">Washington</option>
+               <select id="emissor">
+                    <option value="Juliana Francisca de Sousa">Juliana Francisca de Sousa</option>
+                    <option value="Rafael Pereira de Carvalho">Rafael Pereira de Carvalho</option>
+                    <option value="Washington Carvalho Lopes">Washington Carvalho Lopes</option>
                 </select>
             </div>
         </div>
@@ -790,10 +807,10 @@
         </div>
         <div class="form-group">
             <label for="man-emitido-por">👤 Documento Emitido por:</label>
-            <select id="man-emitido-por">
-                <option value="Juliana">Juliana</option>
-                <option value="Rafael">Rafael</option>
-                <option value="Washington">Washington</option>
+             <select id="man-emitido-por">
+                <option value="Juliana Francisca de Sousa">Juliana Francisca de Sousa</option>
+                <option value="Rafael Pereira de Carvalho">Rafael Pereira de Carvalho</option>
+                <option value="Washington Carvalho Lopes">Washington Carvalho Lopes</option>
             </select>
         </div>
         <div class="form-group" style="max-width: 180px;">
@@ -853,7 +870,7 @@
 </div>
 
     <div class="system-footer">
-        Sistema de Remessas - IPEN / CNEN | Versão 1.2
+        Sistema de Remessas - IPEN / CNEN | Versão 1.3.3
         <div>
             <button class="link-auditoria" onclick="abrirTelaAuditoria()">🕘 Auditoria de Alterações (controle interno)</button>
         </div>
@@ -974,6 +991,20 @@
     let idManifestoEmEdicao = null;
     let auditoriaListaGlobal = [];
     let telaAtivaAtual = 'cadastro';
+
+    /* 🆕 v1.3 — Padronização de nomes completos dos emitentes.
+       Registros criados antes da v1.3 gravam nomes curtos no Firestore;
+       este mapa garante que o select de edição sempre encontre a opção correta. */
+    const NOMES_EMITENTES_LEGADO = {
+        'Juliana': 'Juliana Francisca de Sousa',
+        'Rafael': 'Rafael Pereira de Carvalho',
+        'Washington': 'Washington Carvalho Lopes'
+    };
+
+    function valorEmitenteCompativel(nome) {
+        if (!nome) return '';
+        return NOMES_EMITENTES_LEGADO[nome] || nome;
+    }
 
     function escaparHTML(str) {
         if (!str) return '';
@@ -1432,7 +1463,9 @@
 
         document.getElementById('numero_remessa').value = dados.numeroRemessa || '';
         document.getElementById('numero_remessa').disabled = true;
-        document.getElementById('emissor').value = dados.emissor || 'Juliana';
+                const selectEmissor = document.getElementById('emissor');
+        selectEmissor.value = valorEmitenteCompativel(dados.emissor);
+        if (selectEmissor.selectedIndex === -1) selectEmissor.selectedIndex = 0; // nome legado desconhecido
         document.getElementById('destinatario').value = dados.destinatario || '';
         document.getElementById('qtd_itens').value = Math.max(1, dados.qtdItens || (dados.itens || []).length || 1);
         document.getElementById('container-remetentes').innerHTML = '';
@@ -1878,7 +1911,7 @@ function limparManifesto() {
         document.getElementById('man-data-geracao').value = d.dataGeracaoFormatada || '';
 
         const emitSelect = document.getElementById('man-emitido-por');
-        emitSelect.value = d.emitidoPor || 'Juliana';
+        emitSelect.value = valorEmitenteCompativel(d.emitidoPor);
         if (emitSelect.selectedIndex === -1) emitSelect.selectedIndex = 0;
 
         const qtdInput = document.getElementById('man-qtd-itens');
@@ -2260,23 +2293,25 @@ function limparManifesto() {
         document.getElementById('man-numero-manifesto').value = '';
     }
 
-          function montarTabelaAssinaturas(itens) {
+                    function montarTabelaAssinaturas(itens) {
         const c = v => escaparHTML(v || '');
         let linhas = '';
         itens.forEach(i => {
             linhas += `
                 <tr>
                     <td class="c-item">${c(i.item)}</td>
-                    <td>${c(i.protocolo) || '—'}</td>
+                    <td class="c-protocolo">${c(i.protocolo) || '—'}</td>
                     <td class="c-assinatura">&nbsp;</td>
                     <td class="c-assinatura c-data-linhas">____ / ____ / ______</td>
                 </tr>`;
         });
 
         return `
-            <div class="man-assinaturas-secao">VI. Registro de Recebimento por Item — Assinatura Manual</div>
-            <table class="man-assinaturas-tabela">
+            <table class="man-assinaturas-tabela man-assinaturas-com-secao">
                 <thead>
+                    <tr>
+                        <th colspan="4" class="th-titulo-secao">VI. Registro de Recebimento por Item — Assinatura Manual</th>
+                    </tr>
                     <tr>
                         <th style="width:7%">Item</th>
                         <th style="width:20%">Protocolo/Núm. de Registro</th>
@@ -2287,7 +2322,47 @@ function limparManifesto() {
                 <tbody>${linhas}</tbody>
             </table>`;
     }
-          function montarConteudoFolhaManifesto(dataGeracao, emitidoPor, itens, comAssinaturas = false) {
+       /* 🆕 v1.3.2 — Bloco de Atesto do Recebimento pelo Responsável do Protocolo */
+    function montarBlocoAtestoProtocolo(itens) {
+        const ult = obterDataHoraUltimoItem(itens);
+        return `
+            <div class="man-atesto-wrapper">
+                <div class="man-atesto-titulo">Certificação de Recebimento e Conformidade de Entrada</div>
+                <table class="man-atesto-tabela">
+                    <tr>
+                        <td class="c-atesto-texto">
+                            Após a conferência visual e externa da(s) correspondência(s) e do(s) volume(s), ATESTO o recebimento quantitativo do(s) objeto(s), em condições aparentes de conformidade, de acordo com o registro de entrada constante do Manifesto do Setor de Protocolo.
+                        </td>
+                        <td class="c-atesto-assinatura">
+                            <div class="atesto-linha-assinatura"></div>
+                            <div class="atesto-rotulo">Assinatura do Responsável pelo Recebimento</div>
+                        </td>
+                        <td class="c-atesto-carimbo">
+                            <div class="carimbo-container">
+                                <div class="carimbo-title">⏱️ PROTOCOLO DIGITAL</div>
+                                <div class="carimbo-data">${escaparHTML(ult.data)} - ${escaparHTML(ult.hora)}</div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>`;
+    }
+    /* 🆕 v1.3.2 — Data/hora da última inserção de item (maior dataEntrada+hora do manifesto) */
+    function obterDataHoraUltimoItem(itens) {
+        let maior = null;
+        (itens || []).forEach(i => {
+            if (!i.dataEntrada || !i.hora) return;
+            const ts = new Date(`${i.dataEntrada}T${i.hora}:00`);
+            if (isNaN(ts.getTime())) return;
+            if (!maior || ts.getTime() > maior.getTime()) maior = ts;
+        });
+        if (!maior) return { data: '—', hora: '—' };
+        return {
+            data: maior.toLocaleDateString('pt-BR'),
+            hora: maior.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        };
+    }
+              function montarConteudoFolhaManifesto(dataGeracao, emitidoPor, itens, comAssinaturas = false) {
         const c = v => escaparHTML(v || '');
         let linhas = '';
         itens.forEach(i => {
@@ -2375,7 +2450,8 @@ function limparManifesto() {
                 </thead>
                 <tbody>${linhas}</tbody>
             </table>
-                        <div class="man-texto-legal">${textoLegal}</div>
+            <div class="man-texto-legal">${textoLegal}</div>
+            ${montarBlocoAtestoProtocolo(itens)}
             ${comAssinaturas ? montarTabelaAssinaturas(itens) : ''}`;
     }
         function alternarPreviewRemessa(mostrarRemessa) {
